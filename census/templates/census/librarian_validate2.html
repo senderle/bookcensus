@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <!-- models -->
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+    <div id="editChildModal" class="modal fade" role="dialog"></div>
+
+    <hr class = "style14" width = "50%"></hr>
+    <p class="sansserifgrey" align="center">
+    You have verified the following copies.</p>
+    <p class="sansserifgrey" align="center">
+    Please click details to see if anything needs to be edited.
+    </p>
+    <p class="sansserifgrey" align="center">
+    When everything is correct, please click "Confirm".
+    </p>
+</div>
+<hr class="style14" width = "50%"></hr>
+
+<div class="container">
+    <table class="librarian-select-ui">
+        <tbody>
+            <tr>
+                <th class="librarian-select-ui-wide">Copy</th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui"></th>
+            </tr>
+            {% if child_copies %}
+            {% for copy in child_copies %}
+            <tr>
+                <td>
+                    {{ copy }}
+                </td>
+                <td>
+                    <a class="copy_data button-inline" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        View details
+                    </a>
+                </td>
+                <td>
+                    <a class="update_child_copy button-inline" href="#" data-form="{% url 'update_child_copy' copy.id %}" title="Edit">
+                        Edit details
+                    </a>
+                </td>
+
+                <td id="validate {{ copy.id }}">
+                    {% if copy.librarian_validated %}
+                    Yes
+                    {% else %}
+                    <button class="button-inline" onclick="libConfirm({{ copy.id }});">Confirm changes</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+    <br>
+    <!-- <a href="{% url 'librarian_start' %}" class="btn btn-default" style="margin-left: 250px">Back</a> -->
+    <!-- <a href="{% url 'submission' %}" class="btn btn-default" style="margin-left: 550px">Continue to submit other copies</a> -->
+
+
+</div>
+
+
+<script>
+function libConfirm(copy_id) {
+    var req = new XMLHttpRequest();
+    var url = 'librarian_confirm/' + copy_id;
+    req.open('GET', url, false);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send();
+    var res = JSON.parse(req.responseText);
+    if (res === "success") {
+        window.location.reload();
+    }
+}
+</script>
+
+{% endblock content %}

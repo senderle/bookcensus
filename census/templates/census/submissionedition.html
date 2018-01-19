@@ -1,0 +1,50 @@
+<html>
+    <head>
+    </head>{% load staticfiles %}
+    <body>
+        <div class="wrapper">
+
+            <ul>
+                <li><a class="not.active" href="{% url 'homepage' %}"><p class="sansserif">
+                        Home</p></a></li>
+                <li><a class="not.active" href="{% url 'index' %}"><p class="sansserif">
+                        Titles</p></a></li>
+                <li><a class="active" href="{% url 'copy' %}"><p class="sansserif">
+                        Copy</p></a></li>
+                <li><a class="not.active" href="{% url 'submission' %}" class="dropbtn"><p class="sansserif">Submission</p></a></li>
+                <li><a class="not.active" href="{% url 'register' %}"><p class="sansserif">Register</p></a></li>
+                <li class="dropdown">
+                    <a href="" class="dropbtn" data-toggle="dropdown" role="button" aria-expanded="false">  <p class = sansserif>
+                        Account</p></a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'profile' %}"><p class = sansserif>my profile</p></a>
+                        <a href="{% url 'user_history' %}"><p class = sansserif>my history</p></a>
+                        <a href="{% url 'login_user' %}"><p class = sansserif>login</p></a>
+                        <a href="{% url 'logout_user' %}"><p class = sansserif>logout</p></a>
+
+                    </div>
+                </li>
+
+            </ul>
+
+            <hr width = "30%"></hr>
+            <p class="sansserifgrey">
+            <font size = "6"> <light>Edition</light> </font></br>1. Input your edition information. </br> 2. Click "Submit".
+            </p>
+            </p>
+        </div>
+        <hr width = "30%"></hr>
+        {% block content %}
+        <div class="wrapper">
+            <form method="post" action="/census/submissionedition">
+                {% csrf_token %}
+                {{ edition_form.as_p }}
+                <div class="my-button">
+                    <input type="submit" name="submit" value="Submit" class="django-submit" />
+                </div>
+            </form>
+        </div>
+
+        {% endblock content %}
+    </body>
+</html>

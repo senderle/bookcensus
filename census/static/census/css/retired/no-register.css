@@ -1,0 +1,36 @@
+input[type=text]:focus {
+  outline: none;
+  box-shadow: 0px 1px 0px 0px #010d21, 0px 1px 0px 0px #010d21;
+}
+
+input[type=password]:focus {
+  outline: none;
+  box-shadow: 0px 1px 0px 0px #010d21, 0px 1px 0px 0px #010d21;
+}
+input[type=text] {
+    border: none;
+    color: #000000;
+    background: none;
+    box-shadow: 0px 0px 0px 0px #010d21, 0px 0px 0px 0px #010d21;
+    -webkit-transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s;
+    width: 100%;
+    font-size:20px;
+    font-family:'Raleway', sans-serif;
+    font-weight:300;  
+}
+input[type=password] {
+    border: none;
+    color: #000000;
+    background: none;
+    box-shadow: 0px 0px 0px 0px #010d21, 0px 0px 0px 0px #010d21;
+    -webkit-transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s;
+    width: 100%;
+    font-size:20px;
+    font-family:'Raleway', sans-serif;
+    font-weight:300;  
+}
+table td:nth-child(even) {
+  width:300px;
+}

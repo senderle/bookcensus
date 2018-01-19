@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <head>
+        <p class = "title" style="text-align:center;">shakespeare census</p>
+
+    </head>
+    <body>
+        <div class = "header">
+            <table class = "center">
+                <tr>
+                    <td>
+                        <div id = "unhidebutton">
+                            <p class = sansserif>
+                            search
+                            </p>
+                        </div>
+                    </td>
+                    <td>
+                        <p class = sansserif>
+                        <a class="not.active" href="{% url 'submission' %}">submit</a>
+                        </p>
+                    </td>
+                    <td>
+                        <p class = sansserif>
+                        <a class="not.active" href="{% url 'login_user' %}">account</a>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <span id = "myForm">
+            <div id = "testing" style="overflow-y: auto;">
+                &nbsp;
+                <div id = "hideme" class = "hidden">
+
+                    <!-- <hr style="width:100px; position:relative; right:35%; bottom:40%; margin:auto; height:0.5px; border:none;" color="black" NOSHADE>
+                        <hr style="width:100px; position:relative; left:35%;  bottom:40%; margin:auto; height:0.5px; border:none;" color="black" NOSHADE>
+                    -->
+                    <form method="GET" action="{% url 'search_for_something' %}" class="form1">
+
+
+                        <select name='j' class="select1">
+                            <option value="issue__edition__title__title__icontains">title</option>
+                            <option value="issue__edition__year">year</option>
+                            <option value="STC_Wing">stc wing</option>
+                        </select>
+                        <br>
+                        <input type = 'text' name = 'a' style="height: 50px; width: 200px; font-size:30px; position:relative; left:38.6%;"/>
+                        <br>
+                        <div id = "hide2" class="hidden2">
+                            <select name='k' class="select1">
+                                <optgroup label="Title">
+                                    <option value="issue__edition__title__title__icontains">title</option>
+                                </optgroup>
+                                <optgroup label="Edition">
+                                    <option value="issue__edition__year">year</option>
+                                    <option value="issue__edition__Edition_number">edition number</option>
+                                    <option value="issue__edition__Edition_format">edition format</option>
+                                </optgroup>
+                                <optgroup label="Issue">
+                                    <option value="issue__STC_Wing">stc wing</option>
+                                    <option value="issue__DEEP">DEEP</option>
+                                    <option value="issue__ESTC">ESTC</option>
+                                </optgroup>
+                                <optgroup label="Copy">
+                                    <option value="NSC">NSC</option>
+                                </optgroup>
+                            </select>
+                            <br>
+                            <input type = 'text' name = 'b' style="height: 50px; width: 200px; font-size:30px; position:relative; left:38.5%"/>
+                        </div>
+                        <div id = "hide3" class = "hidden2">
+                            <select name='l' class="select1">
+                                <optgroup label="Title">
+                                    <option value="issue__edition__title__title__icontains">title</option>
+                                </optgroup>
+                                <optgroup label="Edition">
+                                    <option value="issue__edition__Edition_number">edition number</option>
+                                    <option value="issue__edition__year">year</option>
+                                    <option value="issue__edition__Edition_format">edition format</option>
+                                </optgroup>
+                                <optgroup label="Issue">
+                                    <option value="issue__STC_Wing">stc wing</option>
+                                    <option value="issue__DEEP">DEEP</option>
+                                    <option value="issue__ESTC">ESTC</option>
+                                </optgroup>
+                                <optgroup label="Copy">
+                                    <option value="NSC">NSC</option>
+                                    <option value="Owner">owner</option>
+                                    <option value="Shelfmark">shelfmark</option>
+                                    <option value="Barlett1939">Barlett1939</option>
+                                    <option value="Barlet1916">Barlet1916</option>
+                                </optgroup>
+                            </select>
+                            <br>
+                            <input type = 'text' name = 'c' style="height: 50px; width: 200px; font-size:30px; position:relative; left:38.5%"/>
+                        </div>
+                        <div id = "hide4" class = "hidden2">
+                            <select name='z' class="select1">
+                                <option value="issue__edition__title__title__icontains">title</option>
+                                <option value="issue__edition__year">year</option>
+                                <option value="issue__STC_Wing">stc wing</option>
+                            </select>
+                            <br>
+                            <input type = 'text' name = 'd' style="height: 50px; width: 200px; font-size:30px; position:relative; left:38.5%"/>
+                        </div>
+                        <br>
+                        <input type = 'submit' id="search" value = 'search' class = "Submission2"/>
+                        <input type='button' class = "addfields" value='more' id="unhidebutton2" />
+
+                    </form>
+                </div>
+            </div>
+        </span>
+
+    </body>
+    </tr>
+    <script>
+var tohide = document.getElementById('hideme');
+var unhidebutton = document.getElementById('unhidebutton');
+unhidebutton.addEventListener('click', function() {
+    tohide.classList.remove('hidden')
+});
+
+var tohide2 = document.getElementById('hide2');
+var search = document.getElementById('search');
+var tohide3 =document.getElementById('hide3');
+var tohide4 = document.getElementById('hide4');
+var unhidebutton2 = document.getElementById('unhidebutton2');
+unhidebutton2.addEventListener('click', function() {
+    if ($(tohide2).hasClass('hidden2')){
+        tohide2.classList.remove('hidden2')
+    }
+    else {
+        if ($(tohide3).hasClass('hidden2')){
+            tohide3.classList.remove('hidden2')
+        }
+        else {
+            tohide4.classList.remove('hidden2')
+        }
+    }
+});
+    </script>
+
+
+
+</html>

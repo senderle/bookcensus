@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class = "wrapper">
+    <table class="play-title-header">
+        <tr>
+            <td rowspan="2" class="play-title-header-icon">
+                <a href = "{% url 'detail' title.id %}">
+                    <img class="play-title-icon" src="{% static icon_path %}">
+                </a>
+            </td>
+            <td class="play-title-header">
+                <a href = "{% url 'detail' title.id %}">
+                    {{ title.title }}
+                </a>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <a href = "{% url 'detail' title.id %}">
+                    <span>
+                        {% if selected_issue.edition.Edition_number.isdigit %}
+                        Edition&nbsp;{{ selected_issue.edition.Edition_number }}
+                        {% else %}
+                        {{ selected_issue.edition.Edition_number.capitalize }}
+                        {% endif %}
+                    </span>
+                    <span>{{ selected_issue.year }}</span>
+                    <span>STC&nbsp;/&nbsp;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
+                    <span>ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                </a>
+            </td>
+        </tr>
+    </table>
+    <table class="play-detail-set">
+
+        {% if all_copies %}
+        <tr>
+            <th> Location </th>
+            <th> Shelfmark </th>
+            <th> Copy Notes </th>
+            <th> Provenance </th>
+            <th> ESTC Location Verified </th>
+        </tr>
+        {% for copy in all_copies %}
+        <tr>
+            <td>{{copy.Owner}}</td>
+            <td>
+                {% if copy.Shelfmark %}
+                {{ copy.Shelfmark }}
+                {% else %}
+                Not Available
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.copynote %}
+                {{ copy.copynote }}
+                {% else %}
+                None
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.prov_info %}
+                {{ copy.prov_info }}
+                {% else %}
+                None
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.from_estc %}
+                    {% if copy.false_positive is None %}
+              	    Unverified (from ESTC)
+                    {% elif copy.false_positive %}
+                    Incorrect (from ESTC)
+                    {% else %}
+                    Verified (from ESTC)
+                    {% endif %}
+                {% else %}
+                Not from ESTC
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <p class="sansserif" align="center">No editions are available.</p>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock content %}

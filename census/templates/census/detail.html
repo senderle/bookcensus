@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% if editions %}
+<div class = "wrapper">
+    <table class="play-title-header">
+        <tr>
+            <td rowspan="2" class="play-title-header-icon">
+                <a href = "{% url 'detail' title.id %}">
+                    <img class="play-title-icon" src="{% static icon_path %}">
+                </a>
+            </td>
+            <td class="play-title-header">
+                <a href = "{% url 'detail' title.id %}">
+                    {{ title.title }}
+                </a>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <a href = "{% url 'detail' title.id %}">
+                    <span>All Issues</span>
+                </a>
+            </td>
+        </tr>
+    </table>
+    <table class="play-detail-set">
+        <tr>
+            <th> Edition </th>
+            <th> Year </th>
+            <th> STC / Wing</th>
+            <th> ESTC </th>
+        </tr>
+        {% for issue in issues %}
+        <tr>
+            <td>
+                <a href="{% url 'copy' issue.id %}">
+                    {% if issue.edition.Edition_number.isdigit %}
+                    {{ issue.edition.Edition_number }}
+                    {% else %}
+                    {{ issue.edition.Edition_number.capitalize }}
+                    {% endif %}
+                </a>
+            </td>
+            <td><a href="{% url 'copy' issue.id %}">{{ issue.year }}</a></td>
+            <td><a href="{% url 'copy' issue.id %}">{{ issue.STC_Wing }}</a></td>
+            <td><a href="{% url 'copy' issue.id %}">{{ issue.ESTC }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% else %}
+<p class="sansserif" align="center">Oh no! No editions are available.</p>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300" rel="stylesheet">
+<br>
+<div class ="greeting">
+Hello, there.
+</div>
+<br>
+<br>
+<table align = "center">
+	<th colspan = 2> This is what we have stored as our details for you.</th>
+	<tr>
+		<td>Username: </td>
+		<td>{{ user.username}}</td>
+	</tr>
+	<tr>
+		<td>Email: </td>
+		<td>{{ user.email }}</td>
+	</tr>
+	<tr>
+		<td>First name: </td>
+		<td>{{ user.first_name }}</td>
+	</tr>
+	<tr>
+		<td>Last name: </td>
+		<td>{{ user.last_name }}</td>
+	</tr>
+
+</table>
+<br>
+<br>
+<table align="center">
+	<tr class="informtable"><td colspan=2><div class = "inform">If you'd like to change any of the above information, <br>click <a href="{% url 'edit_profile' %}" class="editbutton" role="button">here</a>.</div></td></tr>
+</table>
+
+
+{% endblock content %}

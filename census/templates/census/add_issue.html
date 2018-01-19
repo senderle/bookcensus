@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% if user.is_superuser %}
+<div align="center">
+	<p class="sansserifgrey">
+	<font size = "6"> <light>Issue</light> </font></br>1. Input your issue. Fields with * are required.</br> 2. Click "Submit".
+	</p>
+</div>
+<div align="center">
+	<p class ="sansserif">
+		<form method="post" action="{% url 'add_issue' edition_id %}">
+			{% csrf_token %}
+		<table class = "table2" align="center">
+		{% for field in issue_form.visible_fields %}
+		<tr>
+		<td> {{ field.label_tag }}{% if field.field.required %}*{% endif %}</td>
+		<td> {{ field}} {% if field.help_text %} ({{ field.help_text|safe}}) {% endif %}</td>
+		</tr>
+		{% if field.errors %}
+		<tr>
+			<td></td>
+			<td><ul class="errorlist">{% for error in field.errors %}<li>{{error}}</li>{% endfor %}</ul></td>
+		</tr>
+		{% endif %}
+
+		{% endfor %}
+		</table>
+		<br>
+    	<input type="submit" name="submit" value="submit" class="finalsubmit" style="position:static; left:50%;"/>
+		</form>
+	</p>
+</div>
+
+{% else %}
+<div align="center">
+<p class="sansserif">
+Issue input is currently disabled for librarians. If you'd like to input a new issue, please email something@upenn.edu with your request.
+</p>
+</div>
+{% endif %}
+{% endblock content %}

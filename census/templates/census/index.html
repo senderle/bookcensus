@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <link rel='stylesheet prefetch' href='http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/css/semantic.min.css'>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+  <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href= "{% static 'census/index.css' %}" />
+
+<div class="wrapper">
+<hr class="style14" width = "50%"></hr>
+	<p class="sansserifgrey" style="font-size:12px">
+	Find all of the titles in the database below. <br>Click the edition for all copy information of that edition.
+	</p>
+  <hr class="style14" width = "50%"></hr>
+
+</div>
+<form method='GET' action=''>
+<input type='text' name ='q' placeholder='Refine your search.' value ='{{ request.GET.q }}' class="refinesearch" style="width:300px;"/>
+<br>
+<br>
+
+<input type='submit' value='search' class="finalsubmit"/>
+</form>
+
+{% if query %}
+
+<p class="sansserif">
+  <table class = "center" align="center" width="90%">
+        <tr>
+          <th> Title </th>
+          <th> Edition # </th>
+        </tr>
+        <tr>
+        {% for obj in object_list %}
+        <td>{{ obj.title }}
+        </td>
+          <td>
+            {% for edition in obj.edition_set.all %}
+                {% if edition.Edition_number %}
+                  {% if edition.Edition_number == 'anr. ed.' %}
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton"> anr. ed.</a>
+                  {% else %}
+                  {% if forloop.counter < obj.edition_set.all|length %}
+
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton"> {{ edition.Edition_number }}</a> |
+                  {% else %}
+                 <a href="{% url 'copy' edition.id %}" class ="linkbutton"> {{ edition.Edition_number }}</a>
+                  {% endif %}
+                  {% endif %}
+
+                {% else %}
+                {% if forloop.counter < obj.edition_set.all|length %}
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton">Unknown edition</a> |
+                {% else %}
+                 <a href="{% url 'copy' edition.id %}" class ="linkbutton">Unknown edition</a>
+                 {% endif %}
+
+                {% endif %}
+              </a>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+
+        </table>
+<div class="pagination">
+    <table class = "pagenavigator" align="center">
+    <tr class ="pagenavigator">
+      {% if object_list.has_previous %}
+      <td class = "hoverspecial"> <a href="?page={{ object_list.previous_page_number }}&q={{ request.GET.q }}" class="paginator"><</a></td>
+      {% endif %}
+
+    {% for page in object_list.paginator.page_range %}
+      {% if page <= object_list.number|add:"3" %}
+        {% if page >= object_list.number|add:"-3" %}
+        {% if page == object_list.number %}
+          <td class = "currentpage" width="20px">{{ page }}</td>
+        {% else %}
+          <td class="pagenavigator" width="20px"> <a href = "?page={{ page }}&q={{ request.GET.q }}" class="paginator">{{ page }}</td>
+        {% endif %}
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+
+      {% if object_list.has_next %}
+       <td class = "hoverspecial">  <a href="?page={{ object_list.next_page_number }}&q={{ request.GET.q }}" class="paginator">></a></td>
+      {% endif %}
+    </tr>
+  </table>
+  <!-- Pages generated: {{ object_list.paginator.num_pages }} -->
+</div>
+</p>
+{% else %}
+{% if titles %}
+  <p class="sansserif">
+  <table class = "center" align="center" width="90%">
+        <tr>
+          <th> Title </th>
+          <th> Edition #</th>
+        </tr>
+        <tr>
+    {% for title in titles %}
+    			<td>{{ title.title }}</td>
+          <td>
+            {% for edition in title.edition_set.all %}
+                {% if edition.Edition_number %}
+                  {% if edition.Edition_number == 'anr. ed.' %}
+                  {% if forloop.counter < title.edition_set.all|length %}
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton"> anr. ed.</a> |
+                {% else %}
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton"> anr. ed.</a>
+                {% endif %}
+                  {% else %}
+                  {% if forloop.counter < title.edition_set.all|length %}
+
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton"> {{ edition.Edition_number }}</a> |
+                  {% else %}
+                 <a href="{% url 'copy' edition.id %}" class ="linkbutton"> {{ edition.Edition_number }}</a>
+                  {% endif %}
+                  {% endif %}
+
+                {% else %}
+                {% if forloop.counter < title.edition_set.all|length %}
+                <a href="{% url 'copy' edition.id %}" class ="linkbutton">Unknown edition</a> |
+                {% else %}
+                 <a href="{% url 'copy' edition.id %}" class ="linkbutton">Unknown edition</a>
+                 {% endif %}
+                {% endif %}
+              </a>
+            {% endfor %}
+          </td>
+   			 </tr>
+    {% endfor %}
+
+        </table>
+    </p>
+</div>
+
+<div class="pagination">
+      <table class = "pagenavigator" align="center">
+        <tr class ="pagenavigator">
+
+      {% if titles.has_previous %}
+      <td class = "hoverspecial">  <a href="?page={{ titles.paginator.1 }}" class="paginator"><<</a></td>
+      <td class = "hoverspecial"> <a href="?page={{ titles.previous_page_number }}" class="paginator"><</a></td>
+      {% endif %}
+    {% for page in titles.paginator.page_range %}
+      {% if page <= titles.number|add:"3" %}
+        {% if page >= titles.number|add:"-3" %}
+        {% if page == titles.number %}
+            <td class = "currentpage" width="20px">  {{ page }} </td>
+            {% else %}
+            <td class="pagenavigator" width="20px"> <a href = "?page={{page }}" class="paginator">{{ page }}  </td>
+            {% endif %}
+            {% endif %}
+        {% endif %}
+
+      {% endfor %}
+
+      {% if titles.has_next %}
+     <td class = "hoverspecial"> <a href="?page={{ titles.next_page_number }}" class="paginator">></a></td>
+           <td class = "hoverspecial">  <a href="?page={{ titles.paginator.num_pages }}" class="paginator">>></a></td>
+
+      {% endif %}
+        </tr>
+      </table>
+        <!-- Pages generated: {{ titles.paginator.num_pages }} -->
+
+</div>
+
+
+{% else %}
+    <p class="sansserif" align="center">Oh no! No books are available.</p>
+{% endif %}
+{% endif %}
+{% endblock content %}

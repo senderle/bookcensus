@@ -1,0 +1,17 @@
+web:
+  build: .
+  command: bash runserver.sh
+  volumes:
+    - .:/code
+  ports:
+    - "8989:8000"
+
+  links:
+    - db
+db:
+  image: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=rootpassword
+    - MYSQL_USER=composetest
+    - MYSQL_PASSWORD=testpassword
+    - MYSQL_DATABASE=composetest

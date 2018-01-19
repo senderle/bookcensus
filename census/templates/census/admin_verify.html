@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div>
+  <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+  <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<!-- models -->
+<div id="copyModal" class="modal fade" role="dialog"></div>
+
+<hr class = "style14" width = "50%"></hr>
+	<p class="sansserifgrey" align="center">
+	Here is a list of the copies librarians have verified.</p>
+  <p class="sansserifgrey" align="center">
+    Please check the details and verify the information.
+  </p>
+</div>
+<hr class="style14" width = "50%"></hr>
+<br>
+
+<div class="container">
+<table class="table table-striped" align="center" style="width:70%">
+  <tbody>
+    <tr>
+      <th>Copy</th>
+      <th></th>
+    </tr>
+	{% if copies %}
+	{% for copy in copies %}
+		<tr>
+			<td>{{ copy }}
+        <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">more details...</a>
+      </td>
+
+        <td id="validate {{ copy.id }}">
+         <button class="btn btn-default" onclick="adminValidate({{ copy.id }});">Verify</button>
+        </td>
+
+		</tr>
+    {% endfor %}
+    {% endif %}
+
+  </tbody>
+</table>
+</div>
+<br>
+<div class="pagination">
+    <table class = "pagenavigator" align="center">
+    <tr class ="pagenavigator">
+      {% if copies.has_previous %}
+      <td class = "hoverspecial">  <a href="?page={{ copies.paginator.1 }}" class="paginator"><<</a></td>
+
+      <td class = "hoverspecial"> <a href="?page={{ copies.previous_page_number }}" class="paginator"><</a></td>
+      {% endif %}
+
+    {% for page in copies.paginator.page_range %}
+      {% if page <= copies.number|add:"3" %}
+        {% if page >= copies.number|add:"-3" %}
+        {% if page == copies.number %}
+          <td class = "currentpage" width="20px">{{ page }}</td>
+        {% else %}
+          <td class="pagenavigator" width="20px"> <a href = "?page={{ page }}" class="paginator">{{ page }}</td>
+        {% endif %}
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+
+      {% if copies.has_next %}
+       <td class = "hoverspecial">  <a href="?page={{ copies.next_page_number }}" class="paginator">></a></td>
+      <td class = "hoverspecial">  <a href="?page={{ copies.paginator.num_pages }}" class="paginator">>></a></td>
+
+      {% endif %}
+    </tr>
+  </table>
+  <!-- Pages generated: {{ copies.paginator.num_pages }} -->
+</div>
+
+<script>
+function adminValidate(copy_id) {
+  var req = new XMLHttpRequest();
+  var url = 'admin_verify_copy/' + copy_id;
+  req.open('GET', url, false);
+  req.setRequestHeader('Content-Type', 'application/json');
+  req.send();
+  var res = JSON.parse(req.responseText);
+  window.location.reload();
+}
+</script>
+
+{% endblock content %}

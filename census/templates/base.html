@@ -1,0 +1,17 @@
+{% load static %}
+<html>
+    <head>
+        {% include "site_head.html" %}
+    </head>
+    <body>
+        <div class="outer-frame">
+            <header>
+                {% include "site_header.html" %}
+            </header>
+
+            {% block content %}{% endblock content %}
+
+        </div>
+    </body>
+
+</html>

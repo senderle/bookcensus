@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href= "{% static 'census/detail.css' %}" />
+<div class="wrapper">
+
+{% if issues %}
+<p class="sansserif">
+  <br>
+      <table class = "center" align="center" width="90%">
+        {% for issue in issues|slice:"1" %}
+				<tr>
+        <td colspan="6" class = "announcer"> Title: {{ issue.edition.title }}| Edition: {{ issue.edition.Edition_number }} <div class = "announcer2">Available issues</div>
+				</tr>
+
+				{% endfor %}
+        <tr>
+          <th> Year </th>
+          <th> STC Wing</th>
+          <th> ESTC </th>
+          <th> Notes </th>
+          <th>  </th>
+        </tr>
+    {% for issue in issues %}
+   				<td>{{ issue.year }}</td>
+       		<td>{{ issue.STC_Wing }}</td>
+       		<td>{{ issue.ESTC }}</td>
+
+        	<td>
+						{% if issue.notes %}
+							{{ issue.notes }}
+						{% else %}
+							None
+						{% endif %}
+					</td>
+          <td><a href="{% url 'copy' issue.id %}" class="linkbutton">Available copies</a></td>
+        	</tr>
+    {% endfor %}
+        </table>
+				<table class = "center" align="right" width="90%">
+					<tr>
+					<td>
+					<a href = "{% url 'homepage' %}" class="linkbutton"> See all titles </a> | <a href = "{% url 'index' %}?q={{ selected_edition.title }}" class="linkbutton"> See all editions for this title</a>
+	        </td>
+	        </tr>
+				</table>
+    </p>
+</div>
+
+{% else %}
+    <p class="sansserif" align="center">Oh no! No issues are available.</p>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="/static/census/popup_script.js"></script>
+{% if user.is_superuser %}
+<div align="center">
+	<p class="sansserifgrey">
+	<font size = "6"> <light>Title</light> </font></br>1. Input your title. Fields with * are required.</br> 2. Click "Submit".
+	</p>
+</div>
+<div align="center">
+	<div class="wrapper">
+	<p class ="sansserif">
+		<form method="post" action="{% url 'add_title' %}">
+		{% csrf_token %}
+		<table class = "table2" align="center">
+		{% for field in title_form.visible_fields %}
+			<tr>
+			<td> {{ field.label_tag }}{% if field.field.required %}*{% endif %}</td>
+			<td> {{ field }}</td>
+			</tr>
+			{% if field.errors %}
+			<tr>
+				<td></td>
+				<td><ul class="errorlist">{% for error in field.errors %}<li>{{error}}</li>{% endfor %}</ul></td>
+			</tr>
+			{% endif %}
+		{% endfor %}
+		</table>
+		<br>
+    	<input type="submit" name="submit" value="Submit" class="finalsubmit" style="position:fixed; left:50%;"/>
+		</form>
+	</p>
+</div>
+</div>
+{% else %}
+<div align="center">
+<p class="sansserif">
+Title input is currently disabled for librarians. If you'd like to input a new title, please email something@upenn.edu with your request.
+</p>
+</div>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div>
+    <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+    <div id="copyModal" class="modal fade" role="dialog"></div>
+
+    <hr class = "style14" width = "50%"></hr>
+    <p class="sansserifgrey" align="center">
+    Here is a list of the copies we think your affiliation holds.</p>
+    <p class="sansserifgrey" align="center">
+    Do you actually hold these copies?
+    </p>
+    <p class="sansserifgrey" align="center">
+    Please choose 'Yes'/'No' and then click 'Confirm'.
+    </p>
+</div>
+<hr class="style14" width = "50%"></hr>
+
+<div>
+    <table class="librarian-select-ui">
+        <tbody>
+            <tr>
+                <th class="librarian-select-ui-wide">Copies in {{ affiliation }}</th>
+                <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui">Held by library?</th>
+                <th class="librarian-select-ui"></th>
+            </tr>
+            {% if copies %}
+            {% for copy in copies %}
+            <tr id="section {{ copy.id }}">
+                <td>{{ copy }}
+                </td>
+                <td>
+                    <a class="copy_data button-inline-small" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        View details
+                    </a>
+                </td>
+
+                {% if copy.children.all %}
+                {% for child_copy in copy.children.all %}
+                <td>
+                    {% if child_copy.held_by_library %}
+                    <button class="button-inline button-inline-selected">Yes</button>
+                    <button class="button-inline button-inline-default" onclick="toggleState({{ child_copy.id }});">No</button>
+                    {% else %}
+                    <button class="button-inline button-inline-default" onclick="toggleState({{ child_copy.id }});">Yes</button>
+                    <button class="button-inline button-inline-selected">No</button>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="button-inline button-inline-default" onclick="changeFalsePositive({{ child_copy.id }});">Confirm&nbsp;Choice</button>
+                </td>
+                {% endfor %}
+                {% else %}
+                <td id='validate {{ copy.id }}'>
+                    <button class="button-inline button-inline-default" onclick="holdCopy({{ copy.id }});">Yes</button>
+                    <button class="button-inline button-inline-default" onclick="notHoldCopy({{ copy.id }});">No</button>
+                </td>
+                <td>
+
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% endif %}
+
+        </tbody>
+    </table>
+
+    <br>
+    <!-- <a href="{% url 'librarian_start' %}" class="button-inline button-inline-default" style="margin-left: 1000px">Back</a> -->
+    <!-- <a href="{% url 'librarian_validate2' %}" class="button-inline button-inline-default" style="margin-left: 600px">Continue to verify copy detail</a> -->
+
+    <div class="pagination">
+        <table class = "pagenavigator" align="center">
+            <tr class ="pagenavigator">
+                {% if copies.has_previous %}
+                <td class = "hoverspecial">  <a href="?page={{ copies.paginator.1 }}" class="paginator"><<</a></td>
+
+                <td class = "hoverspecial"> <a href="?page={{ copies.previous_page_number }}" class="paginator"><</a></td>
+                {% endif %}
+
+                {% for page in copies.paginator.page_range %}
+                {% if page <= copies.number|add:"3" %}
+                                                                                              {% if page >= copies.number|add:"-3" %}
+                                                                                              {% if page == copies.number %}
+                                                                                              <td class = "currentpage" width="20px">{{ page }}</td>
+                                                                                              {% else %}
+                                                                                              <td class="pagenavigator" width="20px"> <a href = "?page={{ page }}" class="paginator">{{ page }}</td>
+                                                                                              {% endif %}
+                                                                                              {% endif %}
+
+                                                                                              {% endif %}
+                                                                                              {% endfor %}
+
+                                                                                              {% if copies.has_next %}
+                                                                                              <td class = "hoverspecial">  <a href="?page={{ copies.next_page_number }}" class="paginator">></a></td>
+                                                                                              <td class = "hoverspecial">  <a href="?page={{ copies.paginator.num_pages }}" class="paginator">>></a></td>
+
+                                                                                              {% endif %}
+            </tr>
+        </table>
+        <!-- Pages generated: {{ copies.paginator.num_pages }} -->
+    </div>
+
+    <script>
+function holdCopy(copy_id) {
+    var req = new XMLHttpRequest();
+    var url = 'validate_hold/' + copy_id;
+    req.open('GET', url, false);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send();
+    var res = JSON.parse(req.responseText);
+    if (res === "success") {
+        window.location.reload();
+    }
+}
+
+function notHoldCopy(copy_id) {
+    var req = new XMLHttpRequest();
+    var url = 'validate_not_hold/' + copy_id;
+    req.open('GET', url, false);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send();
+    var res = JSON.parse(req.responseText);
+    if (res === "success") {
+        window.location.reload();
+    }
+}
+
+function toggleState(childcopyid){
+    var req = new XMLHttpRequest();
+    var url = 'change_hold_status/' + childcopyid;
+    req.open('GET', url, false);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send();
+    var res = JSON.parse(req.responseText);
+    if (res === "success") {
+        window.location.reload();
+    }
+}
+
+function changeFalsePositive(childcopyid) {
+    var req = new XMLHttpRequest();
+    var url = 'change_false_positive_draft/' + childcopyid;
+    req.open('GET', url, false);
+    req.setRequestHeader('Content-Type', 'application/json');
+    req.send();
+    var res = JSON.parse(req.responseText);
+    if (res === "success") {
+        window.location.reload();
+    }
+}
+    </script>
+    {% endblock content %}

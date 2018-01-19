@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href= "{% static 'census/index.css' %}" />
+<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300" rel="stylesheet">
+<script type="text/javascript" src="/static/census/bootstrap-modal.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/modal.css' %}" />
+<script type="text/javascript" src="/static/census/copy_detail_edit_modal.js"></script>
+
+<hr class = "style14" width = "50%"></hr>
+	<p class="sansserifgrey" align="center">
+	See all entries in the database below.
+	</p>
+</div>
+<hr class="style14" width = "50%"></hr>
+<form method='GET' action=''>
+<input type='text' name ='q' placeholder='Refine your search.' value ='{{ request.GET.q }}' class="refinesearch" style="width:300px;">
+<br>
+<br>
+
+<input type='submit' value='search' class="finalsubmit"/>
+</form>
+{% if query %}
+    <p class="sansserif">
+      <table class = "center" align="center" width="100%">
+        <tr>
+          <th> Title </th>
+					<th> Year published </th>
+                <th> Edition #</th>
+                <th> ESTC </th>
+                <th> STC/Wing </th>
+                <th> Owner </th>
+								<th> Shelfmark </th>
+								<th>  </th>
+								{% if user.is_superuser %}
+								<th> </th>
+								{% endif %}
+
+        </tr>
+        <tr>
+        {% for obj in object_list %}
+          <td>{{ obj.issue.edition.title }}</td>
+					<td>{{ obj.issue.year }}</td>
+                <td>{{ obj.issue.edition.Edition_number }}</td>
+                <td>{{ obj.issue.ESTC }}</td>
+                <td>{{ obj.issue.STC_Wing}}</td>
+                <td>{{ obj.Owner }}</td>
+								<td>
+									{% if obj.Shelfmark %}
+									{{ obj.Shelfmark }}
+									{% else %}
+									None
+									{% endif %}
+								</td>
+								<td><a class="copy_data" id="data{{obj.id}}" href="#" data-form="{% url 'copy_data' obj.id %}" title="Details" style="font-size:100%">Details</a></td>
+				        <div id="copyModal" class="modal fade" role="dialog"></div>
+
+								{% if user.is_superuser %}
+								<td><a class="update_copy" href="#" data-form="{% url 'update_copy' obj.id %}" title="Edit">Edit</a></td>
+								<div id="editModal" class="modal fade" role="dialog"></div>
+								{% endif %}
+
+
+        </tr>
+
+        {% endfor %}
+        </table>
+</p>
+<div class="pagination">
+    <table class = "pagenavigator" align="center">
+    <tr class ="pagenavigator">
+      {% if object_list.has_previous %}
+      <td class = "hoverspecial"> <a href="?page={{ object_list.previous_page_number }}&q={{ request.GET.q }}" class="paginator"><</a></td>
+      {% endif %}
+
+    {% for page in object_list.paginator.page_range %}
+      {% if page <= object_list.number|add:"3" %}
+        {% if page >= object_list.number|add:"-3" %}
+        {% if page == object_list.number %}
+          <td class = "currentpage" width="20px">{{ page }}</td>
+        {% else %}
+          <td class="pagenavigator" width="20px"> <a href = "?page={{ page }}&q={{ request.GET.q }}" class="paginator">{{ page }}</td>
+        {% endif %}
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+
+      {% if object_list.has_next %}
+       <td class = "hoverspecial">  <a href="?page={{ object_list.next_page_number }}&q={{ request.GET.q }}" class="paginator">></a></td>
+      {% endif %}
+    </tr>
+  </table>
+  <!-- Pages generated: {{ object_list.paginator.num_pages }} -->
+</div>
+
+{% else %}
+{% if copies %}
+    <p class="sansserif">
+    	<table class = "center" align="center" width="100%">
+    		<tr>
+    			<th> Title </th>'
+					<th> Year published </th>
+                <th>Edition #</th>
+                <th> ESTC </th>
+                <th>STC/Wing</th>
+                <th> Owner </th>
+								<th> Shelfmark</th>
+								<th>  </th>
+								{% if user.is_superuser %}
+								<th> </th>
+								{% endif %}
+
+    		</tr>
+    		<tr>
+    		{% for copy in copies %}
+   				<td>{{ copy.issue.edition.title }}</td>
+					<td>{{ copy.issue.year }}</td>
+                <td>{{ copy.issue.edition.Edition_number }}</td>
+                <td>{{ copy.issue.ESTC }}</td>
+                <td>{{ copy.issue.STC_Wing}}</td>
+                <td>{{ copy.Owner }}</td>
+								<td>
+									{% if copy.Shelfmark %}
+									{{ copy.Shelfmark }}
+									{% else %}
+									None
+									{% endif %}
+								</td>
+								<td><a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details" style="font-size:100%">Details</a></td>
+				        <div id="copyModal" class="modal fade" role="dialog"></div>
+
+								{% if user.is_superuser %}
+								<td><a class="update_copy" href="#" data-form="{% url 'update_copy' copy.id %}" title="Edit">Edit</a></td>
+								<div id="editModal" class="modal fade" role="dialog"></div>
+								{% endif %}
+
+   			</tr>
+
+        {% endfor %}
+        </table>
+
+
+    </p>
+
+<div class="pagination">
+    <table class = "pagenavigator" align="center">
+    <tr class ="pagenavigator">
+      {% if copies.has_previous %}
+      <td class = "hoverspecial">  <a href="?page={{ copies.paginator.1 }}" class="paginator"><<</a></td>
+
+      <td class = "hoverspecial"> <a href="?page={{ copies.previous_page_number }}" class="paginator"><</a></td>
+      {% endif %}
+
+    {% for page in copies.paginator.page_range %}
+      {% if page <= copies.number|add:"3" %}
+        {% if page >= copies.number|add:"-3" %}
+        {% if page == copies.number %}
+          <td class = "currentpage" width="20px">{{ page }}</td>
+        {% else %}
+          <td class="pagenavigator" width="20px"> <a href = "?page={{ page }}" class="paginator">{{ page }}</td>
+        {% endif %}
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+
+      {% if copies.has_next %}
+       <td class = "hoverspecial">  <a href="?page={{ copies.next_page_number }}" class="paginator">></a></td>
+      <td class = "hoverspecial">  <a href="?page={{ copies.paginator.num_pages }}" class="paginator">>></a></td>
+
+      {% endif %}
+    </tr>
+  </table>
+  <!-- Pages generated: {{ copies.paginator.num_pages }} -->
+</div>
+{% else %}
+    <p class="sansserif" align="center">Oh no! No copies are available.</p>
+{% endif %}
+{% endif %}
+
+{% endblock content %}

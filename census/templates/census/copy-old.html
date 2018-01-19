@@ -1,0 +1,111 @@
+{% for issue in all_issues %}
+<div class="container">
+    <div class = "ui list">
+        <div class="item">
+
+        </div>
+    </div>
+
+    <table class="copyz" align="center">
+        <thead style="width:100%;">
+
+
+            <th colspan="4">
+                <i class="chevron circle up icon" id = "rotating{{issue.id}}" style="position:relative"></i>
+
+                <a href="#copy_info{{issue.id}}" class="linkbutton" onclick="show_copy_info({{issue.id}}); myfunction({{issue.id}});"> issue ESTC: {{ issue.ESTC }} |
+                    STC/Wing: {{ issue.STC_Wing}} | Year: {{ issue.year }}</a>
+            </th>
+        </thead>
+        {% if issue.copy_set.all %}
+
+        <tbody id="copy_info{{issue.id}}" style="display:block;">
+            <tr>
+                <td class="subhead">Owner</td>
+                <td class="subhead">Shelfmark</td>
+                <td class="subhead">Copy notes</td>
+
+            </tr>
+            {% for copy in issue.copy_set.all %}
+            {% if copy.is_parent and copy.is_history != True %}
+            <tr>
+                <td>{{copy.Owner}}</td>
+                <td>
+                    {% if copy.Shelfmark %}
+                    {{ copy.Shelfmark }}
+                    {% else %}
+                    None
+                    {% endif %}
+                </td>
+                <td>
+                    {% if copy.copynote %}
+                    {{ copy.copynote }}
+                    {% else %}
+                    None
+                    {% endif %}
+                </td>
+                <td>
+                    {% if copy.prov_info %}
+                    {{ copy.prov_info }}
+                    {% else %}
+                    None
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+
+            {% else %}
+            <tbody>
+                <tr>
+                    <td class="subhead">There are no copies for this issue right now.</td>
+                </tr>
+            </tbody>
+            {% endif %}
+    </table>
+</div>
+
+<br>
+{% endfor %}
+
+<script>
+function show_copy_info(issue_id) {
+    event.preventDefault();
+    // var announcer_id = "announcer" +issue_id;
+    // var announcer_div = document.getElementById(announcer_id);
+    var div_id = "copy_info"+issue_id;
+    var copy_div=document.getElementById(div_id);
+
+    if(copy_div.style.display==="block") {
+        copy_div.style.display = "none";
+        copy_div.style.width = "100%";
+
+    } else {
+        copy_div.style.display = "block";
+        copy_div.style.width = "100%";
+    }
+    // if(announcer_div.style.display==="none") {
+    //   announcer_div.style.display="block";
+    // } else {
+    //   announcer_div.style.display="none";
+    // }
+}
+function myfunction(issue_id) {
+    var rotate_selector="rotating"+issue_id;
+    var rotate_div=document.getElementById(rotate_selector);
+    if(rotate_div.classList.contains("rotator")) {
+        rotate_div.classList.remove("rotator");
+        rotate_div.classList.add("antirotator");
+    }
+    else if(rotate_div.classList.contains("antirotator")) {
+        rotate_div.classList.remove("antirotator");
+        rotate_div.classList.add("rotator");
+
+    }
+    else {
+        rotate_div.classList.add("rotator");
+    }
+}
+</script>
+
+{% endblock content %}

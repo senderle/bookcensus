@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href= "{% static 'census/copysubmissionsuccess.css' %}" />
+
+<div class="submitted_line">Congratulations, the copy has been saved!</div>
+<br>
+<div class="newcopy">
+<a href="{% url 'submission' %}"  class="editbutton" role="button">submit another copy</a>
+</div>
+
+{% endblock content %}

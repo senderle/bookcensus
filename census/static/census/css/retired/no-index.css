@@ -1,0 +1,60 @@
+.pagination {
+  font-family: "Century Gothic", AppleGothic, sans-serif;
+  text-align:center;
+}
+table.pagenavigator {
+  height:0%;
+  width:auto;
+  margin: auto;
+  padding: auto;
+}
+input.refinesearch {
+    border: none;
+    color: #000000;
+    background: none;
+    -webkit-transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s;
+    box-shadow: 0px 10px 0px -9px #ebebeb, 0px 10px 0px -9px #ebebeb;
+    width: 300px;
+    height:40px;
+    position:relative;
+    left:50%;
+    margin-left:-150px;
+    padding:auto;
+    font-size:20px;
+    font-family:'Raleway', sans-serif;
+    font-weight:300;  
+}
+
+a.paginator:visited {
+  color:black;
+}
+a.paginator {
+  color:black;
+}
+td.currentpage {
+  background-color: #4DAD16;
+  text-align:center;
+  border-radius:100%;
+  -moz-border-radius:100%;
+  white-space:nowrap;
+  -webkit-border-radius: 100%;
+}
+td.pagenavigator {
+  text-align:center;
+  color:black;
+  white-space:nowrap;
+}
+td.pagenavigator:hover {
+  border-radius:100%;
+  background-color:#ff9966;
+  text-align:center;
+}
+td.hoverspecial {
+  font-size:20px;
+  transition-duration: 0.3s;
+}
+td.hoverspecial:hover {
+  transform:scale(1.5);
+  transition-duration: 0.3s;
+}

@@ -1,0 +1,32 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <p class="sansserif" align="left" class="modal-title">Edit Issue:</p>
+    </div>
+    <div class="modal-body">
+        {% if messages %}
+        <ul class="errorlist">
+            {% for message in messages %}
+            <p class="sansserif" style="position:relative; color:#b91f44; text-align:center;">{{ message }}</p>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form class="editForm"  action="{% url 'update_issue' issue_id %}" method="post" accept-charset="utf-8" style="margin-left:20px">
+        	{% csrf_token %}
+          <div class='issue_section' id='issue_section'>
+            <p style="color:#45556f">Fill in the issue information. Fields with * are required.</p>
+              {% for field in issue_form.visible_fields %}
+              <p>{{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}</p>
+              <ul class="errorlist">{% for error in field.errors %}<li>{{error}}</li>{% endfor %}</ul>
+              {% endfor %}
+          </div>
+        <div class="modal-footer">
+          <a href="#" data-toggle="modal" class="btn btn-primary" onclick="genIssueDialog({{issue_id}});">Save</a>
+          <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
+</form>
+</div>
+</div>
+</div>

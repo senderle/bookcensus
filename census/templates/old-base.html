@@ -1,0 +1,67 @@
+  {% load static %}
+<html>
+    <head>
+        <title>Shakespeare Census</title>
+	<meta charset="utf-8">
+  <link rel="shortcut icon" href="http://s3.amazonaws.com/libapps/customers/220/images/favicon.ico" type="image/png">
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+   <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+   <link rel="stylesheet" type="text/css" href="{% static 'census/style.css' %}" />
+   <link rel="stylesheet" type="text/css" href= "{% static 'census/bootstrapbuttons.css' %}" />
+
+      <style>
+        .user-tools {
+          float: right;
+          margin: 25px 25px 0px 0px;
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <div class="wrapper" id="links">
+        {% if user.is_authenticated %}
+          <a class="btn btn-success" href="{% url 'logout_user' %}" style="float: right;">Sign out</a>
+        {% else %}
+          <a class="btn btn-success" href="{% url 'login_user' %}" style="float: right;">Sign in</a>
+        {% endif %}
+      <ul>
+      <li><a id="homelink" class="not.active" href="{% url 'homepage' %}"><p class="sansserif">
+        Home
+      </p></a></li>
+      <li><a id="titleslink" class="not.active" href="{% url 'index' %}"><p class="sansserif">
+        Titles
+      </p></a></li>
+      <li><a id="copylistlink" class="not.active" href="{% url 'copylist' %}"><p class="sansserif">
+        Copy
+      </p></a></li>
+      <li>
+          <a id="submissionlink" class="not.active" href="{% url 'submission' %}" class="dropbtn"><p class="sansserif">Submission</p></a>
+      </li>
+
+        {% if user.is_authenticated %}
+         <li class="dropdown">
+         <a class="dropdown-toggle" href="{% url 'profile' %}" data-toggle="dropdown" role="button" aria-expanded="false" id="dropdownMenu">  <p class = sansserif>
+         Account</p></a>
+         <div class="dropdown-content">
+
+          <a href="{% url 'profile' %}" id="profilelink"><p class = sansserif>my profile</p></a>
+          {% if user.is_superuser %}
+          <a href="{% url 'admin_start' %}" id="historylink"><p class = sansserif>admin interface</p></a>
+          {% else %}
+          <a href="{% url 'librarian_start' %}" id="historylink"><p class = sansserif>View copies in my affiliation</p></a>
+          {% endif %}
+
+         </div>
+         </li>
+        {% endif %}
+
+      </ul>
+      </div>
+
+      {% block content %}{% endblock content %}
+
+      <script type="text/javascript" src="/static/census/baselinks.js"></script>
+    </body>
+</html>

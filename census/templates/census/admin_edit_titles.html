@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+<div id="titleModal" class="modal de" role="dialog"></div>
+<div id="editionModal" class="modal de" role="dialog"></div>
+<div id="issueModal" class="modal de" role="dialog"></div>
+<div id="titleUpdateModal" class="modal de" role="dialog"></div>
+<div id="editionUpdateModal" class="modal de" role="dialog"></div>
+<div id="issueUpdateModal" class="modal de" role="dialog"></div>
+
+<div>
+    <ul>
+        <li>Find all of the titles in the database below.</li>
+        <li>Click the edition for all copy information of that edition.</li>
+    </ul>
+</div>
+
+<table>
+    <tr>
+        <th> Titles </th>
+    </tr>
+    <tr>
+        <td>
+            <div>
+                <ul>
+                    {% for title in titles %}
+                    <li>
+                        <span aria-hidden="true" class="toggle-item toggle-up" id="toggle-editions-{{title.id}}">▶ </span> {{ title.title }}
+                        <a class="title_data button-inline" id="title_modal{{title.id}}" href="#" data-form="{% url 'title_data' title.id %}" title="Details">
+                            View Details
+                        </a>
+                        <a class="update_title button-inline" href="#" data-form="{% url 'update_title' title.id %}" title="Edit">
+                            Edit Title
+                        </a>
+                        <div id="editions {{title.id}}" class="hidden">
+                            <ul>
+                                {% for edition in title.edition_set.all %}
+                                <li><span aria-hidden="true" class="toggle-item toggle-up" id="toggle-issues-{{edition.id}}">▶ </span>
+                                    Edition {{ edition.Edition_number }}
+                                    <a class="edition_data button-inline" id="edition_modal{{edition.id}}" href="#" data-form="{% url 'edition_data' edition.id %}" title="Details">
+                                        View Details
+                                    </a>
+                                    <a class="update_edition button-inline" href="#" data-form="{% url 'update_edition' edition.id %}" title="Edit" >
+                                        Edit Edition
+                                    </a>
+                                    <div id="issue {{edition.id}}" class="hidden">
+                                        <ul>
+                                            {% for issue in edition.issue_set.all %}
+                                            <li>
+                                                STC/Wing {{ issue.STC_Wing }}
+                                                <a class="issue_data button-inline" id="issue_modal{{issue.id}}" href="#" data-form="{% url 'issue_data' issue.id %}" title="Details">
+                                                    View Details
+                                                </a>
+                                                <a class="update_issue button-inline" href="#" data-form="{% url 'update_issue' issue.id %}" title="Edit" >
+                                                    Edit Issue
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </td>
+    </tr>
+</table>
+</div>
+
+<div>
+    <table>
+        <tr>
+            {% if titles.has_previous %}
+            <td>
+                <a href="?page={{ titles.paginator.1 }}">
+                </a>
+            </td>
+            <td>
+                <a href="?page={{ titles.previous_page_number }}">
+                </a>
+            </td>
+            {% endif %}
+            {% for page in titles.paginator.page_range %}
+            {% if page <= titles.number|add:"3" %}
+                   {% if page >= titles.number|add:"-3" %}
+                   {% if page == titles.number %}
+                   <td>{{ page }}</td>
+                   {% else %}
+                   <td>
+                       <a href="?page={{ page }}">{{ page }}
+                       </a>
+                   </td>
+                   {% endif %}
+                   {% endif %}
+                   {% endif %}
+                   {% endfor %}
+
+                   {% if titles.has_next %}
+                   <td>
+                       <a href="?page={{ titles.next_page_number }}">
+                       </a>
+                   </td>
+                   <td>
+                       <a href="?page={{ titles.paginator.num_pages }}">
+                       </a>
+                   </td>
+                   {% endif %}
+        </tr>
+    </table>
+</div>
+
+
+<script>
+$(document).ready(function() {
+
+    function toggleEditions(title_id) {
+        var editions_div_id = "editions " + title_id;
+        var editions_div = document.getElementById(editions_div_id);
+        if (editions_div.classList.contains("hidden")) {
+            editions_div.classList.remove("hidden");
+        } else {
+            editions_div.classList.add("hidden");
+        }
+    }
+    
+    function toggleIssues(edition_id) {
+        var issues_div_id = "issue " + edition_id;
+        var issues_div = document.getElementById(issues_div_id);
+        if (issues_div.classList.contains("hidden")) {
+            issues_div.classList.remove("hidden");
+        } else {
+            issues_div.classList.add("hidden");
+        }
+    }
+
+    $(".toggle-item").click(function (evt) {
+        var toggleTarget = this.id.match(/toggle-([^-]+)-(\d+)/);
+        var toggleType = toggleTarget[1];
+        var toggleId = toggleTarget[2];
+
+        var toggleDispatch = {
+            'editions': toggleEditions,
+            'edition': toggleEditions,
+            'issues': toggleIssues,
+            'issue': toggleIssues,
+        };
+
+        toggleDispatch[toggleType](toggleId);
+        if (this.classList.contains('toggle-up')) {
+            this.classList.remove('toggle-up');
+            this.classList.add('toggle-down');
+        } else {
+            this.classList.remove('toggle-down');
+            this.classList.add('toggle-up');
+        }
+
+    });
+});
+</script>
+{% endblock content %}

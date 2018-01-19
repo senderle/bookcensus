@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+<div class="middle-frame">
+    <table class="admin-ui">
+        <tr>
+            <td>
+                <h3>Administrative Tasks</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Verify changes made by librarians</h4>
+                <p><a href="{% url 'admin_verify_fp' %}" class="button">Verify changes made to copy location</a></p>
+                <p><a href="{% url 'admin_verify' %}" class="button">Verify other changes</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Edit tables</h4>
+                <p><a href="{% url 'admin_edit_titles' %}" class="button">Edit titles, editions, or issues</a><p>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock content %}
