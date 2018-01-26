@@ -1,7 +1,7 @@
 {% load static %}
 
 <div class="tucked">
-    {% if user.is_authenticated %}                              
+    {% if user.is_authenticated %}
     <a class="button" href="{% url 'logout_user' %}">Sign out</a>
     <a class="button" href="{% url 'profile' %}">Account</a>
     {% if user.is_superuser %}
@@ -12,7 +12,7 @@
     {% else %}
     <a class="button" href="{% url 'login_user' %}">Sign in</a>
     {% endif %}
-    <!-- A normally-styled non-breaking space always appears here 
+    <!-- A normally-styled non-breaking space always appears here
         to ensure consistent div height. Someday we will find the
         correct way to do this. -->
         &nbsp;
@@ -34,7 +34,11 @@
    </tr>
     <tr>
         <td colspan="4">
+          {% if request.path == '/homepage' %}
+            <a>Shakespeare Census</a>
+          {% else %}
             <a href="{% url 'homepage' %}">Shakespeare Census</a>
+          {% endif %}
         </td>
     </tr>
 </table>
