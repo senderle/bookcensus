@@ -119,6 +119,11 @@ def homepage(request):
     }
     return HttpResponse(template.render(context, request))
 
+def about(request):
+    template = loader.get_template('census/about.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 # showing all titles in the database
 def index(request):
     all_titles = Title.objects.all().order_by('title')

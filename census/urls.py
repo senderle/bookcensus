@@ -10,6 +10,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.homepage, name='homepage'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
+    url(r'^about', views.about, name='about'),
 
 
 

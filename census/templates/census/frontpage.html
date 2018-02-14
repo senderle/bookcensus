@@ -30,18 +30,18 @@
 
 <div id="about-button">
     <p class="sansserif" style="text-align:center">
-    <a class="linkbutton">about</a></p>
+    <a class="linkbutton" href="{% url 'about' %}">about</a></p>
 </div>
-<div>
-    <p id="about-text" class="body-text about hidden">
+<!-- <div> -->
+    <!-- <p id="about-text" class="body-text about hidden">
     Shakespeare Census is a creation of the
     <br> Price Labs at the University of Pennsylvania,
     <br>designed to track Shakespeare copies around the world.
-    </p>
-</div>
+    </p> -->
+<!-- </div> -->
 <script>
-utils.get.id('about-button').addEventListener('click', function () {
-    utils.togglehide.id('about-text');
-});
+// utils.get.id('about-button').addEventListener('click', function () {
+//     utils.togglehide.id('about-text');
+// });
 </script>
 {% endblock content %}

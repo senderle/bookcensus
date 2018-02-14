@@ -1,5 +1,5 @@
 /*
- * Global Styles 
+ * Global Styles
  */
 
 /* Tag-level styles */
@@ -78,7 +78,7 @@ table.play-detail-set {
     margin: 0% 20% 0% 20%;
 }
 
-.title td, 
+.title td,
 .title th,
 .play-detail-set td,
 .play-detail-set th {
@@ -98,6 +98,19 @@ table.play-detail-set {
 
 .warning {
     background-color: rgba(152, 75, 67, 0.3);
+}
+
+p.static-text {
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  text-align: left;
+}
+
+p.citation {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tucked {
@@ -144,7 +157,7 @@ input {
     background-color: rgba(152, 75, 67, 0.1);
 }
 
-.button, 
+.button,
 .button-inline,
 .button-inline-small,
 input[type="submit"] {
@@ -155,8 +168,8 @@ input[type="submit"] {
     background-color: rgba(152, 75, 67, 0.6);
 }
 
-/* 
- * Header Styles 
+/*
+ * Header Styles
  */
 
 .title {
@@ -267,7 +280,7 @@ th.librarian-select-ui-wide {
     min-width: 450px;
 }
 
-span.toggle-up, 
+span.toggle-up,
 span.toggle-down {
     display: inline-block;
     font-size: 80%;
