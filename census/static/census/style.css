@@ -83,7 +83,7 @@ table.play-detail-set {
 
 span.unverified-symbol {
     font-size: 130%;
-    font-weight: bold;
+    font-weight: bold; 
     color: rgba(182, 75, 67, 1.0);
 }
 
@@ -93,7 +93,7 @@ span.verified-symbol {
     color: rgba(67, 75, 182, 1.0);
 }
 
-.title td,
+.title td, 
 .title th,
 .play-detail-set td,
 .play-detail-set th {
