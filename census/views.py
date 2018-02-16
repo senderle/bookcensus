@@ -114,6 +114,7 @@ def homepage(request):
         for t in row:
             t.icon_path = get_icon_path(t.id)
     context = {
+        'frontpage': True,
         'titlelist': titlelist,
         'titlerows': titlerows,
     }

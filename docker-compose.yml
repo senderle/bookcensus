@@ -4,7 +4,7 @@ web:
   volumes:
     - .:/code
   ports:
-    - "8989:8000"
+    - "8999:8000"
 
   links:
     - db
