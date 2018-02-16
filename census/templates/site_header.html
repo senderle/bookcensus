@@ -34,7 +34,7 @@
    </tr>
     <tr>
         <td colspan="4">
-          {% if request.path == '/homepage' %}
+          {% if frontpage %}
             <a>Shakespeare Census</a>
           {% else %}
             <a href="{% url 'homepage' %}">Shakespeare Census</a>

@@ -12,8 +12,6 @@ urlpatterns = [
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^about', views.about, name='about'),
 
-
-
     url(r'^titles', views.index, name='index'),
     url(r'^copy/(?P<id>[0-9]+)/$', views.copy, name='copy'),
     url(r'^copies', views.copylist, name='copylist'),
