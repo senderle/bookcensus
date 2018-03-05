@@ -8,17 +8,20 @@ a {
     text-decoration: none
 }
 
-a:link {
-    color: #233237;
-}
-
-a:visited {
-    color: #18121e;
-}
-
+a:link,
+a:visited,
 a:hover {
     color: #233237;
 }
+
+.static-text a:link,
+.static-text a:visited,
+.static-text a:hover {
+    color: rgba(152, 75, 67, 1.0);
+    font-weight: bold;
+}
+
+
 
 a.linkbutton {
     padding: 5px;
@@ -34,7 +37,7 @@ table {
 }
 
 th {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 ul {
@@ -42,7 +45,7 @@ ul {
 }
 
 li {
-	margin: 3px;
+    margin: 3px;
 }
 
 /* Class-level styles */
@@ -78,19 +81,31 @@ table.title {
 }
 
 table.play-detail-set {
-    margin: 0% 20% 10% 20%;
+    margin: 0% 12% 10% 12%;
 }
 
+span.unverified-symbol-small,
 span.unverified-symbol {
-    font-size: 130%;
     font-weight: bold; 
     color: rgba(182, 75, 67, 1.0);
 }
 
+span.unverified-symbol {
+    font-size: 130%;
+}
+
+span.verified-symbol-small,
 span.verified-symbol {
-    font-size: 170%;
     font-weight: bold;
     color: rgba(67, 75, 182, 1.0);
+}
+
+span.verified-symbol-small {
+    font-size: 110%;
+}
+
+span.verified-symbol {
+    font-size: 170%;
 }
 
 .title td, 
@@ -106,9 +121,8 @@ span.verified-symbol {
 }
 
 .play-detail-set th.terse {
-    width: 50px;
+    width: 20px;
 }
-
 
 .warning,
 .notice {
@@ -118,6 +132,12 @@ span.verified-symbol {
 
 .notice {
     background-color: rgba(35, 50, 55, 0.1);
+}
+
+.note {
+    font-size: 60%;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .warning {
@@ -167,14 +187,14 @@ input,
     height: 18px;
     font-size: 65%;
     padding: 1px 6px 2px 6px;
-	margin: 2px 10px 3px 10px;
+    margin: 2px 10px 3px 10px;
 }
 
 .button-inline-small {
     height: 10px;
     font-size: 50%;
     padding: 1px 3px 1px 3px;
-	margin: 2px 10px 3px 10px;
+    margin: 2px 10px 3px 10px;
 }
 
 input {
@@ -285,13 +305,12 @@ td.play-issue-header {
 /* Styles for Admin and Librarian views */
 
 table.admin-ui {
-	border-collapse: separate;
-	border-spacing: 0px 20px;
+    border-collapse: separate;
+    border-spacing: 0px 40px;
 }
 
 table.admin-ui td {
     min-width: 400px;
-    height: 60px;
 }
 
 th.librarian-select-ui {

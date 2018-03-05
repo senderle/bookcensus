@@ -8,8 +8,12 @@
   We exclude the Restoration adaptations.
 </br>
 </br>
-  The initial data has been derived from ESTC, and these copies are listed as unverified ([icon]) until their existence has been confirmed on site ([icon]).
-  We welcome contributions and corrections to copy-specific information from users via the Contact page. [make Contact a link]
+  The initial data has been derived from ESTC, and these copies are listed as unverified (
+  <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol-small">&#x20E0;</span>
+  ) until their existence has been confirmed on site (
+  <span title="This existence of this copy at the location has been verified." class="verified-symbol-small">&#x2713;</span>
+  ).
+  We welcome contributions and corrections to copy-specific information from users via the <a href="{% url 'contact' %}">Contact page</a>.
 </br>
 </br>
   Each copy in the Shakespeare Census has been given a unique identifier, the SC #, which can be used in references and citations.
@@ -28,7 +32,7 @@
     d = n.getDate();
     //new Date()).toString()
     document.write(d + " " + m + " " + y);
-  </script>. <http://….>.
+  </script>. [<a href="{% url 'homepage' %}">{% url 'homepage' %}</a>]
 </p>
 
   <p class="static-text">

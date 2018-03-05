@@ -182,7 +182,7 @@ def detail(request, id):
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
-    all_copies = selected_issue.copy_set.all()
+    all_copies = selected_issue.copy_set.all().filter(is_parent=True).order_by('Owner', 'Shelfmark')
     paginator = Paginator(all_copies, 10)
     page = request.GET.get('page')
     try:
@@ -510,11 +510,14 @@ def librarian_start(request):
     current_user=request.user
     cur_user_detail=UserDetail.objects.get(user=current_user)
     affiliation=cur_user_detail.affiliation
-    copy_count=Copy.objects.all().filter(Owner=affiliation, from_estc=True, false_positive_draft=None, \
-               librarian_validated=False, is_parent=True, is_history=False).count()
+    copy_count=Copy.objects.all().filter(Owner=affiliation, false_positive_draft=None,
+                                         librarian_validated=False, is_parent=True, is_history=False).count()
+    verified_count=Copy.objects.all().filter(Owner=affiliation, librarian_validated=True, 
+                                             is_parent=True, is_history=False).count()
     context={
         'affiliation': affiliation,
-        'copyCount': copy_count,
+        'copy_count': copy_count,
+        'verified_count': verified_count,
     }
     return HttpResponse(template.render(context, request))
 

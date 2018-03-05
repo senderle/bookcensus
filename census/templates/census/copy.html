@@ -3,6 +3,13 @@
 {% block content %}
 
 <div class = "wrapper">
+    <div>
+        <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+    
+        <div id="copyModal" class="modal fade" role="dialog"></div>
+    </div>
     <table class="play-title-header">
         <tr>
             <td rowspan="2" class="play-title-header-icon">
@@ -27,7 +34,7 @@
                     {% endif %}
                 </span>
                 <span>{{ selected_issue.year }}</span>
-                <span>STC&nbsp;/&nbsp;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
+                <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
                 <span>ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
             </td>
         </tr>
@@ -49,7 +56,14 @@
                 {% else %}
                     &nbsp;
                 {% endif %}
-            <td>{{copy.Owner}}</td>
+                {% if user.is_staff %}
+                    <span class="note">[<a href="{% url 'admin:census_copy_change' copy.id %}">Edit copy</a>]</span>
+                {% endif %}
+            <td>
+                <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{copy.Owner}}
+                </a>
+            </td>
             <td>
                 {% if copy.Shelfmark == "[Shelfmark not available]" %}
                     &nbsp;
