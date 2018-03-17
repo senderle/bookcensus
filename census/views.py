@@ -166,16 +166,21 @@ def index(request):
         }
     return HttpResponse(template.render(context, request))
 
+def issue_sort_key(i):
+    ed_number = i.edition.Edition_number
+    return int(ed_number) if ed_number.isdigit() else float('inf')
+
 def detail(request, id):
     selected_title=Title.objects.get(pk=id)
     editions = list(selected_title.edition_set.all())
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
+    issues.sort(key=issue_sort_key)
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
         'editions': editions,
         'issues': issues,
-        'title': selected_title
+        'title': selected_title,
     }
     return HttpResponse(template.render(context, request))
 
@@ -1146,20 +1151,6 @@ def transactions(request, copy_id):
 
 def get_icon_path(id):
     return 'census/images/title_icons/{}.png'.format(id)
-
-#Showing editions related to a certain title; not using right now
-def detail(request, id):
-    selected_title=Title.objects.get(pk=id)
-    editions = list(selected_title.edition_set.all())
-    issues = [issue for ed in editions for issue in ed.issue_set.all()]
-    template = loader.get_template('census/detail.html')
-    context = {
-        'icon_path': get_icon_path(id),
-        'editions': editions,
-        'issues': issues,
-        'title': selected_title
-    }
-    return HttpResponse(template.render(context, request))
 
 #Showing issues related to a certain edition; not using right now
 def issue(request, id):

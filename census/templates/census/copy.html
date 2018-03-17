@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 {% block content %}
 
 <div class = "wrapper">
@@ -12,7 +13,7 @@
     </div>
     <table class="play-title-header">
         <tr>
-            <td rowspan="2" class="play-title-header-icon">
+            <td rowspan="3" class="play-title-header-icon">
                 <a href = "{% url 'detail' title.id %}">
                     <img class="play-title-icon" src="{% static icon_path %}">
                 </a>
@@ -28,14 +29,27 @@
             <td class="play-issue-header">
                 <span>
                     {% if selected_issue.edition.Edition_number.isdigit %}
-                    Edition&nbsp;{{ selected_issue.edition.Edition_number }}
+                    {{ selected_issue.edition.Edition_number|add:"0"|ordinal }}&nbsp;Edition
                     {% else %}
                     {{ selected_issue.edition.Edition_number.capitalize }}
+                    {% endif %}
+                    {% if selected_issue.edition.Edition_format %}
+                    ({{ selected_issue.edition.Edition_format }})
                     {% endif %}
                 </span>
                 <span>{{ selected_issue.year }}</span>
                 <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
                 <span>ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                {% if selected_issue.DEEP and selected_issue.DEEP != '0' %}
+                    <span class="static-text">
+                        DEEP: <a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}">{{ selected_issue.DEEP }}</a>
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ all_copies|length }} </span>
             </td>
         </tr>
     </table>
@@ -52,15 +66,19 @@
         <tr>
             <td>
                 {% if copy.NSC > 0 %}
-                    copy.NSC
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        copy.NSC
+                    </a>
                 {% else %}
                     &nbsp;
                 {% endif %}
                 {% if user.is_staff %}
                     <span class="note">[<a href="{% url 'admin:census_copy_change' copy.id %}">Edit copy</a>]</span>
                 {% endif %}
+            </td>
             <td>
-                <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                <!-- <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details"> -->
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
                     {{copy.Owner}}
                 </a>
             </td>
@@ -68,7 +86,9 @@
                 {% if copy.Shelfmark == "[Shelfmark not available]" %}
                     &nbsp;
                 {% else %}
-                    {{ copy.Shelfmark }}
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        {{ copy.Shelfmark }}
+                    </a>
                 {% endif %}
             </td>
             <td>
