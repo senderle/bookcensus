@@ -26,11 +26,9 @@
   <script type="text/javascript">
     n =  new Date();
     y = n.getFullYear();
-    // m = n.getMonth() + 1;
     locale="en-us";
     m = n.toLocaleString(locale, {month: "long"});
     d = n.getDate();
-    //new Date()).toString()
     document.write(d + " " + m + " " + y);
   </script>. [<a href="{% url 'homepage' %}">{% url 'homepage' %}</a>]
 </p>
