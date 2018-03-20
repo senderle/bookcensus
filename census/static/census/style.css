@@ -29,15 +29,17 @@ a.linkbutton {
 
 body {
     font-family:"Open Sans", AppleGothic, sans-serif;
+    font-weight: lighter;
 }
 
 table {
     margin: auto;
     border-collapse: collapse;
+    font-weight: lighter;
 }
 
 th {
-    font-weight: normal;
+    font-weight: lighter;
 }
 
 ul {
@@ -299,6 +301,14 @@ td.play-issue-header {
 .play-issue-header span {
     display: inline-block;
     padding: 0px 10px 0px 0px;
+}
+
+.modal-header {
+    background-color: rgba(152, 75, 67, 0.3);
+}
+
+.modal-title {
+    font-weight: lighter;
 }
 
 /* Styles for Admin and Librarian views */

@@ -6,7 +6,7 @@
 <div class = "wrapper">
     <table class="play-title-header">
         <tr>
-            <td rowspan="2" class="play-title-header-icon">
+            <td rowspan="3" class="play-title-header-icon">
                 <img class="play-title-icon" src="{% static icon_path %}">
             </td>
             <td class="play-title-header">
@@ -18,7 +18,12 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-                <span>all issues</span>
+                <span>All issues</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ copy_count }} </span>
             </td>
         </tr>
     </table>

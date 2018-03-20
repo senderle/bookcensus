@@ -175,28 +175,21 @@ def detail(request, id):
     editions = list(selected_title.edition_set.all())
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
+    copy_count = sum(i.copy_set.filter(is_parent=True).count() for i in issues)
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
         'editions': editions,
         'issues': issues,
         'title': selected_title,
+        'copy_count': copy_count,
     }
     return HttpResponse(template.render(context, request))
 
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
-    all_copies = selected_issue.copy_set.all().filter(is_parent=True).order_by('Owner', 'Shelfmark')
-    paginator = Paginator(all_copies, 10)
-    page = request.GET.get('page')
-    try:
-        copies = paginator.page(page)
-    except PageNotAnInteger:
-        copies = paginator.page(1)
-    except EmptyPage:
-        copies = paginator.page(paginator.num_pages)
-
+    all_copies = selected_issue.copy_set.filter(is_parent=True).order_by('Owner', 'Shelfmark')
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,

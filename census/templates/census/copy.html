@@ -39,10 +39,26 @@
                 </span>
                 <span>{{ selected_issue.year }}</span>
                 <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
-                <span>ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+
+                {% if selected_issue.ESTC and selected_issue.ESTC != 'not in ESTC' and ';' not in selected_issue.ESTC %}
+                    <span class="static-text">
+                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.ESTC }}" target="_blank">{{ selected_issue.ESTC }}</a>
+                    </span>
+                {% elif ';' in selected_issue.ESTC %}
+                    <span class="static-text">ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                {% else %}
+                    <span class="static-text">
+                        ESTC: not in ESTC
+                    </span>
+                {% endif %}
+
                 {% if selected_issue.DEEP and selected_issue.DEEP != '0' %}
                     <span class="static-text">
-                        DEEP: <a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}">{{ selected_issue.DEEP }}</a>
+                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}" target="_blank">{{ selected_issue.DEEP }}</a>
+                    </span>
+                {% else %}
+                    <span class="static-text">
+                        DEEP: not in DEEP
                     </span>
                 {% endif %}
             </td>
@@ -83,7 +99,7 @@
                 </a>
             </td>
             <td>
-                {% if copy.Shelfmark == "[Shelfmark not available]" %}
+                {% if not copy.Shelfmark or copy.Shelfmark == "[Shelfmark not available]" or copy.Shelfmark is None %}
                     &nbsp;
                 {% else %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
