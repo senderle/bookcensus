@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<div id = "search-bar" style= "text-align: center">
+  <select>
+    <option value="location">Location</option>
+    <option value="year">Year</option>
+    <option value="estc">ESTC</option>
+  </select>
+  <input type="text" placeholder="Search..">
+  <input type="submit" value="Submit" formaction="/search?field=estc&value=S111109">
+</div>
+<br/>
 <table class="play-title-icon">
     {% for row in titlerows %}
     <tr class="play-title-icon">
