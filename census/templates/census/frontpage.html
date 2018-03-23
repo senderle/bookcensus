@@ -2,13 +2,15 @@
 {% load static %}
 {% block content %}
 <div id = "search-bar" style= "text-align: center">
-  <select>
+<form action="/search/" method="get"> 
+  <select name="field">
     <option value="location">Location</option>
     <option value="year">Year</option>
     <option value="estc">ESTC</option>
   </select>
-  <input type="text" placeholder="Search..">
-  <input type="submit" value="Submit" formaction="/search?field=estc&value=S111109">
+  <input type="text" name="value" placeholder="Search..">
+  <input type="submit" value="Submit" >
+</form>
 </div>
 <br/>
 <table class="play-title-icon">

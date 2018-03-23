@@ -24,55 +24,29 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
 
 def search(request):
-    template = loader.get_template('census/results.html')
-    query1 = request.GET.get('a')
-    query2 = request.GET.get('b')
-    query3 = request.GET.get('c')
-    query4 = request.GET.get('d')
-    category1 = request.GET.get('j')
-    category2 = request.GET.get('k')
-    category3 = request.GET.get('l')
-    category4 = request.GET.get('z')
-    copy_list = Copy.objects.all().filter(
-        is_parent=True, is_history=False
-    ).exclude(
-        false_positive=True
-    )
+    template = loader.get_template('census/search-results.html')
+    field = request.GET.get('field')
+    value = request.GET.get('value')
+    print(field)
+    print(value)
+    issue_list = Issue.objects.all()
+    # copy_list = Issue.objects.all().filter(
+    #     is_parent=True, is_history=False
+    # ).exclude(
+    #     false_positive=True
+    # )
 
-    result_list = None
-    if query1 and not query2 and not query3 and not query4:
-        results_list = copy_list.filter(Q(**{category1: query1}))
-        result_list = list(chain(results_list))
+    if field == 'estc' and value:
+        result_list = issue_list.filter(Q(**{'ESTC__contains': value})) #q should be estc, search up Q object to find what estc should be (table column name?)
 
-    if query1 and query2 and not query3 and not query4:
-        results_list = copy_list.filter(
-            Q(**{category1: query1}) & Q(**{category2: query2})
-        )
-        result_list = list(chain(results_list))
+    elif field == 'year' and value:
+        result_list = issue_list.filter(Q(**{'issue__year': value}))#issue__year
 
-    if query1 and query2 and query3 and not query4:
-        results_list = copy_list.filter(
-            Q(**{category1: query1}) &
-            Q(**{category2: query2}) &
-            Q(**{category3: query3})
-        )
-        result_list = list(chain(results_list))
+    elif field == 'location' and value:
+        result_list = issue_list.filter(Q(**{'STC_Wing': value}))
 
-    if query1 and query2 and query3 and query4:
-        results_list = copy_list.filter(
-            Q(**{category1: query1}) &
-            Q(**{category2: query2}) &
-            Q(**{category4: query4})
-        )
-        result_list = list(chain(results_list))
-
-    if not query1 and not query2 and not query3 and not query4:
-        results_list = copy_list.filter(
-            Q(**{category1: query1}) &
-            Q(**{category2: query2}) &
-            Q(**{category4: query4})
-        )
-        result_list = list(chain(results_list))
+    else:
+        result_list = []
 
     paginator = Paginator(result_list, 10)
     page = request.GET.get('page')
@@ -84,17 +58,85 @@ def search(request):
         results = paginator.page(paginator.num_pages)
 
     context = {
-            'result_list': results,
-            'query1': query1,
-            'query2': query2,
-            'query3': query3,
-            'query4': query4,
-            'category1': category1,
-            'category2': category2,
-            'category3': category3,
-            'category4': category4,
-        }
+        'value': value,
+        'field': field,
+        'result_list': results
+    }
+
     return HttpResponse(template.render(context, request))
+    # template = loader.get_template('census/results.html')
+    # query1 = request.GET.get('a')
+    # query2 = request.GET.get('b')
+    # query3 = request.GET.get('c')
+    # query4 = request.GET.get('d')
+    #
+    # category1 = request.GET.get('j')
+    # category2 = request.GET.get('k')
+    # category3 = request.GET.get('l')
+    # category4 = request.GET.get('z')
+    #
+    # copy_list = Copy.objects.all().filter(
+    #     is_parent=True, is_history=False
+    # ).exclude(
+    #     false_positive=True
+    # )
+    #
+    # result_list = None
+    # if query1 and not query2 and not query3 and not query4:
+    #     results_list = copy_list.filter(Q(**{category1: query1}))
+    #     result_list = list(chain(results_list))
+    #
+    # if query1 and query2 and not query3 and not query4:
+    #     results_list = copy_list.filter(
+    #         Q(**{category1: query1}) & Q(**{category2: query2})
+    #     )
+    #     result_list = list(chain(results_list))
+    #
+    # if query1 and query2 and query3 and not query4:
+    #     results_list = copy_list.filter(
+    #         Q(**{category1: query1}) &
+    #         Q(**{category2: query2}) &
+    #         Q(**{category3: query3})
+    #     )
+    #     result_list = list(chain(results_list))
+    #
+    # if query1 and query2 and query3 and query4:
+    #     results_list = copy_list.filter(
+    #         Q(**{category1: query1}) &
+    #         Q(**{category2: query2}) &
+    #         Q(**{category4: query4})
+    #     )
+    #     result_list = list(chain(results_list))
+    #
+    # if not query1 and not query2 and not query3 and not query4:
+    #     results_list = copy_list.filter(
+    #         Q(**{category1: query1}) &
+    #         Q(**{category2: query2}) &
+    #         Q(**{category4: query4})
+    #     )
+    #     result_list = list(chain(results_list))
+    #
+    # paginator = Paginator(result_list, 10)
+    # page = request.GET.get('page')
+    # try:
+    #     results = paginator.page(page)
+    # except PageNotAnInteger:
+    #     results = paginator.page(1)
+    # except EmptyPage:
+    #     results = paginator.page(paginator.num_pages)
+    #
+    # context = {
+    #         'result_list': results,
+    #         'query1': query1,
+    #         'query2': query2,
+    #         'query3': query3,
+    #         'query4': query4,
+    #         'category1': category1,
+    #         'category2': category2,
+    #         'category3': category3,
+    #         'category4': category4,
+    #     }
+    # return HttpResponse(template.render(context, request))
 
 def title_sort_key(title_object):
     title = title_object.title
