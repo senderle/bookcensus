@@ -37,10 +37,10 @@ def search(request):
     # )
 
     if field == 'estc' and value:
-        result_list = issue_list.filter(Q(**{'ESTC__contains': value})) #q should be estc, search up Q object to find what estc should be (table column name?)
+        result_list = issue_list.filter(Q(**{'ESTC': value})) #q should be estc, search up Q object to find what estc should be (table column name?)
 
     elif field == 'year' and value:
-        result_list = issue_list.filter(Q(**{'issue__year': value}))#issue__year
+        result_list = issue_list.filter(Q(**{'year': value}))#issue__year
 
     elif field == 'location' and value:
         result_list = issue_list.filter(Q(**{'STC_Wing': value}))
