@@ -2,117 +2,87 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 align="left" class="modal-title">Copy Details:</h4>
+            <h3 align="left" class="modal-title">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
         </div>
         <div class="modal-body">
-            <p align="left" class = "sansserif"><b>Title:</b> {{ copy.issue.edition.title }}</p>
-            <!-- <p align="left" class = "sansserif"><b>Apocryphal:</b> {{ copy.issue.edition.title.Apocryphal }}</p> -->
-            <p align="left" class = "sansserif"><b>Edition number:</b> {{ copy.issue.edition.Edition_number }}</p>
+            <p align="left"><strong>SC #</strong>: {% if copy.NSC %}{{ copy.NSC }}{% endif %}</p>
 
-            {% if copy.issue.edition.Edition_format %}
-            <p align="left" class = "sansserif"><b>Edition format:</b> {{ copy.issue.edition.Edition_format }}</p>
-            {% endif %}
+            <p align="left"><strong>Location</strong>: {% if copy.Owner %}{{ copy.Owner }}{% endif %}</p>
 
-            <p align="left" class = "sansserif"><b>Year published:</b> {{ copy.issue.year }}</p>
-            <p align="left" class = "sansserif"><b>STC/Wing:</b> {{ copy.issue.STC_Wing }}</p>
-            <p align="left" class = "sansserif"><b>ESTC:</b> {{ copy.issue.ESTC }}</p>
-
-            {% if copy.issue.DEEP %}
-            <p align="left" class = "sansserif"><b>DEEP:</b> {{ copy.issue.DEEP }}</p>
-            {% endif %}
+            <p align="left"><strong>Shelfmark</strong>: {% if copy.Shelfmark and copy.Shelfmark != "[Shelfmark not available]" %}{{ copy.Shelfmark }}{% endif %}</p>
 
             {% if copy.issue.notes %}
-            <p align="left" class = "sansserif"><b>Notes about issue:</b> {{ copy.issue.notes }}</p>
+            <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
             {% endif %}
 
-            {% if copy.issue.Variant_Description %}
-            <p align="left" class = "sansserif"><b>Variant description:</b> {{ copy.issue.Variant_Description }}</p>
-            {% endif %}
-
-            {% if copy.thumbnail_URL %}
-            <p align="left" class = "sansserif"><b>Thumbnail URL:</b> {{ copy.thumbnail_URL }}</p>
-            {% endif %}
-
-            {% if copy.NSC %}
-            <p align="left" class = "sansserif"><b>NSC:</b> {{ copy.NSC }}</p>
-            {% endif %}
-
-            {% if copy.Owner %}
-            <p align="left" class = "sansserif"><b>Owner:</b> {{ copy.Owner }}</p>
-            {% endif %}
-
-            {% if copy.Shelfmark %}
-            <p align="left" class = "sansserif"><b>Shelfmark:</b> {{ copy.Shelfmark }}</p>
-            {% endif %}
-
-            {% if copy.Height %}
-            <p align="left" class = "sansserif"><b>Height:</b> {{ copy.Height }}</p>
-            {% endif %}
-
-            {% if copy.Width %}
-            <p align="left" class = "sansserif"><b>Width:</b> {{ copy.Width }}</p>
-            {% endif %}
-
-            {% if copy.Marginalia %}
-            <p align="left" class = "sansserif"><b>Marginalia:</b> {{ copy.Marginalia }}</p>
-            {% endif %}
-
-            {% if copy.Condition %}
-            <p align="left" class = "sansserif"><b>Condition:</b> {{ copy.Condition }}</p>
-            {% endif %}
-
-            {% if copy.Binding %}
-            <p align="left" class = "sansserif"><b>Binding:</b> {{ copy.Binding }}</p>
-            {% endif %}
-
-            {% if copy.Binder %}
-            <p align="left" class = "sansserif"><b>Binder:</b> {{ copy.Binder }}</p>
-            {% endif %}
-
-            {% if copy.Bookplate %}
-            <p align="left" class = "sansserif"><b>Bookplate:</b> {{ copy.Bookplate }}</p>
-            {% endif %}
-
-            {% if copy.Bookplate_Location %}
-            <p align="left" class = "sansserif"><b>Bookplate location:</b> {{ copy.Bookplate_Location }}</p>
-            {% endif %}
 
             {% if copy.Bartlett1939 %}
-            <p align="left" class = "sansserif"><b>Bartlett 1939:</b> {{ copy.Bartlett1939 }}</p>
-            {% endif %}
-
-            {% if copy.Bartlett1939_Notes %}
-            <p align="left" class = "sansserif"><b>Bartlett 1939 notes:</b> {{ copy.Bartlett1939_Notes }}</p>
+            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
             {% endif %}
 
             {% if copy.Bartlett1916 %}
-            <p align="left" class = "sansserif"><b>Bartlett 1916:</b> {{ copy.Bartlett1916 }}</p>
-            {% endif %}
-
-            {% if copy.Barlett1916_Notes %}
-            <p align="left" class = "sansserif"><b>Bartlett 1916 notes:</b>{{ copy.Bartlett1916_Notes }}</p>
-            {% endif %}
-
-            {% if copy.Lee_Notes %}
-            <p align="left" class = "sansserif"><b>Lee notes:</b> {{ copy.Lee_Notes }}</p>
+            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.Bartlett1916 }}</p>
             {% endif %}
 
             {% if copy.Local_Notes %}
-            <p align="left" class = "sansserif"><b>Local notes:</b> {{ copy.Local_Notes }}</p>
-            {% endif %}
-
-            {% if copy.copynote %}
-            <p align="left" class = "sansserif"><b>Other notes:</b> {{ copy.copynote }}</p>
+            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes }}</p>
             {% endif %}
 
             {% if copy.prov_info %}
-            <p align="left" class = "sansserif"><b>Provenance information:</b> {{ copy.prov_info }}</p>
+            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info }}</p>
             {% endif %}
 
-            <p align="left" class = "sansserif"><b>From estc:</b> {{ copy.from_estc }}</p>
-            <!-- <p align="left" class = "sansserif"><b>False positive:</b> {{ copy.false_positive }}</p> -->
+            {% if copy.Height %}
+            <p align="left"><strong>Height</strong>: {{ copy.Height }} cm</p>
+            {% endif %}
+
+            {% if copy.Width %}
+            <p align="left"><strong>Width</strong>: {{ copy.Width }} cm</p>
+            {% endif %}
+
+            {% if copy.Marginalia %}
+            <p align="left"><strong>Marginalia</strong>: {{ copy.Marginalia }}</p>
+            {% endif %}
+
+            {% if copy.Condition %}
+            <p align="left"><strong>Condition</strong>: {{ copy.Condition }}</p>
+            {% endif %}
+
+            {% if copy.Binding %}
+            <p align="left"><strong>Binding</strong>: {{ copy.Binding }}</p>
+            {% endif %}
+
+            {% if copy.Binder %}
+            <p align="left"><strong>Binder</strong>: {{ copy.Binder }}</p>
+            {% endif %}
+
+            {% if copy.Bookplate %}
+            <p align="left"><strong>Bookplate</strong>: {{ copy.Bookplate }}</p>
+            {% endif %}
+
+            {% if copy.Bookplate_Location %}
+            <p align="left"><strong>Bookplate location</strong>: {{ copy.Bookplate_Location }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1939_Notes %}
+            <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.Bartlett1939_Notes }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1916_Notes %}
+            <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.Bartlett1916_Notes }}</p>
+            {% endif %}
+
+            {% if copy.Lee_Notes %}
+            <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
+            {% endif %}
+
+            {% if copy.bibliography %}
+            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
+            {% endif %}
+
+
             <div class="modal-footer">
-                <button type="button" class="closebutton" data-dismiss="modal">close</button>
+                <button type="button" class="button-inline" data-dismiss="modal">close</button>
             </div>
         </div>
     </div>

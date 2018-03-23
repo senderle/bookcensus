@@ -6,16 +6,24 @@
 <div class = "wrapper">
     <table class="play-title-header">
         <tr>
-            <td rowspan="2" class="play-title-header-icon">
+            <td rowspan="3" class="play-title-header-icon">
                 <img class="play-title-icon" src="{% static icon_path %}">
             </td>
             <td class="play-title-header">
                 {{ title.title }}
+                {% if user.is_staff %}
+                    <span class="note">[<a href="{% url 'admin:census_title_change' title.id %}">Edit title</a>]</span>
+                {% endif %}
             </td>
         </tr>
         <tr>
             <td class="play-issue-header">
-                <span>all issues</span>
+                <span>All issues</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ copy_count }} </span>
             </td>
         </tr>
     </table>
@@ -36,10 +44,18 @@
                     {{ issue.edition.Edition_number.capitalize }}
                     {% endif %}
                 </a>
+                {% if user.is_staff %}
+                <span class="note">[<a href="{% url 'admin:census_edition_change' issue.edition.id %}">Edit edition</a>]</span>
+                {% endif %}
             </td>
             <td><a href="{% url 'copy' issue.id %}">{{ issue.year }}</a></td>
             <td><a href="{% url 'copy' issue.id %}">{{ issue.STC_Wing }}</a></td>
-            <td><a href="{% url 'copy' issue.id %}">{{ issue.ESTC }}</a></td>
+            <td>
+                <a href="{% url 'copy' issue.id %}">{{ issue.ESTC }}</a>
+                {% if user.is_staff %}
+                <span class="note">[<a href="{% url 'admin:census_issue_change' issue.id %}">Edit issue</a>]</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>

@@ -210,32 +210,30 @@ def index(request):
         }
     return HttpResponse(template.render(context, request))
 
+def issue_sort_key(i):
+    ed_number = i.edition.Edition_number
+    return int(ed_number) if ed_number.isdigit() else float('inf')
+
 def detail(request, id):
     selected_title=Title.objects.get(pk=id)
     editions = list(selected_title.edition_set.all())
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
+    issues.sort(key=issue_sort_key)
+    copy_count = sum(i.copy_set.filter(is_parent=True).count() for i in issues)
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
         'editions': editions,
         'issues': issues,
-        'title': selected_title
+        'title': selected_title,
+        'copy_count': copy_count,
     }
     return HttpResponse(template.render(context, request))
 
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
-    all_copies = selected_issue.copy_set.all()
-    paginator = Paginator(all_copies, 10)
-    page = request.GET.get('page')
-    try:
-        copies = paginator.page(page)
-    except PageNotAnInteger:
-        copies = paginator.page(1)
-    except EmptyPage:
-        copies = paginator.page(paginator.num_pages)
-
+    all_copies = selected_issue.copy_set.filter(is_parent=True).order_by('Owner', 'Shelfmark')
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,
@@ -554,11 +552,14 @@ def librarian_start(request):
     current_user=request.user
     cur_user_detail=UserDetail.objects.get(user=current_user)
     affiliation=cur_user_detail.affiliation
-    copy_count=Copy.objects.all().filter(Owner=affiliation, from_estc=True, false_positive_draft=None, \
-               librarian_validated=False, is_parent=True, is_history=False).count()
+    copy_count=Copy.objects.all().filter(Owner=affiliation, false_positive_draft=None,
+                                         librarian_validated=False, is_parent=True, is_history=False).count()
+    verified_count=Copy.objects.all().filter(Owner=affiliation, librarian_validated=True, 
+                                             is_parent=True, is_history=False).count()
     context={
         'affiliation': affiliation,
-        'copyCount': copy_count,
+        'copy_count': copy_count,
+        'verified_count': verified_count,
     }
     return HttpResponse(template.render(context, request))
 
@@ -1187,20 +1188,6 @@ def transactions(request, copy_id):
 
 def get_icon_path(id):
     return 'census/images/title_icons/{}.png'.format(id)
-
-#Showing editions related to a certain title; not using right now
-def detail(request, id):
-    selected_title=Title.objects.get(pk=id)
-    editions = list(selected_title.edition_set.all())
-    issues = [issue for ed in editions for issue in ed.issue_set.all()]
-    template = loader.get_template('census/detail.html')
-    context = {
-        'icon_path': get_icon_path(id),
-        'editions': editions,
-        'issues': issues,
-        'title': selected_title
-    }
-    return HttpResponse(template.render(context, request))
 
 #Showing issues related to a certain edition; not using right now
 def issue(request, id):

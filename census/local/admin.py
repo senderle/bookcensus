@@ -1,1 +1,0 @@
-/home/scye09/shakespeare-census-prototype/census/admin.py

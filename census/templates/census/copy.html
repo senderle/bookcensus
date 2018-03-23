@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 {% block content %}
 
 <div class = "wrapper">
+    <div>
+        <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+        <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+    
+        <div id="copyModal" class="modal fade" role="dialog"></div>
+    </div>
     <table class="play-title-header">
         <tr>
-            <td rowspan="2" class="play-title-header-icon">
+            <td rowspan="3" class="play-title-header-icon">
                 <a href = "{% url 'detail' title.id %}">
                     <img class="play-title-icon" src="{% static icon_path %}">
                 </a>
@@ -21,14 +29,43 @@
             <td class="play-issue-header">
                 <span>
                     {% if selected_issue.edition.Edition_number.isdigit %}
-                    Edition&nbsp;{{ selected_issue.edition.Edition_number }}
+                    {{ selected_issue.edition.Edition_number|add:"0"|ordinal }}&nbsp;Edition
                     {% else %}
                     {{ selected_issue.edition.Edition_number.capitalize }}
                     {% endif %}
+                    {% if selected_issue.edition.Edition_format %}
+                    ({{ selected_issue.edition.Edition_format }})
+                    {% endif %}
                 </span>
                 <span>{{ selected_issue.year }}</span>
-                <span>STC&nbsp;/&nbsp;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
-                <span>ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
+
+                {% if selected_issue.ESTC and selected_issue.ESTC != 'not in ESTC' and ';' not in selected_issue.ESTC %}
+                    <span class="static-text">
+                        ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.ESTC }}" target="_blank">{{ selected_issue.ESTC }}</a>
+                    </span>
+                {% elif ';' in selected_issue.ESTC %}
+                    <span class="static-text">ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                {% else %}
+                    <span class="static-text">
+                        ESTC: not in ESTC
+                    </span>
+                {% endif %}
+
+                {% if selected_issue.DEEP and selected_issue.DEEP != '0' %}
+                    <span class="static-text">
+                        DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}" target="_blank">{{ selected_issue.DEEP }}</a>
+                    </span>
+                {% else %}
+                    <span class="static-text">
+                        DEEP: not in DEEP
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ all_copies|length }} </span>
             </td>
         </tr>
     </table>
@@ -45,16 +82,29 @@
         <tr>
             <td>
                 {% if copy.NSC > 0 %}
-                    copy.NSC
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        copy.NSC
+                    </a>
                 {% else %}
                     &nbsp;
                 {% endif %}
-            <td>{{copy.Owner}}</td>
+                {% if user.is_staff %}
+                    <span class="note">[<a href="{% url 'admin:census_copy_change' copy.id %}">Edit copy</a>]</span>
+                {% endif %}
+            </td>
             <td>
-                {% if copy.Shelfmark == "[Shelfmark not available]" %}
+                <!-- <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details"> -->
+                <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                    {{copy.Owner}}
+                </a>
+            </td>
+            <td>
+                {% if not copy.Shelfmark or copy.Shelfmark == "[Shelfmark not available]" or copy.Shelfmark is None %}
                     &nbsp;
                 {% else %}
-                    {{ copy.Shelfmark }}
+                    <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                        {{ copy.Shelfmark }}
+                    </a>
                 {% endif %}
             </td>
             <td>
