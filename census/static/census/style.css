@@ -21,8 +21,6 @@ a:hover {
     font-weight: bold;
 }
 
-
-
 a.linkbutton {
     padding: 5px;
 }
@@ -208,10 +206,23 @@ input {
 .button-inline-small,
 input[type="submit"] {
     background-color: rgba(152, 75, 67, 0.2);
+    font-weight: lighter;
 }
 
 .button-inline-selected {
     background-color: rgba(152, 75, 67, 0.6);
+}
+
+select {
+    -moz-appearance: none; /* Firefox */
+    -webkit-appearance: none; /* Safari and Chrome */
+    appearance: none;
+    background-color: rgba(152, 75, 67, 0.2);
+    padding: 3px;
+    margin: 3px;
+    font-weight: lighter;
+    font-size: 80%;
+    font-family: "Open Sans", AppleGothic, sans-serif;
 }
 
 /*
@@ -254,7 +265,7 @@ img.play-title-icon {
 
 .play-title,
 .body-text {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', AppleGothic, sans-serif;
     text-align: center;
 }
 
@@ -273,7 +284,7 @@ img.play-title-icon {
 /* Detail Table Styles */
 
 .play-title-header {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', AppleGothic, sans-serif;
     font-size: 20px;
 }
 
