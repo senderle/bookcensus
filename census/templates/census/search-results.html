@@ -7,25 +7,14 @@
       {% if result_list %}
       <tr>
           <th> Year </th>
-          <th> STC Wing</th>
+          <th> Location </th>
           <th> ESTC </th>
-          <th> Notes </th>
-          <th>  </th>
       </tr>
-      {% for issue in result_list %}
+      {% for copy in result_list %}
       <tr>
-          <td>{{ issue.year }}</td>
-          <td>{{ issue.STC_Wing }}</td>
-          <td>{{ issue.ESTC }}</td>
-          <td>
-						{% if issue.notes %}
-							{{ issue.notes }}
-						{% else %}
-							None
-						{% endif %}
-					</td>
-          <td><a href="{% url 'copy' issue.id %}" class="linkbutton">Available copies</a></td>
-        	</tr>
+          <td>{{ copy.issue.year }}</td>
+          <td>{{ copy.Owner }}</td>
+          <td>{{ copy.issue.ESTC }}</td>
       </tr>
       {% endfor %}
       {% else %}

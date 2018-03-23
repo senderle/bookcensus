@@ -29,8 +29,8 @@ def search(request):
     value = request.GET.get('value')
     print(field)
     print(value)
-    issue_list = Issue.objects.all()
-    print(issue_list)
+    copy_list = Copy.objects.all()
+    # print(issue_list)
     # copy_list = Issue.objects.all().filter(
     #     is_parent=True, is_history=False
     # ).exclude(
@@ -38,31 +38,22 @@ def search(request):
     # )
 
     if field == 'estc' and value:
-        result_list = issue_list.filter(Q(**{'ESTC': value})) #ESTC__contains
+        result_list = copy_list.filter(**{'issue__ESTC__contains': value}) #ESTC__contains
         print(result_list)
 
     elif field == 'year' and value:
-        result_list = issue_list.filter(Q(**{'year': value}))
+        result_list = copy_list.filter(**{'issue__year': value})
 
     elif field == 'location' and value:
-        result_list = issue_list.filter(Q(**{'STC_Wing': value}))
+        result_list = copy_list.filter(**{'Owner__contains': value})
 
     else:
         result_list = []
 
-    paginator = Paginator(result_list, 10)
-    page = request.GET.get('page')
-    try:
-        results = paginator.page(page)
-    except PageNotAnInteger:
-        results = paginator.page(1)
-    except EmptyPage:
-        results = paginator.page(paginator.num_pages)
-
     context = {
         'value': value,
         'field': field,
-        'result_list': results
+        'result_list': result_list
     }
 
     return HttpResponse(template.render(context, request))
@@ -554,7 +545,7 @@ def librarian_start(request):
     affiliation=cur_user_detail.affiliation
     copy_count=Copy.objects.all().filter(Owner=affiliation, false_positive_draft=None,
                                          librarian_validated=False, is_parent=True, is_history=False).count()
-    verified_count=Copy.objects.all().filter(Owner=affiliation, librarian_validated=True, 
+    verified_count=Copy.objects.all().filter(Owner=affiliation, librarian_validated=True,
                                              is_parent=True, is_history=False).count()
     context={
         'affiliation': affiliation,
