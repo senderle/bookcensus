@@ -30,6 +30,7 @@ def search(request):
     print(field)
     print(value)
     issue_list = Issue.objects.all()
+    print(issue_list)
     # copy_list = Issue.objects.all().filter(
     #     is_parent=True, is_history=False
     # ).exclude(
@@ -37,10 +38,11 @@ def search(request):
     # )
 
     if field == 'estc' and value:
-        result_list = issue_list.filter(Q(**{'ESTC': value})) #q should be estc, search up Q object to find what estc should be (table column name?)
+        result_list = issue_list.filter(Q(**{'ESTC': value})) #ESTC__contains
+        print(result_list)
 
     elif field == 'year' and value:
-        result_list = issue_list.filter(Q(**{'year': value}))#issue__year
+        result_list = issue_list.filter(Q(**{'year': value}))
 
     elif field == 'location' and value:
         result_list = issue_list.filter(Q(**{'STC_Wing': value}))

@@ -4,42 +4,32 @@
 
 <div class = "wrapper">
   <table class="play-detail-set">
-      {% if all_copies %}
+      {% if result_list %}
       <tr>
-          <th class="terse"> SC # </th>
-          <th class="detailed"> Location </th>
-          <th> Shelfmark </th>
-          <th class="terse"> Verified? </th>
+          <th> Year </th>
+          <th> STC Wing</th>
+          <th> ESTC </th>
+          <th> Notes </th>
+          <th>  </th>
       </tr>
-      {% for copy in all_copies %}
+      {% for issue in result_list %}
       <tr>
+          <td>{{ issue.year }}</td>
+          <td>{{ issue.STC_Wing }}</td>
+          <td>{{ issue.ESTC }}</td>
           <td>
-              {% if copy.NSC > 0 %}
-                  copy.NSC
-              {% else %}
-                  &nbsp;
-              {% endif %}
-          <td>{{copy.Owner}}</td>
-          <td>
-              {% if copy.Shelfmark == "[Shelfmark not available]" %}
-                  &nbsp;
-              {% else %}
-                  {{ copy.Shelfmark }}
-              {% endif %}
-          </td>
-          <td>
-              {% if copy.from_estc and copy.false_positive is None %}
-                  <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
-              {% elif copy.from_estc and copy.false_positive %}
-                  Incorrect (from ESTC)
-              {% else %}
-                  <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
-              {% endif %}
-          </td>
+						{% if issue.notes %}
+							{{ issue.notes }}
+						{% else %}
+							None
+						{% endif %}
+					</td>
+          <td><a href="{% url 'copy' issue.id %}" class="linkbutton">Available copies</a></td>
+        	</tr>
       </tr>
       {% endfor %}
       {% else %}
-      <p class="sansserif" align="center">No editions are available.</p>
+      <p class="sansserif" align="center">Oh no! No issues are available.</p>
       {% endif %}
   </table>
 </div>
