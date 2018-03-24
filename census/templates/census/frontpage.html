@@ -1,18 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div id = "search-bar" style= "text-align: center">
-<form action="/search/" method="get">
-  <select name="field">
-    <option value="location">Location</option>
-    <option value="year">Year</option>
-    <option value="estc">ESTC</option>
-  </select>
-  <input type="text" name="value" placeholder="Search..">
-  <input type="submit" value="Submit" >
-</form>
-</div>
-<br/>
+
 <table class="play-title-icon">
     {% for row in titlerows %}
     <tr class="play-title-icon">
@@ -40,20 +29,4 @@
     {% endfor %}
 </table>
 
-<div id="about-button">
-    <p class="sansserif" style="text-align:center">
-    <a class="linkbutton" href="{% url 'about' %}">about</a></p>
-</div>
-<!-- <div> -->
-    <!-- <p id="about-text" class="body-text about hidden">
-    Shakespeare Census is a creation of the
-    <br> Price Labs at the University of Pennsylvania,
-    <br>designed to track Shakespeare copies around the world.
-    </p> -->
-<!-- </div> -->
-<script>
-// utils.get.id('about-button').addEventListener('click', function () {
-//     utils.togglehide.id('about-text');
-// });
-</script>
 {% endblock content %}

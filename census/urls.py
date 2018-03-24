@@ -6,19 +6,19 @@ from django.contrib.auth.views import (password_reset,
                                        logout)
 
 from . import views
+from .models import StaticPageText
+
+_static_page_names = '|'.join(sorted(set(s.viewname for s in StaticPageText.objects.all())))
 
 urlpatterns = [
     url(r'^$', views.homepage, name='homepage'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
-    url(r'^about', views.about, name='about'),
+    url(r'^about/$', views.about, name='about'),
+    url(r'^about/(?P<viewname>' + _static_page_names + ')/$', views.about, name='about'),
     url(r'^contact', views.about, name='contact'),
 
     url(r'^titles', views.index, name='index'),
     url(r'^copy/(?P<id>[0-9]+)/$', views.copy, name='copy'),
-    url(r'^copies', views.copylist, name='copylist'),
-    url(r'^issue/(?P<id>[0-9]+)/$', views.issue, name='issue'),
-    url(r'^provenance$', views.provenance, name='provenance'),
-    # url(r'^register$', views.register, name='register'),
 
     # Jinyun-urls for submission forms
     url(r'^submission$', views.submission, name='submission'),

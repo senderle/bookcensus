@@ -30,22 +30,16 @@ def search(request):
     print(field)
     print(value)
     copy_list = Copy.objects.all()
-    # print(issue_list)
-    # copy_list = Issue.objects.all().filter(
-    #     is_parent=True, is_history=False
-    # ).exclude(
-    #     false_positive=True
-    # )
 
-    if field == 'estc' and value:
-        result_list = copy_list.filter(**{'issue__ESTC__contains': value}) #ESTC__contains
+    if field == 'stc' and value:
+        result_list = copy_list.filter(issue__STC_Wing__icontains=value, is_parent=True)
         print(result_list)
 
     elif field == 'year' and value:
-        result_list = copy_list.filter(**{'issue__year': value})
+        result_list = copy_list.filter(issue__year=value, is_parent=True)
 
     elif field == 'location' and value:
-        result_list = copy_list.filter(**{'Owner__contains': value})
+        result_list = copy_list.filter(Owner__icontains=value, is_parent=True)
 
     else:
         result_list = []
@@ -155,9 +149,11 @@ def homepage(request):
     }
     return HttpResponse(template.render(context, request))
 
-def about(request):
+def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
-    context = {}
+    context =  { 
+        'content': StaticPageText.objects.filter(viewname=viewname)
+    }
     return HttpResponse(template.render(context, request))
 
 # showing all titles in the database

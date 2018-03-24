@@ -12,6 +12,7 @@ admin.site.register(Transaction)
 admin.site.register(UserDetail)
 admin.site.register(CopyHistory)
 admin.site.register(ChildCopy)
+admin.site.register(StaticPageText)
 
 class BookPlatezInline(admin.StackedInline):
 	model = BookPlate

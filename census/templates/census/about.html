@@ -1,51 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<!-- <div class="static-text"> -->
-  <p class="static-text">
-  The Shakespeare Census attempts to locate and describe all extant copies of all editions of Shakespeare’s works through 1700, excluding the folios.
-  We include all items attributed to Shakespeare in print during the period, but not those attributed to him only by modern scholarship.
-  We exclude the Restoration adaptations.
-</br>
-</br>
-  The initial data has been derived from ESTC, and these copies are listed as unverified (
-  <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol-small">&#x20E0;</span>
-  ) until their existence has been confirmed on site (
-  <span title="This existence of this copy at the location has been verified." class="verified-symbol-small">&#x2713;</span>
-  ).
-  We welcome contributions and corrections to copy-specific information from users via the <a href="{% url 'contact' %}">Contact page</a>.
-</br>
-</br>
-  Each copy in the Shakespeare Census has been given a unique identifier, the SC #, which can be used in references and citations.
-  Please cite the Shakespeare Census as follows:
-</br>
-</p>
-<p class="citation">
-  <i>Shakespeare Census</i>. Ed. Adam G. Hooks and Zachary Lesser. Created 2018.
-  Accessed
-  <script type="text/javascript">
-    n =  new Date();
-    y = n.getFullYear();
-    locale="en-us";
-    m = n.toLocaleString(locale, {month: "long"});
-    d = n.getDate();
-    document.write(d + " " + m + " " + y);
-  </script>. [<a href="{% url 'homepage' %}">{% url 'homepage' %}</a>]
-</p>
-
-  <p class="static-text">
-  This project is modelled on and extends the groundbreaking bibliographic work of Henrietta C. Bartlett.
-  It builds on and incorporates the information in <i>A Census of Shakespeare’s Plays in Quarto 1594-1709</i>, compiled by Bartlett and Alfred W. Pollard
-  (1916), which was revised and extended by Bartlett alone (1939). In addition, Bartlett also compiled <i>Mr. William Shakespeare: Original and Early
-  Editions of his Quartos and Folios (1922)</i>.
-</br>
-</br>
-</p>
-<!-- <script>
-n =  new Date();
-y = n.getFullYear();
-m = n.getMonth() + 1;
-d = n.getDate();
-document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
-</script> -->
+  {% for c in content %}
+    <p class="static-text">
+      {{ c.content|safe }}
+    </p>
+  {% endfor %}
 {% endblock content %}

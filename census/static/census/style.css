@@ -76,10 +76,6 @@ div.middle-frame {
     border: none;
 }
 
-table.title {
-    margin: 0% 20% 0% 20%;
-}
-
 table.play-detail-set {
     margin: 0% 12% 10% 12%;
 }
@@ -108,8 +104,6 @@ span.verified-symbol {
     font-size: 170%;
 }
 
-.title td, 
-.title th,
 .play-detail-set td,
 .play-detail-set th {
     width: 170px;
@@ -159,6 +153,10 @@ p.citation {
 
 .tucked {
     text-align: right;
+}
+
+.unicode-icon {
+    font-family: FontAwesome;
 }
 
 /* UI Styles (May be either class- or tag-level) */
@@ -218,7 +216,7 @@ select {
     -webkit-appearance: none; /* Safari and Chrome */
     appearance: none;
     background-color: rgba(152, 75, 67, 0.2);
-    padding: 3px;
+    padding: 3px 5px 3px 5px;
     margin: 3px;
     font-weight: lighter;
     font-size: 80%;
@@ -226,8 +224,18 @@ select {
 }
 
 /*
- * Header Styles
+ * Header and Footer Styles
  */
+
+table.title {
+    margin: 0% 20% 0% 20%;
+}
+
+.title td, 
+.title th {
+    width: 170px;
+    padding: 10px 6px 0px 6px;
+}
 
 .title {
     font-family: "Open Sans", AppleGothic, sans-serif;
@@ -236,11 +244,34 @@ select {
     margin: 40px auto 20px auto;
 }
 
-/* Frontpage Styles */
-
-table.play-title-icon {
-    margin-bottom: 10%;
+table.footer-nav {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: 80%;
 }
+
+.footer-nav th, 
+.footer-nav td {
+    width: 100px;
+    padding: 10px 0px 10px 0px;
+}
+
+.header-title-nav th,
+.header-title-nav td {
+    width: 60px;
+    padding: 8px 6px 0px 6px;
+}
+
+.search-bar {
+    text-align: center;
+    height: 32px;
+}
+
+.search-bar form {
+    margin-bottom: 0px; 
+}
+
+/* Frontpage Styles */
 
 td.play-title,
 td.play-title-icon {
