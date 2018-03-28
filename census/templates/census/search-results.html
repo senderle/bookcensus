@@ -13,8 +13,21 @@
     </div>
     <table class="play-title-header">
         <tr>
+            <td rowspan="3" class="play-title-header-icon">
+                <img class="play-title-icon" src="{% static icon_path %}">
+            </td>
             <td class="play-title-header">
-                Search Results for <strong>{{ field }}</strong> <em>{{ value }}</em>&nbsp;:
+                Search Results
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                {{ field }}: {{ value }}
+            </td>
+        </tr>
+        <tr>
+            <td class="play-issue-header">
+                <span>Extant copies: {{ copy_count }} </span>
             </td>
         </tr>
     </table>
@@ -65,7 +78,7 @@
         </tr>
         {% endfor %}
         {% else %}
-        <p class="sansserif" align="center">No editions are available.</p>
+        <p class="sansserif" align="center">No copies found.</p>
         {% endif %}
     </table>
 

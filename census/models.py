@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.forms import ModelForm
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+# from tinymce import models as tinymce_models
 
 class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
@@ -47,21 +48,21 @@ class Copy (models.Model):
     Bookplate = models.CharField(max_length=40, default=None, null=True, blank=True)
     Bookplate_Location = models.CharField(max_length=100, default=None, null=True, blank=True)
     Bartlett1939 = models.IntegerField(default=0, null=True)
-    Bartlett1939_Notes = models.CharField(max_length=1000, default=None, null=True, blank=True)
+    Bartlett1939_Notes = models.TextField(null=True, blank=True, default=None)
     Bartlett1916 = models.IntegerField(default=0, null=True)
-    Bartlett1916_Notes = models.CharField(max_length=1000, default=None, null=True, blank=True)
-    Lee_Notes = models.CharField(max_length=2000, default=None, null=True, blank=True)
-    Local_Notes=models.CharField(max_length=5000, default=None, null=True, blank=True)
-    created_by=models.ForeignKey(User, related_name="submitted_copies", default=1, null=True)
-    prov_info=models.TextField(null=True, blank=True, default=None)
-    bibliography=models.TextField(null=True, blank=True, default=None)
+    Bartlett1916_Notes = models.TextField(null=True, blank=True, default=None)
+    Lee_Notes = models.TextField(null=True, blank=True, default=None)
+    Local_Notes = models.TextField(null=True, blank=True, default=None)
+    created_by = models.ForeignKey(User, related_name="submitted_copies", default=1, null=True)
+    prov_info = models.TextField(null=True, blank=True, default=None)
+    bibliography = models.TextField(null=True, blank=True, default=None)
     librarian_validated = models.BooleanField(default=False)
     admin_validated = models.BooleanField(default=False)
-    is_parent=models.BooleanField(default=False)
-    is_history=models.BooleanField(default=False)
-    from_estc=models.BooleanField(default=False)
-    false_positive_draft=models.NullBooleanField(default=None)
-    false_positive=models.NullBooleanField(default=None)
+    is_parent = models.BooleanField(default=False)
+    is_history = models.BooleanField(default=False)
+    from_estc = models.BooleanField(default=False)
+    false_positive_draft = models.NullBooleanField(default=None)
+    false_positive = models.NullBooleanField(default=None)
 
     def __str__(self):
         return  "%s (%s)" % (self.issue, self.issue.year)
@@ -113,6 +114,7 @@ class UserDetail(models.Model):
 
 class StaticPageText(models.Model):
     content = models.TextField(null=True, blank=True, default=None)
+    #htmlcontent = tinymce_models.HTMLField()
     viewname = models.CharField(max_length=255, default='', null=True, blank=True)
 
     def __str__(self):

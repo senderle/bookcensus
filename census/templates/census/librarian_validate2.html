@@ -26,16 +26,16 @@
     <table class="librarian-select-ui">
         <tbody>
             <tr>
-                <th class="librarian-select-ui-wide">Copy</th>
+                <th class="librarian-select-ui-wide">Copies at {{ affiliation }}</th>
                 <th class="librarian-select-ui"></th>
                 <th class="librarian-select-ui"></th>
                 <th class="librarian-select-ui"></th>
             </tr>
-            {% if child_copies %}
             {% for copy in child_copies %}
             <tr>
-                <td>
-                    {{ copy }}
+                <td>{{ copy.issue.edition.title }}
+                    ({{ copy.issue.year }}) --
+                    STC/Wing: {{ copy.issue.STC_Wing }}
                 </td>
                 <td>
                     <a class="copy_data button-inline" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
@@ -49,15 +49,15 @@
                 </td>
 
                 <td id="validate {{ copy.id }}">
-                    {% if copy.librarian_validated %}
+                    <button class="button-inline" onclick="libConfirm({{ copy.id }});">Confirm changes</button>
+                    <!-- {% if copy.librarian_validated %}
                     Yes
                     {% else %}
-                    <button class="button-inline" onclick="libConfirm({{ copy.id }});">Confirm changes</button>
-                    {% endif %}
+                    No
+                    {% endif %} -->
                 </td>
             </tr>
             {% endfor %}
-            {% endif %}
         </tbody>
     </table>
 
@@ -82,5 +82,4 @@ function libConfirm(copy_id) {
     }
 }
 </script>
-
-{% endblock content %}
+{% endblock %}

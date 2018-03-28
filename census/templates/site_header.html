@@ -46,13 +46,10 @@
 <table class="header-title-nav">
    <tr>
      <th>
-       <a href="#search" id="site-search-button">search</a>
-     </th>
-     <th>
        <a href="{% url 'about' %}">about</a>
      </th>
      <th>
-       <a href="{% url 'about' 'contact' %}">contact</a>
+       <a href="#search" id="site-search-button">search</a>
      </th>
    </tr>
 </table>
@@ -74,7 +71,7 @@
     utils.get.id('site-search-button').addEventListener('click', function () {
         utils.togglehide.id('search-bar-form');
     });
-    if (window.location.hash && window.location.hash === '#search') {
-        utils.get.id('search-bar-form').classList.remove('hidden');
-    }
+    // if (window.location.hash && window.location.hash === '#search') {
+    //    utils.get.id('search-bar-form').classList.remove('hidden');
+    // }
 </script>

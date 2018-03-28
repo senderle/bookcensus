@@ -145,6 +145,10 @@ p.static-text {
   text-align: left;
 }
 
+td p.static-text {
+  text-align: center;
+}
+
 p.citation {
   width: 60%;
   margin-left: auto;
@@ -231,9 +235,18 @@ table.title {
     margin: 0% 20% 0% 20%;
 }
 
-.title td, 
-.title th {
+.title th, 
+.title td {
     width: 170px;
+}
+
+.title th {
+    font-size: 10px;
+    height: 20px;
+    padding: 0px 6px 0px 6px;
+}
+
+.title td {
     padding: 10px 6px 0px 6px;
 }
 
@@ -248,23 +261,27 @@ table.footer-nav {
     margin-bottom: 20px;
     margin-top: 20px;
     font-size: 80%;
+    border-top: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.footer-nav span {
+    padding: 0px 10px 0px 10px;
 }
 
 .footer-nav th, 
 .footer-nav td {
-    width: 100px;
-    padding: 10px 0px 10px 0px;
+    padding: 10px 15px 10px 15px;
 }
 
 .header-title-nav th,
 .header-title-nav td {
-    width: 60px;
-    padding: 8px 6px 0px 6px;
+    padding: 10px;
 }
 
 .search-bar {
     text-align: center;
     height: 32px;
+    padding: 0px 0px 15px 0px;
 }
 
 .search-bar form {
