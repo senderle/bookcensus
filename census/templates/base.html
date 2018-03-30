@@ -4,15 +4,17 @@
         {% include "site_head.html" %}
     </head>
     <body>
-        <div class="outer-frame">
-            <header>
-                {% include "site_header.html" %}
-            </header>
+        <div class="frame-container">
+            <div class="outer-frame">
+                <header>
+                    {% include "site_header.html" %}
+                </header>
 
-            {% block content %}{% endblock content %}
+                {% block content %}{% endblock content %}
 
-            <div class="footer">
-                {% include "site_footer.html" %}
+                <div class="footer">
+                    {% include "site_footer.html" %}
+                </div>
             </div>
         </div>
     </body>

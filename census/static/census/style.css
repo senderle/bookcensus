@@ -50,9 +50,18 @@ li {
 
 /* Class-level styles */
 
+div.frame-container {
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    position: relative;
+}
+
 div.outer-frame {
-    max-width: 1024px;
+    position: relative;
+    max-width: 1200px;
     min-width: 526px;
+    margin: 0 auto;
 }
 
 div.middle-frame {
@@ -116,6 +125,10 @@ span.verified-symbol {
 
 .play-detail-set th.terse {
     width: 20px;
+}
+
+.play-detail-set th.even {
+    width: 215px;
 }
 
 .warning,

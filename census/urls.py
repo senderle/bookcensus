@@ -40,27 +40,25 @@ urlpatterns = [
     url(r'^accounts/login/$', views.login_user, name='login_user'),
     url(r'^logout$', views.logout_user, name='logout_user'),
     url(r'^profile$', views.display_user_profile, name='profile'),
+    url(r'^editProfile$', views.edit_profile, name='edit_profile'),
 
-    #for viewing user's history (submitted copies & editted copies)
+    # Librarian verification and admin approval routines.
     url(r'^librarian_confirm/(?P<id>[0-9]+)/$', views.librarian_confirm, name='librarian_validate'),
     url(r'^admin_verify$', views.admin_verify, name='admin_verify'), #to verify changes to copies
     url(r'^admin_verify_fp$', views.admin_verify_fp, name='admin_verify_fp'), #to verify false_positive_draft
-
     #button triggered, change false_positive attribute of the copy
     url(r'^admin_verify_copy_fp/(?P<copy_id>[0-9]+)/$', views.admin_verify_copy_fp, name='admin_verify_copy_fp'),
-
     #button triggered, change admin_validated attribute of the copy
     url(r'^admin_verify_copy/(?P<id>[0-9]+)/$', views.admin_verify_copy, name='admin_verify_copy'),
-
     url(r'^admin_start$', views.admin_start, name='admin_start'),
 
+    # Librarian-specific verification UI elements:
+    url(r'^librarian_start$', views.librarian_start, name='librarian_start'),
     url(r'^librarian_validate1$', views.librarian_validate1, name='librarian_validate1'),
     url(r'^validate_hold/(?P<id>[0-9]+)/$', views.validate_hold, name='validate_hold'),
     url(r'^validate_not_hold/(?P<id>[0-9]+)/$', views.validate_not_hold, name='validate_not_hold'),
     url(r'^change_hold_status/(?P<id>[0-9]+)/$', views.change_hold_status, name='change_hold_status'),
     url(r'^librarian_validate2$', views.librarian_validate2, name='librarian_validate2'),
-    url(r'^librarian_start$', views.librarian_start, name='librarian_start'),
+    url(r'^updatechildcopy/(?P<copy_id>[0-9]+)/$', views.update_child_copy, name='update_child_copy'),
     url(r'^change_false_positive_draft/(?P<id>[0-9]+)/$', views.change_false_positive_draft, name='change_false_positive_draft'),
-    url(r'^editProfile$', views.edit_profile, name='edit_profile'),
-
 ]

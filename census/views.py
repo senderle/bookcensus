@@ -527,6 +527,46 @@ def librarian_confirm(request, id):
     data='success'
     return HttpResponse(json.dumps(data), content_type='application/json')
 
+@login_required()
+def update_child_copy(request, copy_id):
+    template = loader.get_template('census/edit_child_modal.html')
+    copy_to_edit=ChildCopy.objects.get(pk=copy_id)
+
+    if request.method=='POST':
+        data={}
+        if request.POST.get('cancel', None):
+            return HttpResponseRedirect(reverse('user_history'))
+
+        copy_form=ChildCopyForm(request.POST, instance=copy_to_edit)
+
+        if copy_form.is_valid():
+            new_copy=copy_form.save()
+            new_copy.save(force_update=True)
+            data['stat']="ok"
+            return HttpResponse(json.dumps(data), content_type='application/json')
+
+        else:
+            messages.error(request, 'Invalid copy information!')
+            data['stat'] = "copy error"
+
+        copy_form=ChildCopyForm(data=request.POST)
+        context = {
+                'copy_form': copy_form,
+                'copy_id': copy_id,
+                }
+        html=loader.render_to_string('census/edit_modal.html', context, request=request)
+        data['form']=html
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    else:
+        copy_form=ChildCopyForm(instance=copy_to_edit)
+
+    context = {
+            'copy_form': copy_form,
+            'copy_id': copy_id,
+            }
+    return HttpResponse(template.render(context, request))
+
 @login_required
 def admin_start(request):
     template=loader.get_template('census/admin_start_page.html')
