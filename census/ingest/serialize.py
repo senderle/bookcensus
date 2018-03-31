@@ -3,11 +3,11 @@ import codecs
 from census.models import Title, Edition, Issue, Copy
 from django.core.serializers import serialize, deserialize
 
-# This defines the primary backup dataset. There are lots of 
+# This defines the primary backup dataset. There are lots of
 # other tables, but we regard all of them as containing ephemeral
 # data subject to loss at any time. *This* data is unrecoverable
 # if lost, and is therefore the first priority for backups. It
-# should be saved to files tracked by version control -- the 
+# should be saved to files tracked by version control -- the
 # quantity will never be so large that it won't fit in a
 # standard GitHub repository.
 
@@ -51,15 +51,15 @@ def export_canon_json(filename_base='backup'):
         export_query_json(filename, query)
 
 def import_query_json(filename, queryset):
-    with codecs.open(filename, 'w', encoding='utf-8') as ip:
+    with codecs.open(filename, 'r', encoding='utf-8') as ip:
         data = ip.read()
 
     for row in deserialize('json', data):
         row.save()
 
 def import_canon_json(filename_base='backup'):
-    canonical_models = [('{}_{}.json'.format(filename_base, name), model) 
+    canonical_models = [('{}_{}.json'.format(filename_base, name), model)
                         for name, model in get_canonical_models(export=False)]
     if all(os.path.isfile(filename) for filename, model in canonical_models):
-        for filename, model in canoncal_models:
+        for filename, model in canonical_models:
             import_query_json(filename, model)

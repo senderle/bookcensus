@@ -6,9 +6,9 @@ from django.contrib.auth.views import (password_reset,
                                        logout)
 
 from . import views
-from .models import StaticPageText
 
-_static_page_names = '|'.join(sorted(set(s.viewname for s in StaticPageText.objects.all())))
+# from .models import StaticPageText
+# _static_page_names = '|'.join(sorted(set(s.viewname for s in StaticPageText.objects.all())))
 
 urlpatterns = [
     # Main site functionality
@@ -17,7 +17,8 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search_for_something'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^about/$', views.about, name='about'),
-    url(r'^about/(?P<viewname>' + _static_page_names + ')/$', views.about, name='about'),
+    # url(r'^about/(?P<viewname>' + _static_page_names + ')/$', views.about, name='about'),
+    url(r'^about/(?P<viewname>[A-Za-z0-9]+)/$', views.about, name='about'),
     url(r'^copy/(?P<id>[0-9]+)/$', views.copy, name='copy'),
     url(r'^copydata/(?P<copy_id>[0-9]+)/$', views.copy_data, name='copy_data'),
 
