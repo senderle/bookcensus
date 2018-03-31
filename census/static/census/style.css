@@ -59,7 +59,7 @@ div.frame-container {
 
 div.outer-frame {
     position: relative;
-    max-width: 1200px;
+    max-width: 1024px;
     min-width: 526px;
     margin: 0 auto;
 }

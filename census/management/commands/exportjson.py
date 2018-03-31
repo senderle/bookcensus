@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from census.ingest.export_data import export_json
+from census.ingest.serialize import export_canon_json
 
 class Command(BaseCommand):
     help = ('Export a json version of the current database. '
@@ -12,4 +12,4 @@ class Command(BaseCommand):
         parser.add_argument('json_basename')
 
     def handle(self, *args, **options):
-        export_json(options['json_basename'])
+        export_canon_json(options['json_basename'])
