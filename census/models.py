@@ -41,7 +41,7 @@ class Copy (models.Model):
     Shelfmark = models.CharField(max_length=500, default=None, null=True, blank=True)
     Height = models.FloatField(default=0, null=True)
     Width = models.FloatField(default=0, null=True)
-    Marginalia = models.CharField(max_length=100, null=True, blank=True)
+    Marginalia = models.TextField(null=True, blank=True, default=None)
     Condition = models.CharField(max_length=200, default=None, null=True, blank=True)
     Binding = models.CharField(max_length=200, default=None, null=True, blank=True)
     Binder = models.CharField(max_length=40, default=None, null=True, blank=True)

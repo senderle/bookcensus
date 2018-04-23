@@ -4,6 +4,10 @@
 
 /* Tag-level styles */
 
+html { 
+    margin-left: calc(100vw - 100%); 
+}
+
 a {
     text-decoration: none
 }
@@ -308,20 +312,35 @@ td.play-title-icon {
     width: 150px;
 }
 
-div.play-title-icon {
-    text-align: center;
-    margin: 12px 0px 0px 0px;
-}
-
 div.play-title {
     padding: 4px 0px 20px 0px;
     margin: 2px;
 }
 
+div.play-title-icon {
+    text-align: center;
+    margin: 12px 0px 0px 0px;
+}
+
+div.play-title-icon-border {
+    width: 100px;
+    height: 100px;
+    margin: 0px auto;
+    border-radius:100px;
+    border: 1px solid;
+}
+
 img.play-title-icon {
+    height:80px;
+    width:80px;
+    margin: 10px;
+    border-radius: 20px;
+}
+
+img.play-title-icon-generic {
     height:100px;
     width:100px;
-    border-radius:100px;
+    border-radius: 100px;
 }
 
 .play-title,

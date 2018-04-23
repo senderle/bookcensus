@@ -7,7 +7,9 @@
     <table class="play-title-header">
         <tr>
             <td rowspan="3" class="play-title-header-icon">
-                <img class="play-title-icon" src="{% static icon_path %}">
+                <div class="play-title-icon-border">
+                    <img class="play-title-icon" src="{% static icon_path %}">
+                </div>
             </td>
             <td class="play-title-header">
                 {{ title.title }}
@@ -18,7 +20,7 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-                <span>All issues</span>
+                <span>All editions</span>
             </td>
         </tr>
         <tr>

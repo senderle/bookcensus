@@ -14,9 +14,11 @@
     <table class="play-title-header">
         <tr>
             <td rowspan="3" class="play-title-header-icon">
-                <a href = "{% url 'detail' title.id %}">
-                    <img class="play-title-icon" src="{% static icon_path %}">
-                </a>
+                <div class="play-title-icon-border">
+                    <a href = "{% url 'detail' title.id %}">
+                        <img class="play-title-icon" src="{% static icon_path %}">
+                    </a>
+                </div>
             </td>
             <td class="play-title-header">
                 <a href = "{% url 'detail' title.id %}">

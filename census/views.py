@@ -29,13 +29,21 @@ import re
 def search_sort_key(copy):
     return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), copy.Owner)
 
+def strip_article(s):
+    articles = ['a ', 'A ', 'an ', 'An ', 'the ', 'The ']
+    for a in articles:
+        if s.startswith(a):
+            return s.replace(a, '', 1)
+    else:
+        return s
+
 def title_sort_key(title_object):
     title = title_object.title
     if title and title[0].isdigit():
         title = title.split()
-        return ' '.join(title[1:] + [title[0]])
+        return strip_article(' '.join(title[1:] + [title[0]]))
     else:
-        return title
+        return strip_article(title)
 
 def issue_sort_key(i):
     ed_number = i.edition.Edition_number
@@ -122,7 +130,14 @@ def about(request, viewname='about'):
 
 def detail(request, id):
     selected_title=Title.objects.get(pk=id)
-    editions = list(selected_title.edition_set.all())
+    if id == '5' or id == '6':
+        editions = list(selected_title.edition_set.all())
+        extra_ed = list(Title.objects.get(pk='39').edition_set.all())
+        extra_ed[0].Edition_number = '3'
+        editions.extend(extra_ed)
+    else:
+        editions = list(selected_title.edition_set.all())
+        
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
     copy_count = sum(i.copy_set.filter(is_parent=True).count() for i in issues)

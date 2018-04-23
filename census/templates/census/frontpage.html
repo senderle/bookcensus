@@ -8,9 +8,11 @@
         {% for title in row %}
         <td class="play-title-icon">
             <div class="play-title-icon">
-                <a href="{% url 'detail' title.id %}">
-                    <img class="play-title-icon" src="{% static title.icon_path %}">
-                </a>
+                <div class="play-title-icon-border">
+                    <a href="{% url 'detail' title.id %}">
+                        <img class="play-title-icon" src="{% static title.icon_path %}">
+                    </a>
+		</div>
             </div>
         </td>
         {% endfor %}
