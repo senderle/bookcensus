@@ -412,7 +412,7 @@ def display_user_profile(request):
 
 @login_required
 def librarian_start(request):
-    template = loader.get_template('census/librarian_start_page.html')
+    template = loader.get_template('census/librarian/librarian_start_page.html')
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
@@ -437,7 +437,7 @@ def librarian_validate_sort_key(copy):
 
 @login_required
 def librarian_validate1(request):
-    template = loader.get_template('census/librarian_validate1.html')
+    template = loader.get_template('census/librarian/librarian_validate1.html')
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
@@ -517,7 +517,7 @@ def change_false_positive_draft(request, id):
 
 @login_required
 def librarian_validate2(request):
-    template = loader.get_template('census/librarian_validate2.html')
+    template = loader.get_template('census/librarian/librarian_validate2.html')
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
@@ -584,13 +584,13 @@ def update_child_copy(request, copy_id):
 
 @login_required
 def admin_start(request):
-    template=loader.get_template('census/admin_start_page.html')
+    template=loader.get_template('census/staff/admin_start_page.html')
     context={}
     return HttpResponse(template.render(context, request))
 
 @login_required
 def admin_verify_fp(request): #fp -false_positive
-    template=loader.get_template('census/admin_verify_fp.html')
+    template=loader.get_template('census/staff/admin_verify_fp.html')
     selected_copies=ChildCopy.objects.all().filter(false_positive=None).exclude(false_positive_draft=None)
 
     paginator = Paginator(selected_copies, 10)
@@ -638,7 +638,7 @@ def admin_verify_copy_fp(request, copy_id):
 
 @login_required
 def admin_verify(request):
-    template=loader.get_template('census/admin_verify.html')
+    template=loader.get_template('census/staff/admin_verify.html')
     all_copies=ChildCopy.objects.all()
     copy_list=[copy for copy in all_copies if copy.librarian_validated and not copy.admin_validated]
 
