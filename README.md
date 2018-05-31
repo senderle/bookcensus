@@ -1,4 +1,4 @@
-# Django Development with Docker
+# Shakespeare Census Prototype
 
 ## Building and starting the container for the first time:
 
@@ -6,7 +6,7 @@ Run docker-compose up to start the Django server
 
 `docker-compose up`
 
-The default port is `8000`, visit `http://localhost:8000/`
+The default port is `8989`, visit `http://localhost:8989/`
 
 ## Running default migrations and creating a superuser account:
 
@@ -24,9 +24,13 @@ Then you can create a Django superuser:
 
 `docker-compose run web python manage.py createsuperuser`
 
+Finally, you'll want to populate the database:
+
+`docker-compose run web python manage.py importjson census/ingest/data/json-backups/20180509`
+
 ## Modifying your Django project and restarting the server:
 
-After changing Django code, you may need to restart the 
+After changing Django code, you may sometimes need to restart the 
 server to test your changes. To do so, use this command:
 
 `docker-compose restart`
