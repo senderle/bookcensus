@@ -19,7 +19,7 @@ services:
       - MYSQL_PASSWORD=testpassword
       - MYSQL_DATABASE=composetest
     volumes:
-    - census-db-data:/var/lib/mysql
+    - census-db-data-new:/var/lib/mysql
 
 volumes:
-  census-db-data:
+  census-db-data-new:
