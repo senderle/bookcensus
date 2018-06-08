@@ -63,3 +63,5 @@ def import_canon_json(filename_base='backup'):
     if all(os.path.isfile(filename) for filename, model in canonical_models):
         for filename, model in canonical_models:
             import_query_json(filename, model)
+    else:
+        print("couldn't find backup files")
