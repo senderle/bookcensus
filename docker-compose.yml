@@ -9,11 +9,11 @@ services:
       - .:/code
     ports:
       - "9000:8000"
-  
+
     links:
       - db
   db:
-    image: mysql
+    image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_USER=composetest
@@ -24,4 +24,3 @@ services:
 
 volumes:
   census-db-data:
-
