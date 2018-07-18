@@ -148,6 +148,7 @@ class LinkedCopyCreate(object):
             setattr(new, f, getattr(source, f))
         new.parent = source
         new.save()
+        return new
 
 create_draft = LinkedCopyCreate(CanonicalCopy, DraftCopy, BaseCopy)
 create_history = LinkedCopyCreate(CanonicalCopy, HistoryCopy, BaseCopy)
@@ -168,9 +169,14 @@ class LinkedCopyUpdate(object):
         if not isinstance(source.parent, self.target_model):
             raise ValueError('Can only update to instances of {}, but the parent of {} is a {}'.format(self.target_model, source, type(source.parent)))
         parent = source.parent
+        print(parent.id)
+        print(source.id)
         self.create_record(parent)
         for f in self.copy_fields:
             setattr(parent, f, getattr(source, f))
+        print(parent.id)
+        print(source.id)
+
         parent.save()
         source.delete()
 
@@ -197,6 +203,25 @@ class LinkedCopyCreateParent(object):
         new.save()
 
 draft_to_canonical_create = LinkedCopyCreateParent(DraftCopy, CanonicalCopy, BaseCopy)
+
+class ParentCopyMove(object):
+    def __init__(self, source_model, target_model, base_model):
+        self.source_model = source_model
+        self.target_model = target_model
+        self.base_model = base_model
+        self.copy_fields = set(f.name for f in base_model._meta.fields)
+        self.copy_fields.discard('id')
+        self.copy_fields.discard('pk')
+    def __call__(self, source):
+        if not isinstance(source, self.source_model):
+            raise ValueError('Can only copy instances of {}'.format(self.source_model))
+        new = self.target_model()
+        for f in self.copy_fields:
+            setattr(new, f, getattr(source, f))
+        new.save()
+        source.delete()
+
+canonical_to_fp_move = ParentCopyMove(CanonicalCopy, FalseCopy, BaseCopy)
 
 ### Old Models (Unused or to be retired) ###
 

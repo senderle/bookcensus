@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+            <form id="login_form" method="post" action="/login{% if next %}/?next={{next}}{% endif %}">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <td>
+
+                        <p class="notice">Are you invited to register?</p>
+
+                        <p class="notice">If yes, Please enter your email</p>
+
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><input type="text" name="email" placeholder="Email" value="" size="30" /></td>
+                    </tr>
+
+                </table>
+                <table>
+                    <tr>
+                        <td><input type="submit" value="Submit" /></td>
+                    </tr>
+                </table>
+                <input type="hidden" name="next" value={{next}}>
+            </form>
+{% endblock content %}

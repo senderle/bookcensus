@@ -7,7 +7,9 @@
   <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
 <!-- models -->
 <div id="copyModal" class="modal fade" role="dialog"></div>
-
+{% if not user.is_superuser %}
+<p>Please sign in as administrator to view this page or do anything</p>
+{% else %}
 <hr class = "style14" width = "50%"></hr>
 	<p class="sansserifgrey" align="center">
 	Here is a list of the copies librarians have verified.</p>
@@ -75,16 +77,20 @@
   </table>
   <!-- Pages generated: {{ copies.paginator.num_pages }} -->
 </div>
-
+{% endif %}
 <script>
 function adminValidate(copy_id) {
-  var req = new XMLHttpRequest();
-  var url = 'admin_verify_copy/' + copy_id;
-  req.open('GET', url, false);
-  req.setRequestHeader('Content-Type', 'application/json');
-  req.send();
-  var res = JSON.parse(req.responseText);
-  window.location.reload();
+  $.ajax({
+       type: "GET",
+       url: "admin_verify_copy/",
+       data: {
+         copy_id: copy_id
+       },
+       dataType: 'json',
+       success: function (data) {
+            console.log("success")
+       }
+     });
 }
 </script>
 

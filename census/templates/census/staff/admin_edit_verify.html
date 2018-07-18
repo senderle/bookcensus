@@ -5,7 +5,6 @@
 <div>
   <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
   <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
-
 <!-- models -->
 <div id="copyModal" class="modal fade" role="dialog"></div>
 {% if not user.is_superuser %}
@@ -13,9 +12,9 @@
 {% else %}
 <hr class = "style14" width = "50%"></hr>
 	<p class="sansserifgrey" align="center">
-	Here is a list of the copies librarians have verified they have no such copy at hand.</p>
+	Here is a list of the copies librarians have edited.</p>
   <p class="sansserifgrey" align="center">
-    Please check and verify the information.
+    Please check the details and verify the information.
   </p>
 </div>
 <hr class="style14" width = "50%"></hr>
@@ -26,21 +25,20 @@
   <tbody>
     <tr>
       <th>Copy</th>
-      <th>Held by library?</th>
       <th></th>
     </tr>
 	{% if copies %}
 	{% for copy in copies %}
 		<tr>
 			<td>{{ copy }}
-        <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'admin_copy_data' copy.id %}" title="Details">more details...</a>
-      </td>
-      <td>
-        {{ copy.held_by_library }}
+        <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">more details...</a>
       </td>
 
         <td id="validate {{ copy.id }}">
-         <button class="btn btn-default" onclick="adminValidate({{ copy.id }});">Verify</button>
+         <button class="btn btn-default" onclick="accept({{ copy.id }});">Accept</button>
+        </td>
+        <td id="validate {{ copy.id }}">
+         <button class="btn btn-default" onclick="reject({{ copy.id }});">Reject</button>
         </td>
 
 		</tr>
@@ -84,10 +82,23 @@
 </div>
 {% endif %}
 <script>
-function adminValidate(copy_id) {
+function accept(copy_id) {
   $.ajax({
        type: "GET",
-       url: "admin_verify_copy/",
+       url: "admin_verify_single_edit_accept/",
+       data: {
+         copy_id: copy_id
+       },
+       dataType: 'json',
+       success: function (data) {
+            console.log("success")
+       }
+     });
+}
+function reject(copy_id) {
+  $.ajax({
+       type: "GET",
+       url: "admin_verfiy_single_edit_reject/",
        data: {
          copy_id: copy_id
        },

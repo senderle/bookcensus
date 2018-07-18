@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
+<script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+<p>Welcome: {{ copy.edition  }}</p>
+{% if not user.is_authenticated %}
+<p>Please sign in to make any change</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+{% if user.is_superuser %}
+<p>Want to add a new Copy as admin? Please fill in the form</p>
+{% else %}
+<p>Want to add a new Copy for your library? Please fill in the form</p>
+<a class="button" href="{% url 'librarian_start' %}">Library Holdings</a>
+{% endif %}
+{% endif %}
+
+<form class="form-inline"  method="post">
+       {% csrf_token %}
+       <table>
+       {{ form }}
+       </table>
+       <input type="submit" name="submit" value="submit" class="finalsubmit" style="position:static; left:50%;"/>
+   </form>
+
+{% endblock content %}

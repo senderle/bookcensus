@@ -40,88 +40,56 @@
                         View details
                     </a>
                 </td>
-
-                {% if copy.children.all %}
-                {% for child_copy in copy.children.all %}
                 <td>
-                    {% if child_copy.held_by_library %}
-                    <button class="button-inline button-inline-selected">Yes</button>
-                    <button class="button-inline button-inline-default" onclick="toggleState({{ child_copy.id }});">No</button>
-                    {% else %}
-                    <button class="button-inline button-inline-default" onclick="toggleState({{ child_copy.id }});">Yes</button>
-                    <button class="button-inline button-inline-selected">No</button>
-                    {% endif %}
+                  <button class=" button_inline button-inline-selected" id="yes{{copy.id}}" href="#" data-id="{{ copy.id }}" onclick="yes({{ copy.id }})" title="Yes">
+                      Yes
+                  </buttton>
+                  <button class="button_inline button-inline-selected" id="no{{copy.id}}" href="#" onclick="no({{ copy.id}})" onclick="yes({{ copy.id }})" title="No">
+                      No
+                  </button>
                 </td>
-                <td>
-                    <button class="button-inline button-inline-default" onclick="changeFalsePositive({{ child_copy.id }});">Confirm&nbsp;Choice</button>
-                </td>
-                {% endfor %}
-                {% else %}
-                <td id='validate {{ copy.id }}'>
-                    <button class="button-inline button-inline-default" onclick="holdCopy({{ copy.id }});">Yes</button>
-                    <button class="button-inline button-inline-default" onclick="notHoldCopy({{ copy.id }});">No</button>
-                </td>
-                <td>
-
-                </td>
-                {% endif %}
             </tr>
             {% endfor %}
-
         </tbody>
     </table>
 
     <br>
-    <!-- <a href="{% url 'librarian_start' %}" class="button-inline button-inline-default" style="margin-left: 1000px">Back</a> -->
-    <!-- <a href="{% url 'librarian_validate2' %}" class="button-inline button-inline-default" style="margin-left: 600px">Continue to verify copy detail</a> -->
+    
 
     <script>
-function holdCopy(copy_id) {
-    var req = new XMLHttpRequest();
-    var url = 'validate_hold/' + copy_id;
-    req.open('GET', url, false);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send();
-    var res = JSON.parse(req.responseText);
-    if (res === "success") {
-        window.location.reload();
-    }
+
+function yes(id){
+  alert("you just click yes!");
+  var copy_id = id;
+  console.log(copy_id)
+  $.ajax({
+       type: "GET",
+       url: "create_draftcopy/",
+       data: {
+         copy_id: id
+       },
+       dataType: 'json',
+       success: function (data) {
+            console.log("success")
+       }
+     });
 }
 
-function notHoldCopy(copy_id) {
-    var req = new XMLHttpRequest();
-    var url = 'validate_not_hold/' + copy_id;
-    req.open('GET', url, false);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send();
-    var res = JSON.parse(req.responseText);
-    if (res === "success") {
-        window.location.reload();
-    }
+function no(id){
+  alert("you just click yes!");
+  var copy_id = id;
+  console.log(copy_id)
+  $.ajax({
+       type: "GET",
+       url: "location_incorrect/",
+       data: {
+         copy_id: id
+       },
+       dataType: 'json',
+       success: function (data) {
+            console.log("success")
+       }
+     });
 }
-
-function toggleState(childcopyid){
-    var req = new XMLHttpRequest();
-    var url = 'change_hold_status/' + childcopyid;
-    req.open('GET', url, false);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send();
-    var res = JSON.parse(req.responseText);
-    if (res === "success") {
-        window.location.reload();
-    }
-}
-
-function changeFalsePositive(childcopyid) {
-    var req = new XMLHttpRequest();
-    var url = 'change_false_positive_draft/' + childcopyid;
-    req.open('GET', url, false);
-    req.setRequestHeader('Content-Type', 'application/json');
-    req.send();
-    var res = JSON.parse(req.responseText);
-    if (res === "success") {
-        window.location.reload();
-    }
-}
-    </script>
+ </script>
 {% endblock content %}

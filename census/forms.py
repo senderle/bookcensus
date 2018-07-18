@@ -203,3 +203,31 @@ class editProfileForm(forms.ModelForm):
 		else:
 			raise forms.ValidationError("Must be a Penn email address.")
 		return data
+
+
+class copySubMissionForm(forms.ModelForm):
+	issue_id = forms.IntegerField(required=True)
+	Owner = forms.CharField(required=True)
+	Shelfmark = forms.CharField(required=True)
+	Local_Notes = forms.CharField(required=True)
+	Prov_info = forms.CharField(label="Provenance Information", required=True)
+	Height = forms.IntegerField(initial=0, required=False, help_text="cm")
+	Width = forms.IntegerField(initial=0, required=False, help_text="cm")
+
+	class Meta:
+		model = CanonicalCopy
+		fields = ['issue_id', 'Owner', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
+
+
+class createDraftForm(forms.ModelForm):
+	issue_id = forms.IntegerField(required=True)
+	Owner = forms.CharField(required=True)
+	Shelfmark = forms.CharField(required=True)
+	Local_Notes = forms.CharField(required=True)
+	Prov_info = forms.CharField(label="Provenance Information", required=True)
+	Height = forms.IntegerField(initial=0, required=False, help_text="cm")
+	Width = forms.IntegerField(initial=0, required=False, help_text="cm")
+
+	class Meta:
+		model = DraftCopy
+		fields = ['issue_id', 'Owner', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']

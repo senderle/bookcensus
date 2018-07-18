@@ -25,6 +25,21 @@ import re
 
 ## UTILITY FUNCTIONS ##
 # Eventually these should be moved into a separate util module.
+def check_and_create_draft(selected_copy):
+    assert selected_copy.drafts.count() < 2, "There should not be more than one Draft copies"
+    if not selected_copy.drafts.exists():
+        create_draft(selected_copy)
+
+    draft_copy = selected_copy.drafts.get()
+    return draft_copy
+
+def lookup_draft(selected_copy):
+    if not selected_copy.drafts.exists():
+        print("no more more more draft") # problems found here
+        return selected_copy
+    else:
+        print("draft")
+        return selected_copy.drafts.get()
 
 def search_sort_key(copy):
     return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), copy.Owner)
@@ -72,11 +87,11 @@ def search(request):
     value = request.GET.get('value')
     print(field)
     print(value)
-    copy_list = Copy.objects.all()
+    copy_list = CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
 	field = 'STC / Wing'
-        result_list = copy_list.filter(issue__STC_Wing__icontains=value, is_parent=True)
+        result_list = copy_list.filter(issue__STC_Wing__icontains=value)
         print(result_list)
     elif field == 'year' and value:
         field = 'Year'
@@ -85,10 +100,10 @@ def search(request):
             start, end = year_range
             result_list = copy_list.filter(issue__start_date__lte=end, issue__end_date__gte=start)
         else:
-            result_list = copy_list.filter(issue__year__icontains=value, is_parent=True)
+            result_list = copy_list.filter(issue__year__icontains=value)
     elif field == 'location' and value:
         field = 'Location'
-        result_list = copy_list.filter(Owner__icontains=value, is_parent=True)
+        result_list = copy_list.filter(Owner__icontains=value)
 
     result_list = sorted(result_list, key=search_sort_key)
 
@@ -120,10 +135,10 @@ def homepage(request):
 
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
-    copy_count = str(Copy.objects.filter(is_parent=True).count())
-    content = [s.content.replace('{copy_count}', copy_count) 
+    copy_count = str(CanonicalCopy.objects.count())
+    content = [s.content.replace('{copy_count}', copy_count)
                for s in StaticPageText.objects.filter(viewname=viewname)]
-    context =  { 
+    context =  {
         'content': content,
     }
     return HttpResponse(template.render(context, request))
@@ -137,10 +152,10 @@ def detail(request, id):
         editions.extend(extra_ed)
     else:
         editions = list(selected_title.edition_set.all())
-        
+
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
-    copy_count = sum(i.copy_set.filter(is_parent=True).count() for i in issues)
+    copy_count = CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues]).count()
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
@@ -154,7 +169,7 @@ def detail(request, id):
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
-    all_copies = selected_issue.copy_set.filter(is_parent=True).order_by('Owner', 'Shelfmark')
+    all_copies = CanonicalCopy.objects.filter(issue__id=id).order_by('Owner', 'Shelfmark')
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,
@@ -166,9 +181,22 @@ def copy(request, id):
 
 def copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-    selected_copy=Copy.objects.get(pk=copy_id)
-    context={"copy": selected_copy,}
+
+    selected_copy = CanonicalCopy.objects.get(pk=copy_id)
+    selected_copy = lookup_draft(selected_copy)
+
+    context={"copy": selected_copy}
+
     return HttpResponse(template.render(context, request))
+
+
+# only want to show draft on the direct webpage
+def admin_copy_data(request, id):
+    template = loader.get_template('census/copy_modal.html')
+    selected_copy = DraftCopy.objects.get(pk=id)
+    context={"copy": selected_copy}
+    return HttpResponse(template.render(context, request))
+
 
 def login_user(request):
     template = loader.get_template('census/login.html')
@@ -190,6 +218,29 @@ def login_user(request):
             return HttpResponse(template.render({'failed': True}, request))
     else:
         return HttpResponse(template.render({'next': request.GET.get('next', '')}, request))
+
+def register(request):
+    template = loader.get_template('census/librarian_register.html')
+    if request.method=='POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user_account = authenticate(username=username, password=password)
+        if user_account is not None:
+            login(request, user_account)
+            next_url = request.POST.get('next',default=request.GET.get('next', 'login.html'))
+            if request.GET.get('next') is None:
+                if user_account.is_superuser:
+                    next_url = "admin_start"
+                else:
+                    next_url = "librarian_start"
+
+            return HttpResponseRedirect(next_url)
+        else:
+            return HttpResponse(template.render({'failed': True}, request))
+    else:
+        return HttpResponse(template.render({'next': request.GET.get('next', '')}, request))
+
+
 
 def logout_user(request):
     template = loader.get_template('census/logout.html')
@@ -249,7 +300,7 @@ def submission(request):
 def edit_copy_submission(request, copy_id):
     template = loader.get_template('census/edit_submission.html')
     all_titles = Title.objects.all()
-    copy_to_edit = ChildCopy.objects.get(pk=copy_id)
+    copy_to_edit = CanonicalCopy.objects.get(pk=copy_id)
     old_issue = copy_to_edit.issue
     old_edition = old_issue.edition
     old_title = old_edition.title
@@ -369,6 +420,38 @@ def add_edition(request, title_id):
     return HttpResponse(template.render(context, request))
 
 @login_required()
+def add_copy(request, id):
+    template = loader.get_template('census/copy_submission.html')
+    selected_copy =  Issue.objects.get(pk=id)
+    copy_submission_form = copySubMissionForm(request.POST or None)
+
+    data = {'issue_id': id, 'Owner': 'affiliation_test', 'Shelfmark': 'required',
+                           'Local_Notes': 'required', 'Prov_info': 'required'}
+    if request.method == 'POST':
+        copy_submission_form = copySubMissionForm(request.POST, initial=data)
+
+        if copy_submission_form.is_valid():
+            '''
+            add draft
+            linked to canonical_copy
+            click to make prefilled word disappear
+            move to the next page
+            '''
+            copy = copy_submission_form.save(commit=False)
+            copy.issue = Issue.objects.get(pk=id)
+            copy.location_verified = False
+            copy.save()
+            return HttpResponseRedirect(reverse('copy', args=(id,)))
+    else:
+        copy_submission_form = copySubMissionForm(initial=data)
+    context = {
+       'form': copy_submission_form,
+       'copy': selected_copy,
+    }
+
+    return HttpResponse(template.render(context, request))
+
+@login_required()
 def add_issue(request, edition_id):
     template = loader.get_template('census/add_issue.html')
     selected_edition =Edition.objects.get(pk=edition_id)
@@ -416,15 +499,12 @@ def librarian_start(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    copy_count = Copy.objects.all().filter(Owner=affiliation, 
-                                         is_parent=True,
-                                         librarian_validated=False,
-                                         admin_validated=False,
-                                         false_positive=None, 
-                                         false_positive_draft=None).count()
-    verified_count = Copy.objects.all().filter(Owner=affiliation, 
-                                             is_parent=True,
-                                             false_positive=False).count()
+
+    copy_count = CanonicalCopy.objects.all().filter(Owner=affiliation,
+                                        location_verified=False).count()
+    verified_count = CanonicalCopy.objects.all().filter(Owner=affiliation,
+                                             location_verified=True).count()
+
     context = {
         'affiliation': affiliation,
         'copy_count': copy_count,
@@ -441,79 +521,14 @@ def librarian_validate1(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    copy_list = Copy.objects.all().filter(Owner=affiliation,
-                                        is_parent=True, 
-                                        librarian_validated=False,
-                                        admin_validated=False,
-                                        false_positive_draft=None, 
-                                        false_positive=None)
+    copy_list = CanonicalCopy.objects.filter(Owner=affiliation, location_verified=False)
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
         'affiliation': affiliation,
         'copies': copy_list,
     }
+
     return HttpResponse(template.render(context, request))
-
-@login_required
-def validate_hold(request, id):
-    selected_copy = Copy.objects.get(pk=id)
-
-    ChildCopy.objects.create(Owner=selected_copy.Owner, issue=selected_copy.issue, \
-    thumbnail_URL=selected_copy.thumbnail_URL, NSC=selected_copy.NSC, Shelfmark=selected_copy.Shelfmark,\
-    Height=selected_copy.Height, Width=selected_copy.Width, Marginalia=selected_copy.Marginalia, \
-    Condition=selected_copy.Condition, Binding=selected_copy.Binding, Binder=selected_copy.Binder, \
-    Bookplate=selected_copy.Bookplate, Bookplate_Location=selected_copy.Bookplate_Location, Bartlett1939=selected_copy.Bartlett1939,\
-    Bartlett1939_Notes=selected_copy.Bartlett1939_Notes, Bartlett1916=selected_copy.Bartlett1916, Bartlett1916_Notes=selected_copy.Bartlett1916_Notes,\
-    Lee_Notes=selected_copy.Lee_Notes, Local_Notes=selected_copy.Local_Notes, created_by=selected_copy.created_by,\
-    prov_info=selected_copy.prov_info, from_estc=selected_copy.from_estc,\
-    librarian_validated=False, admin_validated=False, is_parent=False, is_history=False, held_by_library=True, parent=selected_copy)
-
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-@login_required
-def validate_not_hold(request, id):
-    selected_copy = Copy.objects.get(pk=id)
-
-    ChildCopy.objects.create(Owner=selected_copy.Owner, issue=selected_copy.issue, \
-    thumbnail_URL=selected_copy.thumbnail_URL, NSC=selected_copy.NSC, Shelfmark=selected_copy.Shelfmark,\
-    Height=selected_copy.Height, Width=selected_copy.Width, Marginalia=selected_copy.Marginalia, \
-    Condition=selected_copy.Condition, Binding=selected_copy.Binding, Binder=selected_copy.Binder, \
-    Bookplate=selected_copy.Bookplate, Bookplate_Location=selected_copy.Bookplate_Location, Bartlett1939=selected_copy.Bartlett1939,\
-    Bartlett1939_Notes=selected_copy.Bartlett1939_Notes, Bartlett1916=selected_copy.Bartlett1916, Bartlett1916_Notes=selected_copy.Bartlett1916_Notes,\
-    Lee_Notes=selected_copy.Lee_Notes, Local_Notes=selected_copy.Local_Notes, created_by=selected_copy.created_by,\
-    prov_info=selected_copy.prov_info, from_estc=selected_copy.from_estc,\
-    librarian_validated=False, admin_validated=False, is_parent=False, is_history=False, held_by_library=False, parent=selected_copy)
-
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-@login_required
-def change_hold_status(request, id):
-    selected_copy=ChildCopy.objects.get(pk=id)
-    if selected_copy.held_by_library:
-        selected_copy.held_by_library = False
-    else:
-        selected_copy.held_by_library = True
-    selected_copy.save()
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-@login_required
-def change_false_positive_draft(request, id):
-    selected_copy=ChildCopy.objects.get(pk=id)
-    parent=selected_copy.parent
-    if selected_copy.held_by_library:
-        selected_copy.false_positive_draft = False
-        parent.false_positive_draft=False
-    else:
-        selected_copy.false_positive_draft = True
-        parent.false_positive_draft=True
-
-    selected_copy.save()
-    parent.save()
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
 
 @login_required
 def librarian_validate2(request):
@@ -521,9 +536,8 @@ def librarian_validate2(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    child_copies = Copy.objects.all().filter(Owner=affiliation, 
-                                           is_parent=True, 
-                                           false_positive=False)
+    child_copies = CanonicalCopy.objects.all().filter(Owner=affiliation,
+                                        location_verified=True)
     child_copies = sorted(child_copies, key=librarian_validate_sort_key)
     context={
         'user_detail': cur_user_detail,
@@ -532,55 +546,36 @@ def librarian_validate2(request):
     }
     return HttpResponse(template.render(context, request))
 
-def librarian_confirm(request, id):
-    #Librarian confirms all infor is correct; the childcopy's librarian_validated will be marked true; so is its parent
-    selected_copy = ChildCopy.objects.get(pk=id)
-    selected_copy.librarian_validated = True
-    selected_copy.parent.librarian_validated=True
-    selected_copy.save()
-    selected_copy.parent.save()
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
 @login_required()
-def update_child_copy(request, copy_id):
-    template = loader.get_template('census/edit_child_modal.html')
-    copy_to_edit=ChildCopy.objects.get(pk=copy_id)
-
-    if request.method=='POST':
-        data={}
-        if request.POST.get('cancel', None):
-            return HttpResponseRedirect(reverse('user_history'))
-
-        copy_form=ChildCopyForm(request.POST, instance=copy_to_edit)
+def update_draft_copy(request, id):
+    template = loader.get_template('census/copy_submission.html')
+    selected_copy = CanonicalCopy.objects.get(pk=id)
+    copy = lookup_draft(selected_copy)
+    data = {'issue_id': copy.issue.id, 'Owner': copy.Owner,
+            'Shelfmark': copy.Shelfmark, 'Local_Notes': copy.Local_Notes,
+            'Prov_info': copy.prov_info,
+            }
+    if request.method == 'POST':
+        copy_form = createDraftForm(request.POST)
 
         if copy_form.is_valid():
-            new_copy=copy_form.save()
-            new_copy.save(force_update=True)
-            data['stat']="ok"
-            return HttpResponse(json.dumps(data), content_type='application/json')
 
-        else:
-            messages.error(request, 'Invalid copy information!')
-            data['stat'] = "copy error"
-
-        copy_form=ChildCopyForm(data=request.POST)
-        context = {
-                'copy_form': copy_form,
-                'copy_id': copy_id,
-                }
-        html=loader.render_to_string('census/edit_modal.html', context, request=request)
-        data['form']=html
-        return HttpResponse(json.dumps(data), content_type='application/json')
-
+            new_copy = copy_form.save(commit=False)
+            new_copy.issue = copy.issue
+            new_copy.location_verified = True
+            new_copy.parent = selected_copy
+            if isinstance(copy, DraftCopy):
+                print("This is draftcopy")
+                copy.delete()
+            new_copy.save()
+            return HttpResponseRedirect(reverse('librarian_validate2'))
     else:
-        copy_form=ChildCopyForm(instance=copy_to_edit)
-
-    context = {
-            'copy_form': copy_form,
-            'copy_id': copy_id,
-            }
-    return HttpResponse(template.render(context, request))
+        copy_form = createDraftForm(initial=data)
+        context = {
+        'form': copy_form,
+        'copy': selected_copy,
+        }
+        return HttpResponse(template.render(context, request))
 
 @login_required
 def admin_start(request):
@@ -588,144 +583,95 @@ def admin_start(request):
     context={}
     return HttpResponse(template.render(context, request))
 
-@login_required
-def admin_verify_fp(request): #fp -false_positive
-    template=loader.get_template('census/staff/admin_verify_fp.html')
-    selected_copies=ChildCopy.objects.all().filter(false_positive=None).exclude(false_positive_draft=None)
 
-    paginator = Paginator(selected_copies, 10)
+@login_required
+def admin_edit_verify(request):
+    template = template = loader.get_template('census/staff/admin_edit_verify.html')
+    selected_copies = DraftCopy.objects.all()
+    copies = [copy.parent for copy in selected_copies
+    if isinstance(copy.parent, CanonicalCopy) and copy.parent.location_verified]
+
+    paginator = Paginator(copies, 10)
     page = request.GET.get('page')
     try:
-        copies = paginator.page(page)
+        copies_per_page = paginator.page(page)
     except PageNotAnInteger:
-        copies = paginator.page(1)
+        copies_per_page = paginator.page(1)
     except EmptyPage:
-        copies = paginator.page(paginator.num_pages)
+        copies_per_page = paginator.page(paginator.num_pages)
 
     context={
-        'copies': copies,
+        'copies': copies_per_page,
     }
     return HttpResponse(template.render(context, request))
 
-@login_required
-def admin_verify_copy_fp(request, copy_id):
-    """admin verifies the false_positive attribute of a copy"""
-    selected_copy=ChildCopy.objects.get(pk=copy_id)
-    copy_parent = selected_copy.parent
-    if selected_copy.false_positive_draft:
-        #create a copyHistory object and copy all copy_parent info to that object
-        copyHistory=CopyHistory.objects.create(Owner=copy_parent.Owner, issue=copy_parent.issue, \
-        thumbnail_URL=copy_parent.thumbnail_URL, NSC=copy_parent.NSC, Shelfmark=copy_parent.Shelfmark,\
-        Height=copy_parent.Height, Width=copy_parent.Width, Marginalia=copy_parent.Marginalia, \
-        Condition=copy_parent.Condition, Binding=copy_parent.Binding, Binder=copy_parent.Binder, \
-        Bookplate=copy_parent.Bookplate, Bookplate_Location=copy_parent.Bookplate_Location, Bartlett1939=copy_parent.Bartlett1939,\
-        Bartlett1939_Notes=copy_parent.Bartlett1939_Notes, Bartlett1916=copy_parent.Bartlett1916, Bartlett1916_Notes=copy_parent.Bartlett1916_Notes,\
-        Lee_Notes=copy_parent.Lee_Notes, Local_Notes=copy_parent.Local_Notes, created_by=copy_parent.created_by,\
-        prov_info=copy_parent.prov_info, librarian_validated=False, \
-        admin_validated=True, is_history=True, is_parent=False, from_estc=copy_parent.from_estc, false_positive=True, \
-        stored_copy=None)
-
-        copy_parent.delete()
-        selected_copy.delete()
-    else:
-        copy_parent.false_positive=False
-        selected_copy.false_positive=False
-        selected_copy.save()
-        copy_parent.save()
-
-    data='success'
-    return HttpResponse(json.dumps(data), content_type='application/json')
 
 @login_required
-def admin_verify(request):
-    template=loader.get_template('census/staff/admin_verify.html')
-    all_copies=ChildCopy.objects.all()
-    copy_list=[copy for copy in all_copies if copy.librarian_validated and not copy.admin_validated]
+def admin_verify_single_edit_accept(request):
+    try:
+        copy_id = request.GET.get('copy_id')
+    except IOError:
+        print("something wrong with id, may be it does not exist at all?")
+    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
+    canonical_copy = selected_draft_copy.parent
+    draft_to_canonical_update(selected_draft_copy)
 
-    paginator = Paginator(copy_list, 10)
+    return HttpResponse('success')
+
+@login_required
+def admin_verify_single_edit_reject(request):
+    try:
+        copy_id = request.GET.get('copy_id')
+
+    except IOError:
+        print("something wrong with id, may be it does not exist at all?")
+    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
+    canonical_copy = selected_draft_copy.parent
+
+    return HttpResponse('success')
+
+
+
+@login_required
+def admin_verify_location_verified(request): #fp -false_positive
+    template = loader.get_template('census/staff/admin_verify.html')
+    selected_copies = DraftCopy.objects.all()
+    copies = [copy.parent for copy in selected_copies
+    if isinstance(copy.parent, CanonicalCopy) and not copy.parent.location_verified]
+
+    #copies = [copy for copy in selected_copies if copy.drafts.exists()]
+    paginator = Paginator(copies, 10)
     page = request.GET.get('page')
     try:
-        copies = paginator.page(page)
+        copies_per_page = paginator.page(page)
     except PageNotAnInteger:
-        copies = paginator.page(1)
+        copies_per_page = paginator.page(1)
     except EmptyPage:
-        copies = paginator.page(paginator.num_pages)
+        copies_per_page = paginator.page(paginator.num_pages)
 
     context={
-        'copies': copies,
+        'copies': copies_per_page,
     }
     return HttpResponse(template.render(context, request))
 
+# This is for validate old copyx
 @login_required()
-def admin_verify_copy(request, id):
-    selected_copy = ChildCopy.objects.get(pk=id)
-    data=[]
-    if selected_copy.parent:  #if this child copy has parent, i.e. not directly submitted
-        copy_parent=selected_copy.parent
+def admin_verify_copy(request):
+    try:
+        copy_id = request.GET.get('copy_id')
+    except IOError:
+        print("something wrong with id, may be it does not exist at all?")
+    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
+    canonical_copy = selected_draft_copy.parent
 
-        #create a copyHistory object and copy all copy_parent info to that object
-        copyHistory=CopyHistory.objects.create(Owner=copy_parent.Owner, issue=copy_parent.issue, \
-        thumbnail_URL=copy_parent.thumbnail_URL, NSC=copy_parent.NSC, Shelfmark=copy_parent.Shelfmark,\
-        Height=copy_parent.Height, Width=copy_parent.Width, Marginalia=copy_parent.Marginalia, \
-        Condition=copy_parent.Condition, Binding=copy_parent.Binding, Binder=copy_parent.Binder, \
-        Bookplate=copy_parent.Bookplate, Bookplate_Location=copy_parent.Bookplate_Location, Bartlett1939=copy_parent.Bartlett1939,\
-        Bartlett1939_Notes=copy_parent.Bartlett1939_Notes, Bartlett1916=copy_parent.Bartlett1916, Bartlett1916_Notes=copy_parent.Bartlett1916_Notes,\
-        Lee_Notes=copy_parent.Lee_Notes, Local_Notes=copy_parent.Local_Notes, created_by=copy_parent.created_by,\
-        prov_info=copy_parent.prov_info, librarian_validated=copy_parent.librarian_validated, \
-        admin_validated=copy_parent.admin_validated, is_history=True, is_parent=False, from_estc=copy_parent.from_estc, \
-        false_positive=copy_parent.false_positive, stored_copy=copy_parent)
 
-        #update parent copy info:
-        copy_parent.Owner=selected_copy.Owner
-        copy_parent.issue=selected_copy.issue
-        copy_parent.thumbnail_URL=selected_copy.thumbnail_URL
-        copy_parent.NSC=selected_copy.NSC
-        copy_parent.Shelfmark=selected_copy.Shelfmark
-        copy_parent.Height=selected_copy.Height
-        copy_parent.Width=selected_copy.Width
-        copy_parent.Marginalia=selected_copy.Marginalia
-        copy_parent.Condition=selected_copy.Condition
-        copy_parent.Binding=selected_copy.Binding
-        copy_parent.Binder=selected_copy.Binder
-        copy_parent.Bookplate=selected_copy.Bookplate
-        copy_parent.Bookplate_Location=selected_copy.Bookplate_Location
-        copy_parent.Bartlett1939=selected_copy.Bartlett1939
-        copy_parent.Bartlett1939_Notes=selected_copy.Bartlett1939_Notes
-        copy_parent.Bartlett1916=selected_copy.Bartlett1916
-        copy_parent.Bartlett1916_Notes=selected_copy.Bartlett1916_Notes
-        copy_parent.Lee_Notes=selected_copy.Lee_Notes
-        copy_parent.Local_Notes=selected_copy.Local_Notes
-        copy_parent.created_by=selected_copy.created_by
-        copy_parent.prov_info=selected_copy.prov_info
-        copy_parent.false_positive=False
-        copy_parent.librarian_validated=True
-        copy_parent.admin_validated=True
-
-        copy_parent.save()
-
-        #delete the child copy
-        selected_copy.delete()
-
-        data.append(model_to_dict(copy_parent))
-
+    if not selected_draft_copy.location_verified:
+        selected_draft_copy.delete()
+        canonical_to_fp_move(canonical_copy)
     else:
-        #create a new parent copy
-        new_copy=Copy.objects.create(Owner=selected_copy.Owner, issue=selected_copy.issue, \
-        thumbnail_URL=selected_copy.thumbnail_URL, NSC=selected_copy.NSC, Shelfmark=selected_copy.Shelfmark,\
-        Height=selected_copy.Height, Width=selected_copy.Width, Marginalia=selected_copy.Marginalia, \
-        Condition=selected_copy.Condition, Binding=selected_copy.Binding, Binder=selected_copy.Binder, \
-        Bookplate=selected_copy.Bookplate, Bookplate_Location=selected_copy.Bookplate_Location, Bartlett1939=selected_copy.Bartlett1939,\
-        Bartlett1939_Notes=selected_copy.Bartlett1939_Notes, Bartlett1916=selected_copy.Bartlett1916, Bartlett1916_Notes=selected_copy.Bartlett1916_Notes,\
-        Lee_Notes=selected_copy.Lee_Notes, Local_Notes=selected_copy.Local_Notes, created_by=selected_copy.created_by,\
-        prov_info=selected_copy.prov_info, \
-        librarian_validated=True, admin_validated=True, from_estc=False, false_positive=False, is_parent=True, is_history=False)
+        draft_to_canonical_update(selected_draft_copy)
 
-        #delete the child copy
-        selected_copy.delete()
-
-        data.append(model_to_dict(new_copy))
-
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse('success')
 
 @login_required()
 def edit_profile(request):
@@ -746,3 +692,36 @@ def edit_profile(request):
         'profile_form': profile_form,
     }
     return HttpResponse(template.render(context, request))
+
+
+#used by aja
+@login_required
+def create_draftcopy(request):
+
+    try:
+        copy_id = request.GET.get('copy_id')
+    except IOError:
+        print("something wrong with id, may be it does not exist at all?")
+
+
+    selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
+    draft_copy = check_and_create_draft(selected_copy)
+    draft_copy.location_verified = True
+    draft_copy.save()
+
+    return HttpResponse("success!")
+
+@login_required
+def location_incorrect(request):
+    try:
+        copy_id = request.GET.get('copy_id')
+    except IOError:
+        print("something wrong with id, may be it does not exist at all?")
+
+    selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
+    draft_copy = check_and_create_draft(selected_copy)
+    draft_copy.location_verified = False
+    draft_copy.save()
+
+
+    return HttpResponse("success!")

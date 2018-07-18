@@ -8,7 +8,7 @@
         <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
         <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
         <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
-    
+
         <div id="copyModal" class="modal fade" role="dialog"></div>
     </div>
     <table class="play-title-header">
@@ -67,6 +67,9 @@
         <tr>
             <td class="play-issue-header">
                 <span>Extant copies: {{ all_copies|length }} </span>
+                {% if user.is_authenticated %}
+                <a href="{% url 'add_copy' selected_issue.id %}">Add New Copies</a>
+                {% endif %}
             </td>
         </tr>
     </table>
@@ -109,10 +112,9 @@
                 {% endif %}
             </td>
             <td>
-                {% if copy.from_estc and copy.false_positive is None %}
+                {% if copy.from_estc and not location_verified %}
               	    <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
-                {% elif copy.from_estc and copy.false_positive %}
-                    Incorrect (from ESTC)
+
                 {% else %}
               	    <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
                 {% endif %}

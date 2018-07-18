@@ -22,6 +22,7 @@ def get_canonical_models(export=False):
     if export:
         models = [[name, model.objects.all()] for name, model in _canonical_models]
         models[0][1] = models[0][1].filter(is_parent=True)  # Only parent copies are canonical
+        print('Export is true')
         return models
     else:
         return _canonical_models
