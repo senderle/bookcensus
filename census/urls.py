@@ -42,8 +42,6 @@ urlpatterns = [
 
     # User accounts and management
     url(r'^login', views.login_user, name='login_user'),
-    url(r'^accounts/login/$', views.login_user, name='login_user'),
-    url(r'^librarian_register/$', views.register, name='register'),
     url(r'^logout$', views.logout_user, name='logout_user'),
     url(r'^profile$', views.display_user_profile, name='profile'),
     url(r'^editProfile$', views.edit_profile, name='edit_profile'),
@@ -70,12 +68,10 @@ urlpatterns = [
     url(r'^create_draftcopy/$',views.create_draftcopy, name='create_draftcopy'),
     url(r'^location_incorrect/$',views.location_incorrect, name='location_incorrect'),
 
-    #url for password change
-    url(r'^librarian_password_change/$', password_change, {
-        'template_name': 'registration/password_change_form.html'},
-        name='password_change'),
-    url(r'^accounts/password/change/done/$', password_change_done,
-        {'template_name': 'registration/password_change_done.html'},
-        name='password_change_done'),
+
+    url(r'^signup/$', views.signup, name='signup'),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
+
 
 ]

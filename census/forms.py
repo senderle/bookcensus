@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from django.forms import inlineformset_factory, TextInput, formset_factory
 import datetime
@@ -231,3 +232,10 @@ class createDraftForm(forms.ModelForm):
 	class Meta:
 		model = DraftCopy
 		fields = ['issue_id', 'Owner', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
+
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(max_length=200, help_text='Required')
+    affiliation = forms.CharField(required=True, max_length=200, help_text='your university')
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')

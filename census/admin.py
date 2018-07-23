@@ -12,6 +12,8 @@ admin.site.register(Copy)
 admin.site.register(UserProfile)
 admin.site.register(UserDetail)
 
+#admin.site.register(LibrarianEmail)
+
 @admin.register(DraftCopy)
 class DraftCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)

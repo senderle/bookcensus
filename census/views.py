@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.template import Context, Template
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 import models
 from .models import *
@@ -20,7 +20,14 @@ from django.forms.models import model_to_dict
 import json
 from django.urls import reverse
 from django.contrib import messages
+#new import
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
 import re
 
 ## UTILITY FUNCTIONS ##
@@ -218,29 +225,6 @@ def login_user(request):
             return HttpResponse(template.render({'failed': True}, request))
     else:
         return HttpResponse(template.render({'next': request.GET.get('next', '')}, request))
-
-def register(request):
-    template = loader.get_template('census/librarian_register.html')
-    if request.method=='POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user_account = authenticate(username=username, password=password)
-        if user_account is not None:
-            login(request, user_account)
-            next_url = request.POST.get('next',default=request.GET.get('next', 'login.html'))
-            if request.GET.get('next') is None:
-                if user_account.is_superuser:
-                    next_url = "admin_start"
-                else:
-                    next_url = "librarian_start"
-
-            return HttpResponseRedirect(next_url)
-        else:
-            return HttpResponse(template.render({'failed': True}, request))
-    else:
-        return HttpResponse(template.render({'next': request.GET.get('next', '')}, request))
-
-
 
 def logout_user(request):
     template = loader.get_template('census/logout.html')
@@ -725,3 +709,50 @@ def location_incorrect(request):
 
 
     return HttpResponse("success!")
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            user_detail = UserDetail.objects.get(user=user)
+            user_detail.affiliation = form.cleaned_data['affiliation']
+            user_detail.save()
+            current_site = get_current_site(request)
+            message = render_to_string('signup/acc_active_email.html', {
+                'user':user,
+                'domain':current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            mail_subject = 'Activate your librarian account.'
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
+
+    else:
+        form = SignupForm()
+
+    return render(request, 'signup/signup.html', {'form': form})
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        user_detail = UserDetail.objects.get(user=user)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+        user_detail = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        user_detail.save()
+        login(request, user)
+
+        return HttpResponseRedirect('/profile')
+    else:
+        return HttpResponse('Activation link is invalid!')

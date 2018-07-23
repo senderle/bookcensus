@@ -25,7 +25,15 @@ class UserDetail(models.Model):
         return self.user.username
     class Meta:
         verbose_name_plural = "user details"
+'''
+class LibrarianEmail(models.Model):
+    email = models.EmailField(max_length=200)
 
+    def __str__(self):
+        return self.email
+    class Meta:
+        verbose_name_plural = "trusted emails"
+'''
 class StaticPageText(models.Model):
     content = models.TextField(null=True, blank=True, default=None)
     #htmlcontent = tinymce_models.HTMLField()
@@ -67,6 +75,12 @@ class Issue (models.Model):
     DEEP = models.CharField(max_length=20, default='', null=True, blank=True)
     notes = models.CharField(max_length=1000, default='', null=True, blank=True)
     Variant_Description = models.CharField(max_length=1000, null=True, blank=True)
+    def ESTC_as_list(self):
+        return self.ESTC.split('; ')
+        
+    def DEEP_as_list(self):
+        return self.DEEP.split('; ')
+
     def __str__(self):
         return "%s ESTC %s" % (self.edition, self.ESTC)
 

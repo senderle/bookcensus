@@ -42,20 +42,36 @@
                 <span>STC&#8239;/&#8239;Wing:&nbsp;{{ selected_issue.STC_Wing }}</span>
 
                 {% if selected_issue.ESTC and selected_issue.ESTC != 'not in ESTC' and ';' not in selected_issue.ESTC %}
-                    <span class="static-text">
+
+                     <span class="static-text">
                         ESTC:&nbsp;<a href="http://estc.bl.uk/{{ selected_issue.ESTC }}" target="_blank">{{ selected_issue.ESTC }}</a>
                     </span>
                 {% elif ';' in selected_issue.ESTC %}
-                    <span class="static-text">ESTC:&nbsp;{{ selected_issue.ESTC }}</span>
+                     <span class="static-text">
+                       ESTC:
+                       {% for estc in selected_issue.ESTC_as_list %}
+
+                          &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>,
+                       {% endfor %}
+                     </span>
+
                 {% else %}
                     <span class="static-text">
                         ESTC: not in ESTC
                     </span>
                 {% endif %}
 
-                {% if selected_issue.DEEP and selected_issue.DEEP != '0' %}
+                {% if selected_issue.DEEP and selected_issue.DEEP != '0' and ';' not in selected_issue.DEEP %}
                     <span class="static-text">
                         DEEP:&nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ selected_issue.DEEP }}" target="_blank">{{ selected_issue.DEEP }}</a>
+                    </span>
+                {% elif ';' in selected_issue.DEEP%}
+                    <span class="static-text">
+                      DEEP:
+                      {% for deep in selected_issue.DEEP_as_list %}
+
+                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>,
+                      {% endfor %}
                     </span>
                 {% else %}
                     <span class="static-text">
