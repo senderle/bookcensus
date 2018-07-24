@@ -6,7 +6,7 @@ jQuery(function($) {
             var url=$(this).data("form");
             $("#copyModal").load(url, function() {
                 $("#copyModal").modal('show');
-                $(document).click(function(ev) {
+                $(document).click(function(event) {
                     if (! $(event.target).closest(".modal-dialog").length) {
                     	$("#copyModal").modal('hide');
                     }
