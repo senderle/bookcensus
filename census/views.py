@@ -111,6 +111,9 @@ def search(request):
     elif field == 'location' and value:
         field = 'Location'
         result_list = copy_list.filter(Owner__icontains=value)
+    elif field == 'bartlett' and value:
+        field = 'Bartlett'
+        result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
 
     result_list = sorted(result_list, key=search_sort_key)
 

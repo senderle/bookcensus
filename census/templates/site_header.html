@@ -10,7 +10,7 @@
     <a class="button" href="{% url 'librarian_start' %}">Library Holdings</a>
     {% endif %}
     {% else %}
-    
+
     <a class="button" href="{% url 'login_user' %}">Sign in</a>
     {% endif %}
     <!-- A normally-styled non-breaking space always appears here
@@ -62,6 +62,7 @@
       <option value="location">Location</option>
       <option value="year">Year</option>
       <option value="stc">STC / Wing</option>
+      <option value="bartlett">Bartlett</option>
     </select>
     <input type="text" name="value" placeholder="Search..">
     <input type="submit" value="Submit" >
