@@ -1,4 +1,3 @@
-
 from __future__ import unicode_literals
 from django.db import models
 import inspect
@@ -7,7 +6,7 @@ from census.models import Copy, CanonicalCopy, BaseCopy
 
 
 def export_old_copies():
-    
+
     old_copies = Copy.objects.filter(is_parent=True)
 
     base_copy_fields = set(f.name for f in BaseCopy._meta.get_fields())
