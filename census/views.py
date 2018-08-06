@@ -747,7 +747,7 @@ def edit_profile(request):
     }
     return HttpResponse(template.render(context, request))
 
-def contact(request):
+'''def contact(request):
     template=loader.get_template('census/contact-form.html')
 
     if request.method=='POST':
@@ -756,6 +756,22 @@ def contact(request):
             form.save()
             return HttpResponseRedirect(reverse('contact_success'))
         elif form.is_valid() and form.data['guardian'] != "":
+            return HttpResponseRedirect(reverse('contact_success'))
+        else:
+            messages.error(request, "This form is invalid")
+    else:
+        form=ContactUs()
+
+    context={'form': form}
+    return HttpResponse(template.render(context, request))'''
+
+def contact(request):
+    template=loader.get_template('census/contact-form.html')
+
+    if request.method=='POST':
+        form=ContactUs(request.POST)
+        if form.is_valid():
+            form.save()
             return HttpResponseRedirect(reverse('contact_success'))
         else:
             messages.error(request, "This form is invalid")

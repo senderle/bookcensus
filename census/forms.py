@@ -12,7 +12,7 @@ class ContactUs(forms.ModelForm):
 	("I have a copy that should be in your database", "I have a copy that should be in your database"))
 
 	subject=forms.ChoiceField(choices=choices)
-	guardian=forms.CharField(widget=forms.Textarea(attrs={'id': 'styled'}), label='')
+	#guardian=forms.CharField(widget=forms.Textarea(attrs={'id': 'styled'}), label='')
 
 	class Meta:
 		model = ContactForm

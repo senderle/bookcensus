@@ -159,6 +159,6 @@ class ContactForm(models.Model):
     email = models.EmailField(max_length=100, default="")
     subject = models.CharField(max_length=200, default="")
     message = models.TextField(default="")
-    guardian = models.CharField(max_length=50, blank=True) #field for honeypot captcha
+    #guardian = models.CharField(max_length=50, blank=True) #field for honeypot captcha
     def __str__(self):
         return  "%s" % (self.name)
