@@ -121,9 +121,9 @@ def homepage(request):
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
     copy_count = str(Copy.objects.filter(is_parent=True).count())
-    content = [s.content.replace('{copy_count}', copy_count) 
+    content = [s.content.replace('{copy_count}', copy_count)
                for s in StaticPageText.objects.filter(viewname=viewname)]
-    context =  { 
+    context =  {
         'content': content,
     }
     return HttpResponse(template.render(context, request))
@@ -137,7 +137,7 @@ def detail(request, id):
         editions.extend(extra_ed)
     else:
         editions = list(selected_title.edition_set.all())
-        
+
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
     copy_count = sum(i.copy_set.filter(is_parent=True).count() for i in issues)
@@ -416,13 +416,13 @@ def librarian_start(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    copy_count = Copy.objects.all().filter(Owner=affiliation, 
+    copy_count = Copy.objects.all().filter(Owner=affiliation,
                                          is_parent=True,
                                          librarian_validated=False,
                                          admin_validated=False,
-                                         false_positive=None, 
+                                         false_positive=None,
                                          false_positive_draft=None).count()
-    verified_count = Copy.objects.all().filter(Owner=affiliation, 
+    verified_count = Copy.objects.all().filter(Owner=affiliation,
                                              is_parent=True,
                                              false_positive=False).count()
     context = {
@@ -442,10 +442,10 @@ def librarian_validate1(request):
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
     copy_list = Copy.objects.all().filter(Owner=affiliation,
-                                        is_parent=True, 
+                                        is_parent=True,
                                         librarian_validated=False,
                                         admin_validated=False,
-                                        false_positive_draft=None, 
+                                        false_positive_draft=None,
                                         false_positive=None)
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
@@ -521,8 +521,8 @@ def librarian_validate2(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    child_copies = Copy.objects.all().filter(Owner=affiliation, 
-                                           is_parent=True, 
+    child_copies = Copy.objects.all().filter(Owner=affiliation,
+                                           is_parent=True,
                                            false_positive=False)
     child_copies = sorted(child_copies, key=librarian_validate_sort_key)
     context={
@@ -744,5 +744,31 @@ def edit_profile(request):
     context={
         'user': current_user,
         'profile_form': profile_form,
+    }
+    return HttpResponse(template.render(context, request))
+
+def contact(request):
+    template=loader.get_template('census/contact-form.html')
+
+    if request.method=='POST':
+        form=ContactUs(request.POST)
+        if form.is_valid() and form.data['guardian'] == "":
+            form.save()
+            return HttpResponseRedirect(reverse('contact_success'))
+        elif form.is_valid() and form.data['guardian'] != "":
+            return HttpResponseRedirect(reverse('contact_success'))
+        else:
+            messages.error(request, "This form is invalid")
+    else:
+        form=ContactUs()
+
+    context={'form': form}
+    return HttpResponse(template.render(context, request))
+
+def display_contact_success(request):
+    template = loader.get_template('census/contact-form-success.html')
+    current_user = request.user
+    context = {
+        'user': current_user,
     }
     return HttpResponse(template.render(context, request))

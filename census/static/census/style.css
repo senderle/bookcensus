@@ -4,8 +4,8 @@
 
 /* Tag-level styles */
 
-html { 
-    margin-left: calc(100vw - 100%); 
+html {
+    margin-left: calc(100vw - 100%);
 }
 
 a {
@@ -95,7 +95,7 @@ table.play-detail-set {
 
 span.unverified-symbol-small,
 span.unverified-symbol {
-    font-weight: bold; 
+    font-weight: bold;
     color: rgba(182, 75, 67, 1.0);
 }
 
@@ -252,7 +252,7 @@ table.title {
     margin: 0% 20% 0% 20%;
 }
 
-.title th, 
+.title th,
 .title td {
     width: 170px;
 }
@@ -285,7 +285,7 @@ table.footer-nav {
     padding: 0px 10px 0px 10px;
 }
 
-.footer-nav th, 
+.footer-nav th,
 .footer-nav td {
     padding: 10px 15px 10px 15px;
 }
@@ -302,7 +302,7 @@ table.footer-nav {
 }
 
 .search-bar form {
-    margin-bottom: 0px; 
+    margin-bottom: 0px;
 }
 
 /* Frontpage Styles */
@@ -442,3 +442,13 @@ span.toggle-down {
 span.toggle-down {
     transform: rotate(90deg);
 }
+
+/* style for contact page START */
+div.contactfieldWrapper {
+  padding-bottom: 30px
+}
+
+textarea#styled {
+  display: none;
+}
+/* style for contact page END */

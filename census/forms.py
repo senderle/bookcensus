@@ -4,6 +4,21 @@ from .models import *
 from django.forms import inlineformset_factory, TextInput, formset_factory
 import datetime
 
+
+class ContactUs(forms.ModelForm):
+	choices =(("General feedback", "General feedback"),
+	("I found an error in the data", "I found an error in the data"),
+	("I'd like to suggest a new feature", "I'd like to suggest a new feature"),
+	("I have a copy that should be in your database", "I have a copy that should be in your database"))
+
+	subject=forms.ChoiceField(choices=choices)
+	guardian=forms.CharField(widget=forms.Textarea(attrs={'id': 'styled'}), label='')
+
+	class Meta:
+		model = ContactForm
+		fields = '__all__'
+
+
 class TitleForm(forms.ModelForm):
 	title=forms.CharField(required=True)
 	class Meta:
