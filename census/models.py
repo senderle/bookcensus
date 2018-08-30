@@ -74,7 +74,7 @@ class Issue (models.Model):
     start_date = models.IntegerField(default=0)
     end_date = models.IntegerField(default=0)
     DEEP = models.CharField(max_length=20, default='', null=True, blank=True)
-    notes = models.CharField(max_length=1000, default='', null=True, blank=True)
+    notes = models.TextField(null=True, blank=True, default=None)
     Variant_Description = models.CharField(max_length=1000, null=True, blank=True)
     def ESTC_as_list(self):
         return self.ESTC.split('; ')

@@ -84,7 +84,17 @@
             <td class="play-issue-header">
                 <span>Extant copies: {{ all_copies|length }} </span>
                 {% if user.is_authenticated %}
-                <a href="{% url 'add_copy' selected_issue.id %}">Add New Copies</a>
+                    <span class="note">
+                        [
+                        <a href="{% url 'add_copy' selected_issue.id %}">
+                        {% if user.is_staff %}
+                            Add new copy
+                        {% else %}
+                            I have an unlisted copy
+                        {% endif %}
+                        </a>
+                        ]
+                    </span>
                 {% endif %}
             </td>
         </tr>
@@ -109,7 +119,7 @@
                     &nbsp;
                 {% endif %}
                 {% if user.is_staff %}
-                    <span class="note">[<a href="{% url 'admin:census_copy_change' copy.id %}">Edit copy</a>]</span>
+                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
                 {% endif %}
             </td>
             <td>

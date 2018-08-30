@@ -60,7 +60,7 @@
             {% endif %}
 
             {% if copy.bibliography %}
-            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
+            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography|linebreaks }}</p>
             {% endif %}
           </div>
 
