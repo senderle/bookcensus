@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^copydata/(?P<copy_id>[0-9]+)/$', views.copy_data, name='copy_data'),
     url(r'^admincopydata/(?P<id>[0-9]+)/$', views.admin_copy_data, name='admin_copy_data'),
     url(r'^add_copy/(?P<id>[0-9]+)/$', views.add_copy, name='add_copy'),
+    url(r'^contact/$', views.contact, name='contact'),
+    url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
 
     # Jinyun-urls for submission forms
     url(r'^submission$', views.submission, name='submission'),

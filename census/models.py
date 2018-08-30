@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.forms import ModelForm
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django import forms
 # from tinymce import models as tinymce_models
 
 ### Main Site Operations ###
@@ -329,3 +330,12 @@ class Transfer_Value (models.Model):
     Value = models.CharField(max_length=100)
     def __str__(self):
         return  "%s" % (self.Value)
+
+class ContactForm(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, default="")
+    subject = models.CharField(max_length=200, default="")
+    message = models.TextField(default="")
+    guardian = models.CharField(max_length=50, default="", blank=True) #field for honeypot captcha
+    def __str__(self):
+        return  "%s" % (self.name)

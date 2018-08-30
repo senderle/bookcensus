@@ -680,7 +680,6 @@ def edit_profile(request):
     }
     return HttpResponse(template.render(context, request))
 
-
 #used by aja
 @login_required
 def create_draftcopy(request):
@@ -759,3 +758,29 @@ def activate(request, uidb64, token):
         return HttpResponseRedirect('/profile')
     else:
         return HttpResponse('Activation link is invalid!')
+
+def contact(request):
+    template=loader.get_template('census/contact-form.html')
+
+    if request.method=='POST':
+        form=ContactUs(request.POST)
+        if form.is_valid() and form.data['guardian'] == "":
+            form.save()
+            return HttpResponseRedirect(reverse('contact_success'))
+        elif form.is_valid() and form.data['guardian'] != "":
+            return HttpResponseRedirect(reverse('contact_success'))
+        else:
+            messages.error(request, "This form is invalid")
+    else:
+        form=ContactUs()
+
+    context={'form': form}
+    return HttpResponse(template.render(context, request))
+
+def display_contact_success(request):
+    template = loader.get_template('census/contact-form-success.html')
+    current_user = request.user
+    context = {
+        'user': current_user,
+    }
+    return HttpResponse(template.render(context, request))
