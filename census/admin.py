@@ -15,7 +15,7 @@ admin.site.register(models.UserDetail)
 admin.site.register(models.ContactForm)
 #admin.site.register(LibrarianEmail)
 
-@admin.register(DraftCopy)
+@admin.register(models.DraftCopy)
 class DraftCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
 
