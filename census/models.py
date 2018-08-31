@@ -85,9 +85,16 @@ class Issue (models.Model):
     def __str__(self):
         return "%s ESTC %s" % (self.edition, self.ESTC)
 
+class Location(models.Model):
+    name = models.CharField(max_length=500)
+
+    def __unicode__(self):
+        return unicode(name)
+
 # Essential fields for all copies.
 class BaseCopy(models.Model):
     Owner = models.CharField(max_length=500)
+    location = models.ForeignKey(Location, unique=False)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
     NSC = models.IntegerField(default=0, null=True)
