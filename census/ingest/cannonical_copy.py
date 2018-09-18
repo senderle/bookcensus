@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 import inspect
-from census.models import Copy, CanonicalCopy, FalseCopy, BaseCopy
+from census.models import Copy, CanonicalCopy, FalseCopy, BaseCopy, Location
 
 
 
@@ -25,4 +25,10 @@ def _export(copies, model):
         new_copy = model()
         for f in base_copy_fields:
             setattr(new_copy, f, getattr(copy, f))
+        owner = copy.Owner
+        location = Location.objects.filter(name=owner).first()
+        if location is None:
+            location = Location(name=location)
+            location.save()
+        new_copy.location = location
         new_copy.save()

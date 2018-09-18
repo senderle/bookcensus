@@ -222,8 +222,9 @@ class editProfileForm(forms.ModelForm):
 
 
 class copySubMissionForm(forms.ModelForm):
+	#choices = forms.ModelChoiceField(queryset=Location.objects.all())
 	issue_id = forms.IntegerField(required=True)
-	Owner = forms.CharField(required=True)
+	location = forms.ModelChoiceField(queryset=Location.objects.all())
 	Shelfmark = forms.CharField(required=True)
 	Local_Notes = forms.CharField(required=True)
 	Prov_info = forms.CharField(label="Provenance Information", required=True)
@@ -232,12 +233,12 @@ class copySubMissionForm(forms.ModelForm):
 
 	class Meta:
 		model = CanonicalCopy
-		fields = ['issue_id', 'Owner', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
+		fields = ['issue_id', 'location', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
 
 
 class createDraftForm(forms.ModelForm):
 	issue_id = forms.IntegerField(required=True)
-	Owner = forms.CharField(required=True)
+	location = forms.ModelChoiceField(queryset=Location.objects.all())
 	Shelfmark = forms.CharField(required=True)
 	Local_Notes = forms.CharField(required=True)
 	Prov_info = forms.CharField(label="Provenance Information", required=True)
@@ -246,7 +247,7 @@ class createDraftForm(forms.ModelForm):
 
 	class Meta:
 		model = DraftCopy
-		fields = ['issue_id', 'Owner', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
+		fields = ['issue_id', 'location', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')

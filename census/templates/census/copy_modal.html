@@ -4,7 +4,7 @@
             <h3 align="left" class="modal-title">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
         </div>
         <div class="modal-body">
-          <div class="half-one">
+          <!--div class="half-one"-->
             <p align="left"><strong>SC #</strong>: {% if copy.NSC %}{{ copy.NSC }}{% endif %}</p>
 
             <p align="left"><strong>Location</strong>: {% if copy.Owner %}{{ copy.Owner }}{% endif %}</p>
@@ -12,15 +12,15 @@
             <p align="left"><strong>Shelfmark</strong>: {% if copy.Shelfmark and copy.Shelfmark != "[Shelfmark not available]" %}{{ copy.Shelfmark }}{% endif %}</p>
 
             {% if copy.issue.notes %}
-            <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes|linebreaks  }}</p>
+            <p align="left"><strong>Notes about issue</strong>: {{ copy.issue.notes }}</p>
             {% endif %}
 
             {% if copy.Local_Notes %}
-            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes|linebreaks  }}</p>
+            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes}}</p>
             {% endif %}
 
             {% if copy.prov_info %}
-            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info|linebreaks }}</p>
+            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
             {% endif %}
 
             {% if copy.Height %}
@@ -60,12 +60,12 @@
             {% endif %}
 
             {% if copy.bibliography %}
-            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography|linebreaks }}</p>
+            <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
             {% endif %}
-          </div>
+          <!--</div>--->
 
 
-          <div class="half-two">
+          <!--div class="half-two"--->
             {% if copy.Bartlett1939 %}
             <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
             {% endif %}
@@ -81,14 +81,14 @@
             {% if copy.Bartlett1916_Notes %}
             <p align="left"><strong>Bartlett 1916 notes</strong>: {{ copy.Bartlett1916_Notes }}</p>
             {% endif %}
-          </div>
+          <!--div--->
 
 
 
         </div>
     </div>
 </div>
-
+<!---
 <style>
 html, body {
 	width: 100%;
@@ -104,3 +104,5 @@ html, body {
 	border-right: 1px solid #000000;
 }
 </style>
+
+--->

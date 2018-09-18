@@ -77,24 +77,28 @@ class Issue (models.Model):
     notes = models.TextField(null=True, blank=True, default=None)
     Variant_Description = models.CharField(max_length=1000, null=True, blank=True)
     def ESTC_as_list(self):
-        return self.ESTC.split('; ')
-        
+        estc_list = self.ESTC.split('; ')
+        return [(estc, (i + 1) == len(estc_list))
+                for i, estc in enumerate(estc_list)]
+
     def DEEP_as_list(self):
-        return self.DEEP.split('; ')
+        deep_list = self.DEEP.split('; ')
+        return [(depp, (i + 1) == len(deep_list))
+                for i, deep in enumerate(deep_list)]
+
 
     def __str__(self):
         return "%s ESTC %s" % (self.edition, self.ESTC)
 
 class Location(models.Model):
     name = models.CharField(max_length=500)
-
     def __unicode__(self):
-        return unicode(name)
+        return self.name
 
 # Essential fields for all copies.
 class BaseCopy(models.Model):
     Owner = models.CharField(max_length=500)
-    location = models.ForeignKey(Location, unique=False)
+    location = models.ForeignKey(Location, unique=False, null=True, blank=True)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
     NSC = models.IntegerField(default=0, null=True)

@@ -49,7 +49,7 @@ def lookup_draft(selected_copy):
         return selected_copy.drafts.get()
 
 def search_sort_key(copy):
-    return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), copy.Owner)
+    return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), strip_article(copy.Owner))
 
 def strip_article(s):
     articles = ['a ', 'A ', 'an ', 'An ', 'the ', 'The ']
@@ -70,6 +70,9 @@ def title_sort_key(title_object):
 def issue_sort_key(i):
     ed_number = i.edition.Edition_number
     return int(ed_number) if ed_number.isdigit() else float('inf')
+
+def copy_sort_key(c):
+    return (strip_article(c.location.name), c.Shelfmark)
 
 def convert_year_range(year):
     if '-' in year:
@@ -180,6 +183,7 @@ def detail(request, id):
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
     all_copies = CanonicalCopy.objects.filter(issue__id=id).order_by('Owner', 'Shelfmark')
+    all_copies = sorted(all_copies, key=copy_sort_key)
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,

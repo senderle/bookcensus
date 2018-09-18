@@ -49,9 +49,12 @@
                 {% elif ';' in selected_issue.ESTC %}
                      <span class="static-text">
                        ESTC:
-                       {% for estc in selected_issue.ESTC_as_list %}
-
-                          &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>,
+                       {% for estc, is_last in selected_issue.ESTC_as_list %}
+                          {% if not is_last %}
+                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>;
+                          {% else %}
+                              &nbsp;<a href="http://estc.bl.uk/{{ estc }}" target="_blank">{{ estc }}</a>
+                          {% endif %}
                        {% endfor %}
                      </span>
 
@@ -68,9 +71,12 @@
                 {% elif ';' in selected_issue.DEEP%}
                     <span class="static-text">
                       DEEP:
-                      {% for deep in selected_issue.DEEP_as_list %}
-
-                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>,
+                      {% for deep, is_last in selected_issue.DEEP_as_list %}
+                     {% if not is_last %}
+                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>;
+                      {% else %}
+                      &nbsp;<a href="http://deep.sas.upenn.edu/viewrecord.php?deep_id={{ deep }}" target="_blank">{{ deep }}</a>
+                      {% endif %}
                       {% endfor %}
                     </span>
                 {% else %}

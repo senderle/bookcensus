@@ -13,6 +13,7 @@ admin.site.register(models.UserProfile)
 admin.site.register(models.UserDetail)
 
 admin.site.register(models.ContactForm)
+admin.site.register(models.Location)
 #admin.site.register(LibrarianEmail)
 
 @admin.register(models.DraftCopy)
@@ -35,4 +36,3 @@ admin.site.register(models.BaseCopy)
 
 # class CanonicalCopyAdmin(admin.ModelAdmin):
 #     search_fields = ("Owner",)
-
