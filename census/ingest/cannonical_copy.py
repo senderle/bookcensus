@@ -28,7 +28,7 @@ def _export(copies, model):
         owner = copy.Owner
         location = Location.objects.filter(name=owner).first()
         if location is None:
-            location = Location(name=location)
+            location = Location(name=owner)
             location.save()
         new_copy.location = location
         new_copy.save()
