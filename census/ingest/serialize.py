@@ -1,6 +1,6 @@
 import os
 import codecs
-from census.models import Title, Edition, Issue, Copy
+from census import models
 from django.core.serializers import serialize, deserialize
 
 # This defines the primary backup dataset. There are lots of
@@ -12,20 +12,16 @@ from django.core.serializers import serialize, deserialize
 # standard GitHub repository.
 
 _canonical_models = [
-    ('copies', Copy),
-    ('issues', Issue),
-    ('editions', Edition),
-    ('titles', Title),
+    ('copies', models.CanonicalCopy),
+    ('falsecopies', models.FalseCopy),
+    ('draftcopies', models.DraftCopy),
+    ('historycopies', models.HistoryCopy),
+    ('locations', models.Location),
+    ('statictext', models.StaticPageText),
+    ('issues', models.Issue),
+    ('editions', models.Edition),
+    ('titles', models.Title),
 ]
-
-def get_canonical_models(export=False):
-    if export:
-        models = [[name, model.objects.all()] for name, model in _canonical_models]
-        models[0][1] = models[0][1].filter(is_parent=True)  # Only parent copies are canonical
-        print('Export is true')
-        return models
-    else:
-        return _canonical_models
 
 def check_filename(f):
     new_f = f
@@ -47,9 +43,9 @@ def export_query_json(filename, queryset):
         op.write(data)
 
 def export_canon_json(filename_base='backup'):
-    for name, query in get_canonical_models(export=True):
+    for name, model in _canonical_models:
         filename = '{}_{}.json'.format(filename_base, name)
-        export_query_json(filename, query)
+        export_query_json(filename, model.objects.all())
 
 def import_query_json(filename, queryset):
     with codecs.open(filename, 'r', encoding='utf-8') as ip:
@@ -60,9 +56,9 @@ def import_query_json(filename, queryset):
 
 def import_canon_json(filename_base='backup'):
     canonical_models = [('{}_{}.json'.format(filename_base, name), model)
-                        for name, model in get_canonical_models(export=False)]
+                        for name, model in _canonical_models]
     if all(os.path.isfile(filename) for filename, model in canonical_models):
         for filename, model in canonical_models:
-            import_query_json(filename, model)
+            import_query_json(filename, model.objects.all())
     else:
         print("couldn't find backup files")

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from census.ingest.cannonical_copy import export_old_copies
+from census.ingest.canonical_copy import export_old_copies
 
 class Command(BaseCommand):
     help = ('Export the old copy json file and then'
