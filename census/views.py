@@ -724,20 +724,25 @@ def signup(request):
             user.is_active = False
             user.save()
             user_detail = UserDetail.objects.get(user=user)
-            user_detail.affiliation = form.cleaned_data['affiliation']
+            user_detail.affiliation = form.cleaned_data['affiliation'].name
             user_detail.save()
             current_site = get_current_site(request)
-            message = render_to_string('signup/acc_active_email.html', {
-                'user':user,
-                'domain':current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            mail_subject = 'Activate your librarian account.'
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            email_validation = False
+            if email_validation:
+                message = render_to_string('signup/acc_active_email.html', {
+                    'user':user,
+                    'domain':current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                })
+                mail_subject = 'Activate your librarian account.'
+                to_email = form.cleaned_data.get('email')
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+                return HttpResponse('Please confirm your email address to complete the registration')
+            else:
+		messages.success(request, 'Your account request has been received. A site administrator may contact you for more information.')
+                return HttpResponseRedirect(reverse('signup'))
 
     else:
         form = SignupForm()

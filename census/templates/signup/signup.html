@@ -4,6 +4,19 @@
 <script type="text/javascript" src="{% static 'census/js/bootstrap-modal.js' %}"></script>
 <script type="text/javascript" src="{% static 'census/js/copy_detail_edit_modal.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'census/css/modal.css' %}" />
+
+  {% if messages %}
+  <ul class="messages">
+    {% for m in messages %}
+      {% if m.tags %}
+       <li class="{{ m.tags }}">{{ m }}</li>
+      {% else %}
+       <li>{{ m }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+
   <form method="post">
     {% csrf_token %}
 

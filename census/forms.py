@@ -251,7 +251,8 @@ class createDraftForm(forms.ModelForm):
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')
-    affiliation = forms.CharField(required=True, max_length=200, help_text='your university')
+    # affiliation = forms.CharField(required=True, max_length=200, help_text='your university')
+    affiliation = forms.ModelChoiceField(queryset=Location.objects.all())
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
