@@ -12,7 +12,8 @@ from django.core.serializers import serialize, deserialize
 # standard GitHub repository.
 
 _canonical_models = [
-    ('copies', models.CanonicalCopy),
+    ('canonicalcopies', models.CanonicalCopy),
+    ('basecopies', models.BaseCopy),
     ('falsecopies', models.FalseCopy),
     ('draftcopies', models.DraftCopy),
     ('historycopies', models.HistoryCopy),
