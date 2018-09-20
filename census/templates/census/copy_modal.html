@@ -7,7 +7,7 @@
           <!--div class="half-one"-->
             <p align="left"><strong>SC #</strong>: {% if copy.NSC %}{{ copy.NSC }}{% endif %}</p>
 
-            <p align="left"><strong>Location</strong>: {% if copy.Owner %}{{ copy.Owner }}{% endif %}</p>
+            <p align="left"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
 
             <p align="left"><strong>Shelfmark</strong>: {% if copy.Shelfmark and copy.Shelfmark != "[Shelfmark not available]" %}{{ copy.Shelfmark }}{% endif %}</p>
 

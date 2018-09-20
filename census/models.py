@@ -9,6 +9,11 @@ from django import forms
 
 ### Main Site Operations ###
 
+class Location(models.Model):
+    name = models.CharField(max_length=500)
+    def __unicode__(self):
+        return self.name
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     def __unicode__(self):
@@ -19,7 +24,8 @@ class UserProfile(models.Model):
 
 class UserDetail(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    affiliation = models.CharField(max_length=255, null=True)
+    affiliation_str = models.CharField(max_length=255, default='', null=True, blank=True)
+    affiliation = models.ForeignKey(Location, unique=False, null=True, blank=True)
     group=models.ForeignKey(Group, default=1)
 
     def __str__(self):
@@ -90,14 +96,8 @@ class Issue (models.Model):
     def __str__(self):
         return "%s ESTC %s" % (self.edition, self.ESTC)
 
-class Location(models.Model):
-    name = models.CharField(max_length=500)
-    def __unicode__(self):
-        return self.name
-
 # Essential fields for all copies.
 class BaseCopy(models.Model):
-    Owner = models.CharField(max_length=500)
     location = models.ForeignKey(Location, unique=False, null=True, blank=True)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
@@ -252,7 +252,6 @@ canonical_to_fp_move = ParentCopyMove(CanonicalCopy, FalseCopy, BaseCopy)
 ### Old Models (Unused or to be retired) ###
 
 class Copy(models.Model):
-    Owner = models.CharField(max_length=500)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
     NSC = models.IntegerField(default=0, null=True)

@@ -33,6 +33,3 @@ admin.site.register(models.BaseCopy)
 # admin.site.register(Transfer_Value)
 # admin.site.register(Provenance)
 # admin.site.register(CanonicalCopyAdmin)
-
-# class CanonicalCopyAdmin(admin.ModelAdmin):
-#     search_fields = ("Owner",)
