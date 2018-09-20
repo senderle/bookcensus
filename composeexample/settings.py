@@ -26,7 +26,7 @@ SECRET_KEY = 'lrjx#!2vpfv7h=&ei0iv&hsh*_e3od&!segpiu6ae*g63mnev7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [u'localhost', u"159.203.127.128"]
+ALLOWED_HOSTS = [u'localhost', u"159.203.127.128", u"www.shakespearecensus.org", "shakespearecensus.org"]
 
 
 

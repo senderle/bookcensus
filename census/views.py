@@ -28,6 +28,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
+
+from datetime import datetime
 import re
 
 ## UTILITY FUNCTIONS ##
@@ -49,7 +51,7 @@ def lookup_draft(selected_copy):
         return selected_copy.drafts.get()
 
 def search_sort_key(copy):
-    return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), strip_article(copy.Owner))
+    return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), strip_article(copy.location.name))
 
 def strip_article(s):
     articles = ['a ', 'A ', 'an ', 'An ', 'the ', 'The ']
@@ -113,7 +115,7 @@ def search(request):
             result_list = copy_list.filter(issue__year__icontains=value)
     elif field == 'location' and value:
         field = 'Location'
-        result_list = copy_list.filter(Owner__icontains=value)
+        result_list = copy_list.filter(location__name__icontains=value)
     elif field == 'bartlett' and value:
         field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
@@ -149,7 +151,8 @@ def homepage(request):
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
     copy_count = str(CanonicalCopy.objects.count())
-    content = [s.content.replace('{copy_count}', copy_count)
+    content = [(s.content.replace('{copy_count}', copy_count)
+                         .replace('{current_date}', '{d:%d %B %Y}'.format(d=datetime.now())))
                for s in StaticPageText.objects.filter(viewname=viewname)]
     context =  {
         'content': content,
@@ -182,7 +185,7 @@ def detail(request, id):
 # showing all copies for an issue
 def copy(request, id):
     selected_issue = Issue.objects.get(pk=id)
-    all_copies = CanonicalCopy.objects.filter(issue__id=id).order_by('Owner', 'Shelfmark')
+    all_copies = CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'Shelfmark')
     all_copies = sorted(all_copies, key=copy_sort_key)
     template = loader.get_template('census/copy.html')
     context = {
@@ -270,7 +273,7 @@ def submission(request):
                 copy.issue = selected_issue
                 copy.created_by=request.user
                 user_detail = UserDetail.objects.get(user=request.user)
-                copy.Owner = user_detail.affiliation
+                copy.location = user_detail.affiliation
                 copy.librarian_validated = True
                 copy.is_parent = False
                 copy.false_positive = False
@@ -416,7 +419,7 @@ def add_copy(request, id):
     selected_copy =  Issue.objects.get(pk=id)
     copy_submission_form = copySubMissionForm(request.POST or None)
 
-    data = {'issue_id': id, 'Owner': 'affiliation_test', 'Shelfmark': 'required',
+    data = {'issue_id': id, 'location': 'affiliation_test', 'Shelfmark': 'required',
                            'Local_Notes': 'required', 'Prov_info': 'required'}
     if request.method == 'POST':
         copy_submission_form = copySubMissionForm(request.POST, initial=data)
@@ -435,6 +438,9 @@ def add_copy(request, id):
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
         copy_submission_form = copySubMissionForm(initial=data)
+        if not request.user.is_staff:
+            # Add logic here to display the location
+            del copy_submission_form.fields['location']
     context = {
        'form': copy_submission_form,
        'copy': selected_copy,
@@ -491,13 +497,13 @@ def librarian_start(request):
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
 
-    copy_count = CanonicalCopy.objects.all().filter(Owner=affiliation,
-                                        location_verified=False).count()
-    verified_count = CanonicalCopy.objects.all().filter(Owner=affiliation,
-                                             location_verified=True).count()
+    copy_count = CanonicalCopy.objects.all().filter(location=affiliation,
+                                                    location_verified=False).count()
+    verified_count = CanonicalCopy.objects.all().filter(location=affiliation,
+                                                        location_verified=True).count()
 
     context = {
-        'affiliation': affiliation,
+        'affiliation': affiliation.name,
         'copy_count': copy_count,
         'verified_count': verified_count,
     }
@@ -512,10 +518,10 @@ def librarian_validate1(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    copy_list = CanonicalCopy.objects.filter(Owner=affiliation, location_verified=False)
+    copy_list = CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
-        'affiliation': affiliation,
+        'affiliation': affiliation.name,
         'copies': copy_list,
     }
 
@@ -527,12 +533,12 @@ def librarian_validate2(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    child_copies = CanonicalCopy.objects.all().filter(Owner=affiliation,
+    child_copies = CanonicalCopy.objects.all().filter(location=affiliation,
                                         location_verified=True)
     child_copies = sorted(child_copies, key=librarian_validate_sort_key)
     context={
         'user_detail': cur_user_detail,
-        'affiliation': affiliation,
+        'affiliation': affiliation.name,
         'child_copies': child_copies,
     }
     return HttpResponse(template.render(context, request))
@@ -542,7 +548,7 @@ def update_draft_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_copy = CanonicalCopy.objects.get(pk=id)
     copy = lookup_draft(selected_copy)
-    data = {'issue_id': copy.issue.id, 'Owner': copy.Owner,
+    data = {'issue_id': copy.issue.id, 'location': copy.location,
             'Shelfmark': copy.Shelfmark, 'Local_Notes': copy.Local_Notes,
             'Prov_info': copy.prov_info,
             }
@@ -724,7 +730,7 @@ def signup(request):
             user.is_active = False
             user.save()
             user_detail = UserDetail.objects.get(user=user)
-            user_detail.affiliation = form.cleaned_data['affiliation'].name
+            user_detail.affiliation = form.cleaned_data['affiliation']
             user_detail.save()
             current_site = get_current_site(request)
             email_validation = False
