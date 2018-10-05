@@ -225,8 +225,8 @@ class LinkedCopyCreateParent(object):
         new = self.target_model()
         for f in self.copy_fields:
             setattr(new, f, getattr(source, f))
-        source.parent = new
         new.save()
+        source.delete()
 
 draft_to_canonical_create = LinkedCopyCreateParent(DraftCopy, CanonicalCopy, BaseCopy)
 

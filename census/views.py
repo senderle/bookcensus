@@ -199,21 +199,15 @@ def copy(request, id):
 def copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
 
-    selected_copy = CanonicalCopy.objects.get(pk=copy_id)
-    selected_copy = lookup_draft(selected_copy)
+    selected_copy = CanonicalCopy.objects.filter(pk=copy_id)
+    if selected_copy:
+    	selected_copy = lookup_draft(selected_copy[0])
+    else:
+        selected_copy = DraftCopy.objects.get(pk=copy_id)
 
     context={"copy": selected_copy}
 
     return HttpResponse(template.render(context, request))
-
-
-# only want to show draft on the direct webpage
-def admin_copy_data(request, id):
-    template = loader.get_template('census/copy_modal.html')
-    selected_copy = DraftCopy.objects.get(pk=id)
-    context={"copy": selected_copy}
-    return HttpResponse(template.render(context, request))
-
 
 def login_user(request):
     template = loader.get_template('census/login.html')
@@ -255,172 +249,13 @@ def copy_info(request, copy_id):
     return HttpResponse(template.render(context,request))
 
 @login_required()
-def submission(request):
-    template = loader.get_template('census/submission.html')
-    all_titles = Title.objects.all()
-    copy_form = ChildCopyFormSubmit()
-
-    if request.method=='POST':
-        issue_id=request.POST.get('issue')
-        if not issue_id or issue_id == 'Z':
-            copy_form = ChildCopyFormSubmit()
-            messages.error(request, 'Error: Please choose or add an issue.')
-        else:
-            selected_issue = Issue.objects.get(pk=issue_id)
-            copy_form = ChildCopyFormSubmit(data=request.POST)
-            if copy_form.is_valid():
-                copy = copy_form.save(commit=False)
-                copy.issue = selected_issue
-                copy.created_by=request.user
-                user_detail = UserDetail.objects.get(user=request.user)
-                copy.location = user_detail.affiliation
-                copy.librarian_validated = True
-                copy.is_parent = False
-                copy.false_positive = False
-                copy.save()
-                return HttpResponseRedirect(reverse('copy_info', args=(copy.id,)))
-            else:
-                copy_form = ChildCopyFormSubmit(data=request.POST)
-                messages.error(request, 'Error: invalid copy information!')
-    else:
-        copy_form = ChildCopyFormSubmit()
-    context = {
-        'all_titles': all_titles,
-        'copy_form': copy_form,
-    }
-    return HttpResponse(template.render(context, request))
-
-@login_required()
-def edit_copy_submission(request, copy_id):
-    template = loader.get_template('census/edit_submission.html')
-    all_titles = Title.objects.all()
-    copy_to_edit = CanonicalCopy.objects.get(pk=copy_id)
-    old_issue = copy_to_edit.issue
-    old_edition = old_issue.edition
-    old_title = old_edition.title
-
-    if request.method=='POST':
-        issue_id=request.POST.get('issue')
-        edition_id = request.POST.get('edition')
-        title_id = request.POST.get('title')
-        if not issue_id or issue_id == 'Z':
-            copy_form = CopyForm(instance=copy_to_edit)
-            messages.error(request, 'Error: Please choose or add an issue.')
-        elif not edition_id or edition_id == 'Z':
-            copy_form = CopyForm(instance=copy_to_edit)
-            messages.error(request, 'Error: Please choose or add an edition.')
-        elif not title_id or title_id == 'Z':
-            copy_form = CopyForm(instance=copy_to_edit)
-            messages.error(request, 'Error: Please choose or add a title.')
-
-        else:
-            selected_issue = Issue.objects.get(pk=issue_id)
-            copy_form = CopyForm(request.POST, instance=copy_to_edit)
-
-            if copy_form.is_valid():
-                new_copy = copy_form.save()
-                new_copy.issue = selected_issue
-                new_copy.save(force_update=True)
-                current_user = request.user
-                current_userDetail = UserDetail.objects.get(user=current_user)
-                current_userDetail.edited_copies.add(new_copy)
-                return HttpResponseRedirect(reverse('copy_info', args=(new_copy.id,)))
-            else:
-                messages.error(request, 'Error: invalid copy information!')
-                copy_form = CopyForm(data=request.POST)
-
-    else:
-        copy_form = CopyForm(instance=copy_to_edit)
-
-    context = {
-    'all_titles': all_titles,
-    'copy_form': copy_form,
-    'copy_id': copy_id,
-    'old_title_id': old_title.id,
-    'old_edition_set': old_title.edition_set.all(),
-    'old_edition_id': old_edition.id,
-    'old_issue_set': old_edition.issue_set.all(),
-    'old_issue_id': old_issue.id,
-    }
-    return HttpResponse(template.render(context, request))
-
-def copy_submission_success(request):
-    template = loader.get_template('census/copysubmissionsuccess.html')
-    context = {}
-    return HttpResponse(template.render(context, request))
-
-def cancel_copy_submission(request, copy_id):
-    copy_to_delete = ChildCopy.objects.get(pk=copy_id)
-    copy_to_delete.delete()
-    return HttpResponseRedirect(reverse('submission'))
-
-def json_editions(request, id):
-    current_title = Title.objects.get(pk=id)
-    editions = current_title.edition_set.all()
-    data = []
-    for edition in editions:
-        data.append(model_to_dict(edition))
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-def json_issues(request, id):
-    current_edition = Edition.objects.get(pk=id)
-    issues = current_edition.issue_set.all()
-    data = []
-    for issue in issues:
-        data.append(model_to_dict(issue))
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-@login_required()
-def add_title(request):
-    template = loader.get_template('census/add_title.html')
-    if request.method == 'POST':
-        title_form= TitleForm(data=request.POST)
-        if title_form.is_valid():
-            title = title_form.save(commit=True)
-            myScript = '<script type="text/javascript">opener.dismissAddAnotherTitle(window, "%s", "%s");</script>' % (title.id, title.title)
-            return HttpResponse(myScript)
-        else:
-            print(title_form.errors)
-    else:
-        title_form = TitleForm()
-
-    context = {
-       'title_form': title_form,
-    }
-
-    return HttpResponse(template.render(context, request))
-
-@login_required()
-def add_edition(request, title_id):
-    template = loader.get_template('census/add_edition.html')
-    selected_title =Title.objects.get(pk=title_id)
-    if request.method=='POST':
-        edition_form = EditionForm(data=request.POST)
-        if edition_form.is_valid():
-            edition = edition_form.save(commit=False)
-            edition.title = selected_title
-            edition.save()
-            myScript = '<script type="text/javascript">opener.dismissAddAnotherEdition(window, "%s", "%s");</script>' % (edition.id, edition.Edition_number)
-            return HttpResponse(myScript)
-        else:
-            print(edition_form.errors)
-    else:
-        edition_form = EditionForm()
-
-    context = {
-        'edition_form':edition_form,
-        'title_id': title_id,
-    }
-    return HttpResponse(template.render(context, request))
-
-@login_required()
 def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_copy =  Issue.objects.get(pk=id)
     copy_submission_form = copySubMissionForm(request.POST or None)
 
-    data = {'issue_id': id, 'location': 'affiliation_test', 'Shelfmark': 'required',
-                           'Local_Notes': 'required', 'Prov_info': 'required'}
+    data = {'issue_id': id, 'location': '', 'Shelfmark': '',
+                           'Local_Notes': '', 'Prov_info': ''}
     if request.method == 'POST':
         copy_submission_form = copySubMissionForm(request.POST, initial=data)
 
@@ -432,8 +267,12 @@ def add_copy(request, id):
             move to the next page
             '''
             copy = copy_submission_form.save(commit=False)
+            if not request.user.is_staff:
+                copy.location = UserDetail.objects.get(user=request.user).affiliation
+                copy.location_verified = True
+            else:
+                copy.location_verified = False
             copy.issue = Issue.objects.get(pk=id)
-            copy.location_verified = False
             copy.save()
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
@@ -446,39 +285,6 @@ def add_copy(request, id):
        'copy': selected_copy,
     }
 
-    return HttpResponse(template.render(context, request))
-
-@login_required()
-def add_issue(request, edition_id):
-    template = loader.get_template('census/add_issue.html')
-    selected_edition =Edition.objects.get(pk=edition_id)
-
-    if request.method=='POST':
-        issue_form = IssueForm(data=request.POST)
-        if issue_form.is_valid():
-            issue = issue_form.save(commit=False)
-            year_published = issue_form.cleaned_data['year']
-            raw_nums = re.findall('\d+', year_published)
-            issue.start_date = int(raw_nums[0])
-
-            if len(raw_nums) == 1:
-                issue.end_date = issue.start_date
-            else:
-                issue.end_date = raw_nums[1]
-
-            issue.edition = selected_edition
-            issue.save()
-            myScript = '<script type="text/javascript">opener.dismissAddAnotherIssue(window, "%s", "%s");</script>' % (issue.id, issue.STC_Wing)
-            return HttpResponse(myScript)
-        else:
-            print(issue_form.errors)
-    else:
-        issue_form = IssueForm()
-
-    context = {
-        'issue_form':issue_form,
-        'edition_id': edition_id,
-    }
     return HttpResponse(template.render(context, request))
 
 @login_required()
@@ -634,8 +440,9 @@ def admin_verify_location_verified(request):
     template = loader.get_template('census/staff/admin_verify.html')
     selected_copies = DraftCopy.objects.all()
     copies = [copy for copy in selected_copies
-              if isinstance(copy.parent, CanonicalCopy) 
-              and not copy.parent.location_verified]
+              if copy.parent is None or 
+              (isinstance(copy.parent, CanonicalCopy) 
+               and not copy.parent.location_verified)]
 
     context={
         'copies': copies
@@ -649,11 +456,12 @@ def admin_verify_copy(request):
         copy_id = request.GET.get('copy_id')
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
+    selected_draft_copy = DraftCopy.objects.get(pk=copy_id)
     canonical_copy = selected_draft_copy.parent
 
-
-    if not selected_draft_copy.location_verified:
+    if canonical_copy is None:
+        draft_to_canonical_create(selected_draft_copy)
+    elif not selected_draft_copy.location_verified:
         selected_draft_copy.delete()
         canonical_to_fp_move(canonical_copy)
     else:

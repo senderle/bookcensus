@@ -19,28 +19,12 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search_for_something'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^about/$', views.about, name='about'),
-    # url(r'^about/(?P<viewname>' + _static_page_names + ')/$', views.about, name='about'),
     url(r'^about/(?P<viewname>[A-Za-z0-9]+)/$', views.about, name='about'),
     url(r'^copy/(?P<id>[0-9]+)/$', views.copy, name='copy'),
     url(r'^copydata/(?P<copy_id>[0-9]+)/$', views.copy_data, name='copy_data'),
-    url(r'^admincopydata/(?P<id>[0-9]+)/$', views.admin_copy_data, name='admin_copy_data'),
     url(r'^add_copy/(?P<id>[0-9]+)/$', views.add_copy, name='add_copy'),
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
-
-    # Jinyun-urls for submission forms
-    url(r'^submission$', views.submission, name='submission'),
-    url(r'^title/(?P<id>[0-9]+)/$', views.json_editions, name='json_editions'),
-    url(r'^edition/(?P<id>[0-9]+)/$', views.json_issues, name='json_issues'),
-    url(r'^addTitle$', views.add_title, name='add_title'),
-    url(r'^addEdition/(?P<title_id>[0-9]+)/$', views.add_edition, name='add_edition'),
-    url(r'^addIssue/(?P<edition_id>[0-9]+)/$', views.add_issue, name='add_issue'),
-
-    #reviewing submitted copy-info, having edit, confirm, and cancel buttons
-    url(r'^copy_info/(?P<copy_id>[0-9]+)/$', views.copy_info, name='copy_info'),
-    url(r'^copysubmissionsuccess$', views.copy_submission_success, name='copy_success'),
-    url(r'^cancelcopysubmission/(?P<copy_id>[0-9]+)/$', views.cancel_copy_submission, name='cancel_copy_submission'),
-    url(r'^editcopysubmission/(?P<copy_id>[0-9]+)/$', views.edit_copy_submission, name='edit_copy_submission'),
 
     # User accounts and management
     url(r'^login', views.login_user, name='login_user'),
@@ -70,10 +54,7 @@ urlpatterns = [
     url(r'^create_draftcopy/$',views.create_draftcopy, name='create_draftcopy'),
     url(r'^location_incorrect/$',views.location_incorrect, name='location_incorrect'),
 
-
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
-
-
 ]

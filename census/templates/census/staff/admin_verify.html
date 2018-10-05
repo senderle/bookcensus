@@ -37,15 +37,21 @@
                         STC/Wing: {{ copy.issue.STC_Wing }}
                     </td>
                     <td>
-                        <span class="copy_data button-inline-small" id="data{{copy.parent.id}}" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">
-                            View details
-                        </span>
+                        {% if copy.parent %} 
+                            <span class="copy_data button-inline-small" id="data{{copy.parent.id}}" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">
+                                View details
+                            </span>
+                        {% else %}
+                            <span class="copy_data button-inline-small" id="data{{copy.id}}" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                                View details
+                            </span>
+			{% endif %}
                     </td>
                     <td>
                         {{ copy.location_verified|yesno:"Yes,No" }}
                     </td>
                     <td>
-                        <button id="validate-{{ copy.parent.id }}" class="button-inline" onclick="adminValidate({{ copy.parent.id }});">Verify</button>
+                        <button id="validate-{{ copy.id }}" class="button-inline" onclick="adminValidate({{ copy.id }});">Verify</button>
                     </td>
                 </tr>
             {% endfor %}
