@@ -90,7 +90,7 @@ class EditProfileForm(forms.ModelForm):
 class LibrarianCopySubmissionForm(forms.ModelForm):
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
     Local_Notes = forms.CharField(label="Local Notes", required=True)
-    Prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
+    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
     Height = forms.IntegerField(initial=0, required=False, help_text="(in centimeters)")
     Width = forms.IntegerField(initial=0, required=False, help_text="(in centimeters)")
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
@@ -99,14 +99,14 @@ class LibrarianCopySubmissionForm(forms.ModelForm):
 
     class Meta:
         model = DraftCopy
-        fields = ['Shelfmark', 'Local_Notes', 'Prov_info', 
+        fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
                   'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
 
 class AdminCopySubmissionForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
     Local_Notes = forms.CharField(label="Local Notes", required=True)
-    Prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
+    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
     Height = forms.IntegerField(initial=0, required=False, help_text="(in centimeters)")
     Width = forms.IntegerField(initial=0, required=False, help_text="(in centimeters)")
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
@@ -115,21 +115,8 @@ class AdminCopySubmissionForm(forms.ModelForm):
 
     class Meta:
         model = CanonicalCopy
-        fields = ['location', 'Shelfmark', 'Local_Notes', 'Prov_info', 
+        fields = ['location', 'Shelfmark', 'Local_Notes', 'prov_info', 
                   'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
-
-class CreateDraftForm(forms.ModelForm):
-    issue_id = forms.IntegerField(required=True)
-    location = forms.ModelChoiceField(queryset=Location.objects.all())
-    Shelfmark = forms.CharField(required=True)
-    Local_Notes = forms.CharField(required=True)
-    Prov_info = forms.CharField(label="Provenance Information", required=True)
-    Height = forms.IntegerField(initial=0, required=False, help_text="cm")
-    Width = forms.IntegerField(initial=0, required=False, help_text="cm")
-
-    class Meta:
-        model = DraftCopy
-        fields = ['issue_id', 'location', 'Shelfmark', 'Local_Notes', 'Prov_info', 'Height', 'Width']
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')

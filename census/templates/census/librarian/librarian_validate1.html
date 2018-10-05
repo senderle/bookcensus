@@ -33,8 +33,8 @@
                 <th class="librarian-select-ui">Held by library?</th>
             </tr>
             {% for copy in copies %}
-                {% with child=copy.drafts.all.0 child_held=copy.drafts.all.0.location_verified %}
-                    {% if not child %}
+                {% with draft=copy.drafts.all.0 draft_held=copy.drafts.all.0.location_verified %}
+                    {% if not draft %}
                         <tr id="section {{ copy.id }}">
                             <td>{{ copy.issue.edition.title }}
                                 ({{ copy.issue.year }}) --
@@ -46,10 +46,10 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="button-inline {% if child %}{{ child_held|yesno:"button-inline-selected," }}{% endif %}" id="yes_button_{{copy.id}}" onclick="yes({{ copy.id }})" title="Yes">
+                                <span class="button-inline {% if draft %}{{ draft_held|yesno:"button-inline-selected," }}{% endif %}" id="yes_button_{{copy.id}}" onclick="yes({{ copy.id }})" title="Yes">
                                     Yes
                                 </span>
-                                <span class="button-inline {% if child %}{{ child_held|yesno:",button-inline-selected" }}{% endif %}"  id="no_button_{{copy.id}}" onclick="no({{ copy.id }})" title="No">
+                                <span class="button-inline {% if draft %}{{ draft_held|yesno:",button-inline-selected" }}{% endif %}"  id="no_button_{{copy.id}}" onclick="no({{ copy.id }})" title="No">
                                     No
                                 </span>
                             </td>

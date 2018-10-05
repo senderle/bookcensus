@@ -34,7 +34,7 @@ import re
 
 ## UTILITY FUNCTIONS ##
 # Eventually these should be moved into a separate util module.
-def check_and_create_draft(selected_copy):
+def get_or_create_draft(selected_copy):
     assert selected_copy.drafts.count() < 2, "There should not be more than one Draft copy"
     if not selected_copy.drafts.exists():
         create_draft(selected_copy)
@@ -42,12 +42,10 @@ def check_and_create_draft(selected_copy):
     draft_copy = selected_copy.drafts.get()
     return draft_copy
 
-def lookup_draft(selected_copy):
+def get_draft_if_exists(selected_copy):
     if not selected_copy.drafts.exists():
-        print("no more more more draft") # problems found here
         return selected_copy
     else:
-        print("draft")
         return selected_copy.drafts.get()
 
 def search_sort_key(copy):
@@ -196,15 +194,21 @@ def copy(request, id):
     }
     return HttpResponse(template.render(context, request))
 
-def copy_data(request, copy_id):
+def draft_copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-
     selected_copy = CanonicalCopy.objects.filter(pk=copy_id)
     if selected_copy:
-    	selected_copy = lookup_draft(selected_copy[0])
+    	selected_copy = get_draft_if_exists(selected_copy[0])
     else:
         selected_copy = DraftCopy.objects.get(pk=copy_id)
 
+    context={"copy": selected_copy}
+
+    return HttpResponse(template.render(context, request))
+
+def copy_data(request, copy_id):
+    template = loader.get_template('census/copy_modal.html')
+    selected_copy = CanonicalCopy.objects.filter(pk=copy_id)
     context={"copy": selected_copy}
 
     return HttpResponse(template.render(context, request))
@@ -253,7 +257,7 @@ def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_copy =  Issue.objects.get(pk=id)
     
-    data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'Prov_info': ''}
+    data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
     if request.method == 'POST':
         if request.user.is_staff:
             copy_submission_form = AdminCopySubmissionForm(request.POST, initial=data)
@@ -352,31 +356,26 @@ def librarian_validate2(request):
 @login_required()
 def update_draft_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
-    selected_copy = CanonicalCopy.objects.get(pk=id)
-    copy = lookup_draft(selected_copy)
-    data = {'issue_id': copy.issue.id, 'location': copy.location,
-            'Shelfmark': copy.Shelfmark, 'Local_Notes': copy.Local_Notes,
-            'Prov_info': copy.prov_info,
-            }
+    canonical_copy = CanonicalCopy.objects.get(pk=id)
+    selected_copy = get_draft_if_exists(canonical_copy)
+    init_fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
+                   'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
+    data = {f: getattr(selected_copy, f) for f in init_fields}
     if request.method == 'POST':
-        copy_form = CreateDraftForm(request.POST)
+        copy_form = LibrarianCopySubmissionForm(request.POST)
 
         if copy_form.is_valid():
-
-            new_copy = copy_form.save(commit=False)
-            new_copy.issue = copy.issue
-            new_copy.location_verified = True
-            new_copy.parent = selected_copy
-            if isinstance(copy, DraftCopy):
-                print("This is draftcopy")
-                copy.delete()
-            new_copy.save()
+            copy_form_data = copy_form.save(commit=False)
+            draft_copy = get_or_create_draft(canonical_copy)
+            for f in init_fields:
+                setattr(draft_copy, f, getattr(copy_form_data, f))
+            draft_copy.save()
             return HttpResponseRedirect(reverse('librarian_validate2'))
     else:
-        copy_form = CreateDraftForm(initial=data)
+        copy_form = LibrarianCopySubmissionForm(initial=data)
         context = {
-        'form': copy_form,
-        'copy': selected_copy,
+            'form': copy_form,
+            'copy': selected_copy,
         }
         return HttpResponse(template.render(context, request))
 
@@ -392,7 +391,7 @@ def admin_edit_verify(request):
     template = template = loader.get_template('census/staff/admin_edit_verify.html')
     selected_copies = DraftCopy.objects.all()
     copies = [copy.parent for copy in selected_copies
-    if isinstance(copy.parent, CanonicalCopy) and copy.parent.location_verified]
+              if isinstance(copy.parent, CanonicalCopy) and copy.parent.location_verified]
 
     paginator = Paginator(copies, 10)
     page = request.GET.get('page')
@@ -407,7 +406,6 @@ def admin_edit_verify(request):
         'copies': copies_per_page,
     }
     return HttpResponse(template.render(context, request))
-
 
 @login_required
 def admin_verify_single_edit_accept(request):
@@ -429,11 +427,9 @@ def admin_verify_single_edit_reject(request):
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
     selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
-    canonical_copy = selected_draft_copy.parent
+    selected_draft_copy.delete() 
 
     return HttpResponse('success')
-
-
 
 @login_required
 def admin_verify_location_verified(request):
@@ -498,9 +494,8 @@ def create_draftcopy(request):
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
 
-
     selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
-    draft_copy = check_and_create_draft(selected_copy)
+    draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = True
     draft_copy.save()
 
@@ -514,10 +509,9 @@ def location_incorrect(request):
         print("something wrong with id, may be it does not exist at all?")
 
     selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
-    draft_copy = check_and_create_draft(selected_copy)
+    draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = False
     draft_copy.save()
-
 
     return HttpResponse("success!")
 
