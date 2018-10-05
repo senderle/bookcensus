@@ -21,7 +21,11 @@ class DraftCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
 
 admin.site.register(models.CanonicalCopy)
-admin.site.register(models.HistoryCopy)
+
+@admin.register(models.HistoryCopy)
+class HistoryCopyAdmin(admin.ModelAdmin):
+    raw_id_fields = ("parent",)
+
 admin.site.register(models.FalseCopy)
 admin.site.register(models.BaseCopy)
 

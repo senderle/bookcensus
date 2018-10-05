@@ -162,6 +162,7 @@ p.static-text {
   text-align: left;
 }
 
+p.guide-text,
 td p.static-text {
   text-align: center;
 }
@@ -190,6 +191,7 @@ input,
 .button-inline,
 .button-inline-selected,
 .button-inline-small {
+    cursor: pointer;
     margin: 2px;
     border: solid;
     border-radius: 4px;
@@ -233,6 +235,10 @@ input[type="submit"] {
 
 .button-inline-selected {
     background-color: rgba(152, 75, 67, 0.6);
+}
+
+body:focus {
+    outline-color: rgba(152, 75, 67, 0.6);
 }
 
 select {

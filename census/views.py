@@ -35,7 +35,7 @@ import re
 ## UTILITY FUNCTIONS ##
 # Eventually these should be moved into a separate util module.
 def check_and_create_draft(selected_copy):
-    assert selected_copy.drafts.count() < 2, "There should not be more than one Draft copies"
+    assert selected_copy.drafts.count() < 2, "There should not be more than one Draft copy"
     if not selected_copy.drafts.exists():
         create_draft(selected_copy)
 
@@ -630,24 +630,15 @@ def admin_verify_single_edit_reject(request):
 
 
 @login_required
-def admin_verify_location_verified(request): #fp -false_positive
+def admin_verify_location_verified(request):
     template = loader.get_template('census/staff/admin_verify.html')
     selected_copies = DraftCopy.objects.all()
-    copies = [copy.parent for copy in selected_copies
-    if isinstance(copy.parent, CanonicalCopy) and not copy.parent.location_verified]
-
-    #copies = [copy for copy in selected_copies if copy.drafts.exists()]
-    paginator = Paginator(copies, 10)
-    page = request.GET.get('page')
-    try:
-        copies_per_page = paginator.page(page)
-    except PageNotAnInteger:
-        copies_per_page = paginator.page(1)
-    except EmptyPage:
-        copies_per_page = paginator.page(paginator.num_pages)
+    copies = [copy for copy in selected_copies
+              if isinstance(copy.parent, CanonicalCopy) 
+              and not copy.parent.location_verified]
 
     context={
-        'copies': copies_per_page,
+        'copies': copies
     }
     return HttpResponse(template.render(context, request))
 
