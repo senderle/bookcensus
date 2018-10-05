@@ -252,12 +252,13 @@ def copy_info(request, copy_id):
 def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_copy =  Issue.objects.get(pk=id)
-    copy_submission_form = copySubMissionForm(request.POST or None)
-
-    data = {'issue_id': id, 'location': '', 'Shelfmark': '',
-                           'Local_Notes': '', 'Prov_info': ''}
+    
+    data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'Prov_info': ''}
     if request.method == 'POST':
-        copy_submission_form = copySubMissionForm(request.POST, initial=data)
+        if request.user.is_staff:
+            copy_submission_form = AdminCopySubmissionForm(request.POST, initial=data)
+        else:
+            copy_submission_form = LibrarianCopySubmissionForm(request.POST, initial=data)
 
         if copy_submission_form.is_valid():
             '''
@@ -267,19 +268,18 @@ def add_copy(request, id):
             move to the next page
             '''
             copy = copy_submission_form.save(commit=False)
+            copy.location_verified = False
             if not request.user.is_staff:
                 copy.location = UserDetail.objects.get(user=request.user).affiliation
                 copy.location_verified = True
-            else:
-                copy.location_verified = False
             copy.issue = Issue.objects.get(pk=id)
             copy.save()
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
-        copy_submission_form = copySubMissionForm(initial=data)
-        if not request.user.is_staff:
-            # Add logic here to display the location
-            del copy_submission_form.fields['location']
+        if request.user.is_staff:
+            copy_submission_form = AdminCopySubmissionForm(initial=data)
+        else:
+            copy_submission_form = LibrarianCopySubmissionForm(initial=data)
     context = {
        'form': copy_submission_form,
        'copy': selected_copy,
@@ -359,7 +359,7 @@ def update_draft_copy(request, id):
             'Prov_info': copy.prov_info,
             }
     if request.method == 'POST':
-        copy_form = createDraftForm(request.POST)
+        copy_form = CreateDraftForm(request.POST)
 
         if copy_form.is_valid():
 
@@ -373,7 +373,7 @@ def update_draft_copy(request, id):
             new_copy.save()
             return HttpResponseRedirect(reverse('librarian_validate2'))
     else:
-        copy_form = createDraftForm(initial=data)
+        copy_form = CreateDraftForm(initial=data)
         context = {
         'form': copy_form,
         'copy': selected_copy,
@@ -474,14 +474,14 @@ def edit_profile(request):
     template=loader.get_template('census/edit_profile.html')
     current_user=request.user
     if request.method=='POST':
-        profile_form = editProfileForm(request.POST, instance=current_user)
+        profile_form = EditProfileForm(request.POST, instance=current_user)
         if profile_form.is_valid():
             profile_form.save()
             return HttpResponseRedirect(reverse('profile'))
         else:
             messages.error(request, "The username you've inputted is already taken!")
     else:
-        profile_form=editProfileForm(instance=current_user)
+        profile_form=EditProfileForm(instance=current_user)
 
     context={
         'user': current_user,
@@ -553,7 +553,6 @@ def signup(request):
         form = SignupForm()
 
     return render(request, 'signup/signup.html', {'form': form})
-
 
 def activate(request, uidb64, token):
     try:

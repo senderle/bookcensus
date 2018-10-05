@@ -422,6 +422,11 @@ table.admin-ui td {
     min-width: 400px;
 }
 
+table.admin-submit {
+    border-collapse: separate;
+    border-spacing: 10px;
+}
+
 th.librarian-select-ui {
     height: 50px;
 }

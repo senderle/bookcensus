@@ -146,6 +146,8 @@
             <td>
                 {% if copy.from_estc and not copy.location_verified %}
               	    <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
+                {% elif not copy.location_verified %}
+              	    <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
                 {% else %}
               	    <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
                 {% endif %}
