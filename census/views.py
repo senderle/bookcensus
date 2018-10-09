@@ -208,7 +208,7 @@ def draft_copy_data(request, copy_id):
 
 def copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-    selected_copy = CanonicalCopy.objects.filter(pk=copy_id)
+    selected_copy = CanonicalCopy.objects.get(pk=copy_id)
     context={"copy": selected_copy}
 
     return HttpResponse(template.render(context, request))
@@ -426,8 +426,10 @@ def admin_verify_single_edit_reject(request):
 
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
-    selected_draft_copy.delete() 
+    # selected_draft_set = CanonicalCopy.objects.get(pk=copy_id).drafts
+    # if selected_draft_set:
+    #     selected_draft = selected_draft_set.get()
+    #     selected_draft.delete() 
 
     return HttpResponse('success')
 

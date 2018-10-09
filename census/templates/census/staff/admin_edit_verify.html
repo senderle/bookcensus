@@ -36,16 +36,16 @@
                             ({{ copy.issue.year }}) --
                             STC/Wing: {{ copy.issue.STC_Wing }}
                         </td>
-                        <!-- <td>
-                            <a class="copy_data button-inline" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">Original Version</a>
-                        </td> -->
                         <td>
-                            <a class="copy_data button-inline" id="data{{copy.id}}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+                            <a class="copy_data button-inline" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">Original Version</a>
                         </td>
-                        <td id="validate {{ copy.id }}">
+                        <td>
+                            <a class="copy_data button-inline" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+                        </td>
+                        <td>
                             <button class="button-inline" id="accept-{{ copy.id }}" onclick="accept({{ copy.id }});">Accept</button>
                         </td>
-                        <td id="validate {{ copy.id }}">
+                        <td>
                             <button class="button-inline" id="reject-{{ copy.id }}" onclick="reject({{ copy.id }});">Reject</button>
                         </td>
                     </tr>
