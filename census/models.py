@@ -101,7 +101,7 @@ class BaseCopy(models.Model):
     location = models.ForeignKey(Location, unique=False, null=True, blank=True)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
-    NSC = models.IntegerField(default=0, null=True)
+    NSC = models.CharField(max_length=40, default=None, null=True, blank=True)
     Shelfmark = models.CharField(max_length=500, default=None, null=True, blank=True)
     Height = models.FloatField(default=0, null=True)
     Width = models.FloatField(default=0, null=True)
