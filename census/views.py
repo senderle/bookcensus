@@ -255,7 +255,7 @@ def copy_info(request, copy_id):
 @login_required()
 def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
-    selected_copy =  Issue.objects.get(pk=id)
+    selected_issue = Issue.objects.get(pk=id)
     
     data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
     if request.method == 'POST':
@@ -286,7 +286,8 @@ def add_copy(request, id):
             copy_submission_form = LibrarianCopySubmissionForm(initial=data)
     context = {
        'form': copy_submission_form,
-       'copy': selected_copy,
+       'issue': selected_issue,
+       'icon_path': get_icon_path(selected_issue.edition.title.id)
     }
 
     return HttpResponse(template.render(context, request))
@@ -376,6 +377,7 @@ def update_draft_copy(request, id):
         context = {
             'form': copy_form,
             'copy': selected_copy,
+            'icon_path': get_icon_path(selected_copy.issue.edition.title.id)
         }
         return HttpResponse(template.render(context, request))
 

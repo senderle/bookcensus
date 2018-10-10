@@ -6,15 +6,21 @@ from django.contrib import admin
 import models
 
 admin.site.register(models.StaticPageText)
-admin.site.register(models.Title)
+
+@admin.register(models.Title)
+class TitleAdmin(admin.ModelAdmin):
+    ordering = ('title',)
+
 admin.site.register(models.Issue)
 admin.site.register(models.Edition)
 admin.site.register(models.UserProfile)
 admin.site.register(models.UserDetail)
 
 admin.site.register(models.ContactForm)
-admin.site.register(models.Location)
-#admin.site.register(LibrarianEmail)
+
+@admin.register(models.Location)
+class LocationAdmin(admin.ModelAdmin):
+    ordering = ('name',)
 
 @admin.register(models.DraftCopy)
 class DraftCopyAdmin(admin.ModelAdmin):

@@ -10,12 +10,22 @@
 {% if not user.is_authenticated %}
     <p>Please sign in to make any change</p>
 {% else %}
+    {% if copy %}
+        {% include "census/play-title-header.html" with selected_issue=copy.issue title=copy.issue.edition.title %}
+    {% else %}
+        {% include "census/play-title-header.html" with selected_issue=issue title=issue.edition.title %}
+    {% endif %}
+       
     <p class="guide-text">
         {% if user.is_staff %}
         To add a new copy, please fill in the form below:
-        {% else %}
+        {% elif issue %}
         If you have a copy of this edition that is not in our database,<br \>
-        please fill in the form below to submit it:
+        please fill in the form below to submit it.<br \>
+        An administrator will review your submission as soon as possible.
+        {% else %}
+        You can edit the details of this copy here.<br \>
+        An administrator will review your submission as soon as possible.
         {% endif %}
     </p>
 
@@ -23,7 +33,7 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
         <div>
-            <p class="guide-text">Required:</p>
+            <h4><p class="guide-text">Required:</p></h4>
             <table class="admin-submit">
                 <tbody>
                     {% if user.is_staff %} 
@@ -50,7 +60,7 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="guide-text">Optional:</p>
+            <h4><p class="guide-text">Optional:</p></h4>
             <table class="admin-submit">
                 <tbody>
                     <tr>
