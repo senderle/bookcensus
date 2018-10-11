@@ -24,6 +24,18 @@
                 <p><a href="{% url 'signup' %}" class="button">New user form</a></p>
             </td>
         </tr>
+        <tr>
+            <td>
+                <h4>View public comments and submissions</h4>
+                <p><a href="{% url 'admin:census_contactform_changelist' %}" class="button">Comments and submissions</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Other administration tools</h4>
+                <p><a href="{% url 'admin:index' %}" class="button">Other administration tools</a></p>
+            </td>
+        </tr>
     </table>
 </div>
 {% endblock content %}
