@@ -5,7 +5,7 @@
         </div>
         <div class="modal-body">
           <!--div class="half-one"-->
-            <p align="left"><strong>SC #</strong>: {% if copy.NSC %}{{ copy.NSC }}{% endif %}</p>
+            <p align="left"><strong>SC #</strong>: {% if copy.NSC != '0' %}{{ copy.NSC }}{% endif %}</p>
 
             <p align="left"><strong>Location</strong>: {% if copy.location %}{{ copy.location.name }}{% endif %}</p>
 

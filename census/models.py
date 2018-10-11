@@ -51,6 +51,15 @@ class StaticPageText(models.Model):
     class Meta:
         verbose_name_plural = "Static Pages"
 
+class ContactForm(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, default="")
+    subject = models.CharField(max_length=200, default="")
+    message = models.TextField(default="")
+    guardian = models.CharField(max_length=50, default="", blank=True) #field for honeypot captcha
+    def __str__(self):
+        return  "%s" % (self.name)
+
 @receiver(post_save, sender=User)
 def create_user_detail(sender, instance, created, **kwargs):
     if created:
@@ -101,7 +110,7 @@ class BaseCopy(models.Model):
     location = models.ForeignKey(Location, unique=False, null=True, blank=True)
     issue = models.ForeignKey(Issue, unique=False)
     thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
-    NSC = models.CharField(max_length=40, default=None, null=True, blank=True)
+    NSC = models.CharField(max_length=40, default='', null=True, blank=True)
     Shelfmark = models.CharField(max_length=500, default=None, null=True, blank=True)
     Height = models.FloatField(default=0, null=True)
     Width = models.FloatField(default=0, null=True)
@@ -340,12 +349,3 @@ class Transfer_Value (models.Model):
     Value = models.CharField(max_length=100)
     def __str__(self):
         return  "%s" % (self.Value)
-
-class ContactForm(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100, default="")
-    subject = models.CharField(max_length=200, default="")
-    message = models.TextField(default="")
-    guardian = models.CharField(max_length=50, default="", blank=True) #field for honeypot captcha
-    def __str__(self):
-        return  "%s" % (self.name)

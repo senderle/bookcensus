@@ -24,9 +24,9 @@
         {% for copy in all_copies %}
         <tr>
             <td>
-                {% if copy.NSC > 0 %}
+                {% if copy.NSC != '0' %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
-                        copy.NSC
+                        {{ copy.NSC }}
                     </a>
                 {% else %}
                     &nbsp;
@@ -36,7 +36,6 @@
                 {% endif %}
             </td>
             <td>
-                <!-- <a class="copy_data" id="data{{copy.id}}" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details"> -->
                 <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
                     {{copy.location}}
                 </a>
