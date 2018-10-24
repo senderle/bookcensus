@@ -89,8 +89,8 @@ class EditProfileForm(forms.ModelForm):
 
 class LibrarianCopySubmissionForm(forms.ModelForm):
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
-    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=True)
-    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
+    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=False)
+    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
     Height = forms.IntegerField(label="Height (cm)", initial=0, required=False)
     Width = forms.IntegerField(label="Width (cm)", initial=0, required=False)
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
@@ -105,8 +105,8 @@ class LibrarianCopySubmissionForm(forms.ModelForm):
 class AdminCopySubmissionForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
-    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=True)
-    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=True)
+    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=False)
+    prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
     Height = forms.IntegerField(label="Height (cm)", initial=0, required=False)
     Width = forms.IntegerField(label="Width (cm)", initial=0, required=False)
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)

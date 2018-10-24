@@ -18,7 +18,7 @@
        
     <p class="guide-text">
         {% if user.is_staff %}
-        To add a new copy, please fill in the form below:
+        To add a new copy, please fill in the form below.
         {% elif issue %}
         If you have a copy of this edition that is not in our database,<br \>
         please fill in the form below to submit it.<br \>
@@ -27,6 +27,9 @@
         You can edit the details of this copy here.<br \>
         An administrator will review your submission as soon as possible.
         {% endif %}
+    </p>
+    <p class="guide-text">
+        For cataloging recommendations, see the <a href={% url 'about' 'cataloguingguide' %}>Cataloging Guide</a>.
     </p>
 
     <form class="form-inline"  method="post">
@@ -48,6 +51,11 @@
                         <td>{{ form.Shelfmark }}</td>
                         <td>{{ form.Shelfmark.errors }}</td>
                     </tr>
+                </tbody>
+            </table>
+            <h4><p class="guide-text">Optional:</p></h4>
+            <table class="admin-submit">
+                <tbody>
                     <tr>
                         <td>{{ form.Local_Notes.label_tag }}</td>
                         <td>{{ form.Local_Notes }}</td>
@@ -58,21 +66,14 @@
                         <td>{{ form.prov_info }}</td>
                         <td>{{ form.prov_info.errors }}</td>
                     </tr>
-                </tbody>
-            </table>
-            <h4><p class="guide-text">Optional:</p></h4>
-            <table class="admin-submit">
-                <tbody>
                     <tr>
                         <td>{{ form.Height.label_tag }}</td>
                         <td>{{ form.Height }}</td>
-                        <td>{{ form.Height.help_text }} </td>
                         <td>{{ form.Height.errors }}</td>
                     </tr>
                     <tr>
                         <td>{{ form.Width.label_tag }}</td>
                         <td>{{ form.Width }}</td>
-                        <td>{{ form.Width.help_text }} </td>
                         <td>{{ form.Width.errors }}</td>
                     </tr>
                     <tr>

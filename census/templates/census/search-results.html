@@ -47,7 +47,7 @@
         {% for copy in result_list %}
         <tr>
             <td>
-                {% if copy.NSC != '0' %}
+                {% if copy.NSC and copy.NSC != '0' %}
                     <a class="copy_data" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">
                         {{ copy.NSC }}
                     </a>

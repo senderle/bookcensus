@@ -18,6 +18,9 @@ a:hover {
     color: #233237;
 }
 
+.guide-text a:link,
+.guide-text a:visited,
+.guide-text a:hover,
 .static-text a:link,
 .static-text a:visited,
 .static-text a:hover {
