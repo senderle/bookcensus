@@ -12,16 +12,16 @@ from django.core.serializers import serialize, deserialize
 # standard GitHub repository.
 
 _canonical_models = [
-    ('canonicalcopies', models.CanonicalCopy),
+    ('locations', models.Location),
+    ('titles', models.Title),
+    ('editions', models.Edition),
+    ('issues', models.Issue),
     ('basecopies', models.BaseCopy),
+    ('canonicalcopies', models.CanonicalCopy),
     ('falsecopies', models.FalseCopy),
     ('draftcopies', models.DraftCopy),
     ('historycopies', models.HistoryCopy),
-    ('locations', models.Location),
     ('statictext', models.StaticPageText),
-    ('issues', models.Issue),
-    ('editions', models.Edition),
-    ('titles', models.Title),
 ]
 
 def check_filename(f):

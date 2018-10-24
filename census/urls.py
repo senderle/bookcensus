@@ -15,6 +15,7 @@ from . import views
 urlpatterns = [
     # Main site functionality
     url(r'^$', views.homepage, name='homepage'),
+    url(r'^$', views.homepage, name='home'),
     url(r'^homepage$',views.homepage, name='homepage'),
     url(r'^search/$', views.search, name='search_for_something'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),

@@ -4,9 +4,7 @@ from django.template import Context, Template
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from . import models
-from .models import *
 from django.contrib.auth.models import User, Group
-from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import get_object_or_404
@@ -87,7 +85,7 @@ def get_icon_path(id=None):
     if id is None:
         return 'census/images/title_icons/generic-title-icon.png'
     else:
-    	return 'census/images/title_icons/{}.png'.format(id)
+        return 'census/images/title_icons/{}.png'.format(id)
 
 ## VIEW FUNCTIONS ##
 
@@ -97,10 +95,10 @@ def search(request):
     value = request.GET.get('value')
     print(field)
     print(value)
-    copy_list = CanonicalCopy.objects.all()
+    copy_list = models.CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
-	field = 'STC / Wing'
+        field = 'STC / Wing'
         result_list = copy_list.filter(issue__STC_Wing__icontains=value)
         print(result_list)
     elif field == 'year' and value:
@@ -133,7 +131,7 @@ def search(request):
 def homepage(request):
     template = loader.get_template('census/frontpage.html')
     gridwidth = 5
-    titlelist = sorted(Title.objects.all(), key=title_sort_key)
+    titlelist = sorted(models.Title.objects.all(), key=title_sort_key)
     titlerows = [titlelist[i: i + gridwidth]
                  for i in range(0, len(titlelist), gridwidth)]
     for row in titlerows:
@@ -148,7 +146,7 @@ def homepage(request):
 
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
-    copy_count = str(CanonicalCopy.objects.count())
+    copy_count = str(models.CanonicalCopy.objects.count())
     content = [(s.content.replace('{copy_count}', copy_count)
                          .replace('{current_date}', '{d:%d %B %Y}'.format(d=datetime.now())))
                for s in StaticPageText.objects.filter(viewname=viewname)]
@@ -158,10 +156,10 @@ def about(request, viewname='about'):
     return HttpResponse(template.render(context, request))
 
 def detail(request, id):
-    selected_title=Title.objects.get(pk=id)
+    selected_title=models.Title.objects.get(pk=id)
     if id == '5' or id == '6':
         editions = list(selected_title.edition_set.all())
-        extra_ed = list(Title.objects.get(pk='39').edition_set.all())
+        extra_ed = list(models.Title.objects.get(pk='39').edition_set.all())
         extra_ed[0].Edition_number = '3'
         editions.extend(extra_ed)
     else:
@@ -169,7 +167,7 @@ def detail(request, id):
 
     issues = [issue for ed in editions for issue in ed.issue_set.all()]
     issues.sort(key=issue_sort_key)
-    copy_count = CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues]).count()
+    copy_count = models.CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues]).count()
     template = loader.get_template('census/detail.html')
     context = {
         'icon_path': get_icon_path(id),
@@ -182,8 +180,8 @@ def detail(request, id):
 
 # showing all copies for an issue
 def copy(request, id):
-    selected_issue = Issue.objects.get(pk=id)
-    all_copies = CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'Shelfmark')
+    selected_issue = models.Issue.objects.get(pk=id)
+    all_copies = models.CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'Shelfmark')
     all_copies = sorted(all_copies, key=copy_sort_key)
     template = loader.get_template('census/copy.html')
     context = {
@@ -196,9 +194,9 @@ def copy(request, id):
 
 def draft_copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-    selected_copy = CanonicalCopy.objects.filter(pk=copy_id)
+    selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)
     if selected_copy:
-    	selected_copy = get_draft_if_exists(selected_copy[0])
+        selected_copy = get_draft_if_exists(selected_copy[0])
     else:
         selected_copy = DraftCopy.objects.get(pk=copy_id)
 
@@ -208,7 +206,7 @@ def draft_copy_data(request, copy_id):
 
 def copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-    selected_copy = CanonicalCopy.objects.get(pk=copy_id)
+    selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
     context={"copy": selected_copy}
 
     return HttpResponse(template.render(context, request))
@@ -255,7 +253,7 @@ def copy_info(request, copy_id):
 @login_required()
 def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
-    selected_issue = Issue.objects.get(pk=id)
+    selected_issue = models.Issue.objects.get(pk=id)
     
     data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
     if request.method == 'POST':
@@ -276,7 +274,7 @@ def add_copy(request, id):
             if not request.user.is_staff:
                 copy.location = UserDetail.objects.get(user=request.user).affiliation
                 copy.location_verified = True
-            copy.issue = Issue.objects.get(pk=id)
+            copy.issue = models.Issue.objects.get(pk=id)
             copy.save()
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
@@ -308,9 +306,9 @@ def librarian_start(request):
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
 
-    copy_count = CanonicalCopy.objects.all().filter(location=affiliation,
+    copy_count = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                                     location_verified=False).count()
-    verified_count = CanonicalCopy.objects.all().filter(location=affiliation,
+    verified_count = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                                         location_verified=True).count()
 
     context = {
@@ -329,7 +327,7 @@ def librarian_validate1(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    copy_list = CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
+    copy_list = models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
         'affiliation': affiliation.name,
@@ -344,7 +342,7 @@ def librarian_validate2(request):
     current_user = request.user
     cur_user_detail = UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    child_copies = CanonicalCopy.objects.all().filter(location=affiliation,
+    child_copies = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                         location_verified=True)
     child_copies = sorted(child_copies, key=librarian_validate_sort_key)
     context={
@@ -357,7 +355,7 @@ def librarian_validate2(request):
 @login_required()
 def update_draft_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
-    canonical_copy = CanonicalCopy.objects.get(pk=id)
+    canonical_copy = models.CanonicalCopy.objects.get(pk=id)
     selected_copy = get_draft_if_exists(canonical_copy)
     init_fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
                    'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
@@ -393,7 +391,7 @@ def admin_edit_verify(request):
     template = template = loader.get_template('census/staff/admin_edit_verify.html')
     selected_copies = DraftCopy.objects.all()
     copies = [copy.parent for copy in selected_copies
-              if isinstance(copy.parent, CanonicalCopy) and copy.parent.location_verified]
+              if isinstance(copy.parent, models.CanonicalCopy) and copy.parent.location_verified]
 
     paginator = Paginator(copies, 10)
     page = request.GET.get('page')
@@ -415,7 +413,7 @@ def admin_verify_single_edit_accept(request):
         copy_id = request.GET.get('copy_id')
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    selected_draft_copy = CanonicalCopy.objects.get(pk=copy_id).drafts.get()
+    selected_draft_copy = models.CanonicalCopy.objects.get(pk=copy_id).drafts.get()
     canonical_copy = selected_draft_copy.parent
     draft_to_canonical_update(selected_draft_copy)
 
@@ -428,7 +426,7 @@ def admin_verify_single_edit_reject(request):
 
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    # selected_draft_set = CanonicalCopy.objects.get(pk=copy_id).drafts
+    # selected_draft_set = models.CanonicalCopy.objects.get(pk=copy_id).drafts
     # if selected_draft_set:
     #     selected_draft = selected_draft_set.get()
     #     selected_draft.delete() 
@@ -441,7 +439,7 @@ def admin_verify_location_verified(request):
     selected_copies = DraftCopy.objects.all()
     copies = [copy for copy in selected_copies
               if copy.parent is None or 
-              (isinstance(copy.parent, CanonicalCopy) 
+              (isinstance(copy.parent, models.CanonicalCopy) 
                and not copy.parent.location_verified)]
 
     context={
@@ -498,7 +496,7 @@ def create_draftcopy(request):
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
 
-    selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
+    selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = True
     draft_copy.save()
@@ -512,7 +510,7 @@ def location_incorrect(request):
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
 
-    selected_copy =  CanonicalCopy.objects.get(pk=copy_id)
+    selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = False
     draft_copy.save()
@@ -544,7 +542,7 @@ def signup(request):
                 email.send()
                 return HttpResponse('Please confirm your email address to complete the registration')
             else:
-		messages.success(request, 'Your account request has been received. A site administrator may contact you for more information.')
+                messages.success(request, 'Your account request has been received. A site administrator may contact you for more information.')
                 return HttpResponseRedirect(reverse('signup'))
 
     else:

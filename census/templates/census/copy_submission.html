@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "census/base.html" %}
 {% load static %}
 {% load humanize %}
 {% block content %}
@@ -18,7 +18,7 @@
        
     <p class="guide-text">
         {% if user.is_staff %}
-        To add a new copy, please fill in the form below.
+        To add a new copy, please fill in the form below:
         {% elif issue %}
         If you have a copy of this edition that is not in our database,<br \>
         please fill in the form below to submit it.<br \>
