@@ -3,7 +3,7 @@ from django.template.response import TemplateResponse
 from django.template import Context, Template
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
-import models
+from . import models
 from .models import *
 from django.contrib.auth.models import User, Group
 from .forms import *

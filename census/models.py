@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.forms import ModelForm
@@ -204,13 +204,13 @@ class LinkedCopyUpdate(object):
         if not isinstance(source.parent, self.target_model):
             raise ValueError('Can only update to instances of {}, but the parent of {} is a {}'.format(self.target_model, source, type(source.parent)))
         parent = source.parent
-        print(parent.id)
-        print(source.id)
+        print((parent.id))
+        print((source.id))
         self.create_record(parent)
         for f in self.copy_fields:
             setattr(parent, f, getattr(source, f))
-        print(parent.id)
-        print(source.id)
+        print((parent.id))
+        print((source.id))
 
         parent.save()
         source.delete()
