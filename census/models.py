@@ -14,12 +14,12 @@ from django.conf import settings
 
 class Location(models.Model):
     name = models.CharField(max_length=500)
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
     def delete(self, *args, **kwargs):
         self.user.delete()
@@ -29,7 +29,7 @@ class UserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     affiliation_str = models.CharField(max_length=255, default='', null=True, blank=True)
     affiliation = models.ForeignKey(Location, on_delete=models.CASCADE, unique=False, null=True, blank=True)
-    group=models.ForeignKey(Group, on_delete=models.CASCADE, default=1)
+    group=models.ForeignKey(Group, on_delete=models.CASCADE, default=1, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -74,7 +74,7 @@ class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
     Apocryphal = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 class Edition (models.Model):

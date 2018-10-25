@@ -4,6 +4,7 @@ from django.template import Context, Template
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from . import models
+from . import forms
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
@@ -149,7 +150,7 @@ def about(request, viewname='about'):
     copy_count = str(models.CanonicalCopy.objects.count())
     content = [(s.content.replace('{copy_count}', copy_count)
                          .replace('{current_date}', '{d:%d %B %Y}'.format(d=datetime.now())))
-               for s in StaticPageText.objects.filter(viewname=viewname)]
+               for s in models.StaticPageText.objects.filter(viewname=viewname)]
     context =  {
         'content': content,
     }
@@ -258,9 +259,9 @@ def add_copy(request, id):
     data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
     if request.method == 'POST':
         if request.user.is_staff:
-            copy_submission_form = AdminCopySubmissionForm(request.POST, initial=data)
+            copy_submission_form = forms.AdminCopySubmissionForm(request.POST, initial=data)
         else:
-            copy_submission_form = LibrarianCopySubmissionForm(request.POST, initial=data)
+            copy_submission_form = forms.LibrarianCopySubmissionForm(request.POST, initial=data)
 
         if copy_submission_form.is_valid():
             '''
@@ -279,9 +280,9 @@ def add_copy(request, id):
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
         if request.user.is_staff:
-            copy_submission_form = AdminCopySubmissionForm(initial=data)
+            copy_submission_form = forms.AdminCopySubmissionForm(initial=data)
         else:
-            copy_submission_form = LibrarianCopySubmissionForm(initial=data)
+            copy_submission_form = forms.LibrarianCopySubmissionForm(initial=data)
     context = {
        'form': copy_submission_form,
        'issue': selected_issue,
@@ -361,7 +362,7 @@ def update_draft_copy(request, id):
                    'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
     data = {f: getattr(selected_copy, f) for f in init_fields}
     if request.method == 'POST':
-        copy_form = LibrarianCopySubmissionForm(request.POST)
+        copy_form = forms.LibrarianCopySubmissionForm(request.POST)
 
         if copy_form.is_valid():
             copy_form_data = copy_form.save(commit=False)
@@ -371,7 +372,7 @@ def update_draft_copy(request, id):
             draft_copy.save()
             return HttpResponseRedirect(reverse('librarian_validate2'))
     else:
-        copy_form = LibrarianCopySubmissionForm(initial=data)
+        copy_form = forms.LibrarianCopySubmissionForm(initial=data)
         context = {
             'form': copy_form,
             'copy': selected_copy,
@@ -472,14 +473,14 @@ def edit_profile(request):
     template=loader.get_template('census/edit_profile.html')
     current_user=request.user
     if request.method=='POST':
-        profile_form = EditProfileForm(request.POST, instance=current_user)
+        profile_form = forms.EditProfileForm(request.POST, instance=current_user)
         if profile_form.is_valid():
             profile_form.save()
             return HttpResponseRedirect(reverse('profile'))
         else:
             messages.error(request, "The username you've inputted is already taken!")
     else:
-        profile_form=EditProfileForm(instance=current_user)
+        profile_form=forms.EditProfileForm(instance=current_user)
 
     context={
         'user': current_user,
@@ -519,7 +520,7 @@ def location_incorrect(request):
 
 def signup(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = forms.SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -546,7 +547,7 @@ def signup(request):
                 return HttpResponseRedirect(reverse('signup'))
 
     else:
-        form = SignupForm()
+        form = forms.SignupForm()
 
     return render(request, 'signup/signup.html', {'form': form})
 

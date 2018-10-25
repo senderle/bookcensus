@@ -86,37 +86,45 @@ class EditProfileForm(forms.ModelForm):
             raise forms.ValidationError("Must be a Penn email address.")
         return data
 
+_submission_field_order = [
+    'location', 'Shelfmark', 'prov_info', 'Marginalia', 'Binding', 
+    'Binder', 'Bookplate', 'Bookplate_Location', 'Local_Notes',
+    'Height', 'Width']
 
 class LibrarianCopySubmissionForm(forms.ModelForm):
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
-    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=False)
     prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
-    Height = forms.IntegerField(label="Height (cm)", initial=0, required=False)
-    Width = forms.IntegerField(label="Width (cm)", initial=0, required=False)
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
     Binding = forms.CharField(label="Binding", required=False)
     Binder = forms.CharField(label="Binder", required=False)
+    Bookplate = forms.CharField(label="Bookplate", required=False)
+    Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
+    Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
+    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
+    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
 
+    field_order = _submission_field_order[1:]
     class Meta:
         model = DraftCopy
-        fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
-                  'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
+        fields = _submission_field_order[1:]
 
 class AdminCopySubmissionForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     Shelfmark = forms.CharField(label="Shelfmark", required=True)
-    Local_Notes = forms.CharField(label="Local Notes", widget=forms.Textarea, required=False)
     prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
-    Height = forms.IntegerField(label="Height (cm)", initial=0, required=False)
-    Width = forms.IntegerField(label="Width (cm)", initial=0, required=False)
     Marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
     Binding = forms.CharField(label="Binding", required=False)
     Binder = forms.CharField(label="Binder", required=False)
+    Bookplate = forms.CharField(label="Bookplate", required=False)
+    Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
+    Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
+    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
+    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
 
+    field_order = _submission_field_order
     class Meta:
         model = CanonicalCopy
-        fields = ['location', 'Shelfmark', 'Local_Notes', 'prov_info', 
-                  'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
+        fields = _submission_field_order
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')

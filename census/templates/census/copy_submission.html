@@ -29,7 +29,7 @@
         {% endif %}
     </p>
     <p class="guide-text">
-        For cataloging recommendations, see the <a href={% url 'about' 'cataloguingguide' %}>Cataloging Guide</a>.
+        For cataloging recommendations, see the <a href={% url 'about' 'cataloguingguide' %} target="_blank">Cataloging Guide</a>.
     </p>
 
     <form class="form-inline"  method="post">
@@ -57,24 +57,9 @@
             <table class="admin-submit">
                 <tbody>
                     <tr>
-                        <td>{{ form.Local_Notes.label_tag }}</td>
-                        <td>{{ form.Local_Notes }}</td>
-                        <td>{{ form.Local_Notes.errors }}</td>
-                    </tr>
-                    <tr>
                         <td>{{ form.prov_info.label_tag }}</td>
                         <td>{{ form.prov_info }}</td>
                         <td>{{ form.prov_info.errors }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.Height.label_tag }}</td>
-                        <td>{{ form.Height }}</td>
-                        <td>{{ form.Height.errors }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.Width.label_tag }}</td>
-                        <td>{{ form.Width }}</td>
-                        <td>{{ form.Width.errors }}</td>
                     </tr>
                     <tr>
                         <td>{{ form.Marginalia.label_tag }}</td>
@@ -90,6 +75,31 @@
                         <td>{{ form.Binder.label_tag }}</td>
                         <td>{{ form.Binder }}</td>
                         <td>{{ form.Binder.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Bookplate.label_tag }}</td>
+                        <td>{{ form.Bookplate }}</td>
+                        <td>{{ form.Bookplate.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Bookplate_Location.label_tag }}</td>
+                        <td>{{ form.Bookplate_Location }}</td>
+                        <td>{{ form.Bookplate_Location.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Local_Notes.label_tag }}</td>
+                        <td>{{ form.Local_Notes }}</td>
+                        <td>{{ form.Local_Notes.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Height.label_tag }}</td>
+                        <td>{{ form.Height }}</td>
+                        <td>{{ form.Height.errors }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.Width.label_tag }}</td>
+                        <td>{{ form.Width }}</td>
+                        <td>{{ form.Width.errors }}</td>
                     </tr>
                 </tbody>
             </table>
