@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+
+import sys
+reload(sys)
+sys.setdefaultencoding('UTF8')
+
 #from django.core.mail import send_mail
 #send_mail('Subject here', 'Here is the message.', 'from@example.com', ['to@example.com'], fail_silently=False)
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

@@ -1,39 +1,44 @@
-from django.contrib import admin
-#from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from django.contrib import admin, auth
+from django.conf import settings
 
-# Register your models here.
-# from .models import *
-import models
+from . import models
 
-admin.site.register(models.StaticPageText)
 
-@admin.register(models.Title)
-class TitleAdmin(admin.ModelAdmin):
-    ordering = ('title',)
+class UserInlineAdmin(admin.StackedInline):
+    model = models.UserDetail 
 
-admin.site.register(models.Issue)
-admin.site.register(models.Edition)
-admin.site.register(models.UserProfile)
-admin.site.register(models.UserDetail)
-
-admin.site.register(models.ContactForm)
+admin.site.unregister(auth.get_user_model())
+@admin.register(auth.get_user_model())
+class UserDetailAdmin(admin.ModelAdmin):
+    inlines = (UserInlineAdmin,)
 
 @admin.register(models.Location)
 class LocationAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
+admin.site.register(models.StaticPageText)
+admin.site.register(models.ContactForm)
+
+# Higher-level FRBR categories:
+
+@admin.register(models.Title)
+class TitleAdmin(admin.ModelAdmin):
+    ordering = ('title',)
+admin.site.register(models.Issue)
+admin.site.register(models.Edition)
+
+# Copy tables:
+
+admin.site.register(models.CanonicalCopy)
+admin.site.register(models.FalseCopy)
+admin.site.register(models.BaseCopy)
 @admin.register(models.DraftCopy)
 class DraftCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
 
-admin.site.register(models.CanonicalCopy)
-
 @admin.register(models.HistoryCopy)
 class HistoryCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
-
-admin.site.register(models.FalseCopy)
-admin.site.register(models.BaseCopy)
 
 ### The below are all unused currently.
 
