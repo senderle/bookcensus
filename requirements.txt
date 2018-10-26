@@ -1,6 +1,0 @@
-Django>=1.11.8, <2
-MySQL-python
-django-jquery
-django-tinymce
-django-extensions
-unicodecsv
