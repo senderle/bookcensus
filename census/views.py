@@ -199,7 +199,7 @@ def draft_copy_data(request, copy_id):
     if selected_copy:
         selected_copy = get_draft_if_exists(selected_copy[0])
     else:
-        selected_copy = DraftCopy.objects.get(pk=copy_id)
+        selected_copy = models.DraftCopy.objects.get(pk=copy_id)
 
     context={"copy": selected_copy}
 
@@ -390,7 +390,7 @@ def admin_start(request):
 @login_required
 def admin_edit_verify(request):
     template = template = loader.get_template('census/staff/admin_edit_verify.html')
-    selected_copies = DraftCopy.objects.all()
+    selected_copies = models.DraftCopy.objects.all()
     copies = [copy.parent for copy in selected_copies
               if isinstance(copy.parent, models.CanonicalCopy) and copy.parent.location_verified]
 
@@ -437,7 +437,7 @@ def admin_verify_single_edit_reject(request):
 @login_required
 def admin_verify_location_verified(request):
     template = loader.get_template('census/staff/admin_verify.html')
-    selected_copies = DraftCopy.objects.all()
+    selected_copies = models.DraftCopy.objects.all()
     copies = [copy for copy in selected_copies
               if copy.parent is None or 
               (isinstance(copy.parent, models.CanonicalCopy) 
@@ -455,7 +455,7 @@ def admin_verify_copy(request):
         copy_id = request.GET.get('copy_id')
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    selected_draft_copy = DraftCopy.objects.get(pk=copy_id)
+    selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     canonical_copy = selected_draft_copy.parent
 
     if canonical_copy is None:
@@ -573,7 +573,7 @@ def contact(request):
     template=loader.get_template('census/contact-form.html')
 
     if request.method=='POST':
-        form=ContactUs(request.POST)
+        form = forms.ContactUs(request.POST)
         if form.is_valid() and form.data['guardian'] == "":
             form.save()
             return HttpResponseRedirect(reverse('contact_success'))
@@ -582,7 +582,7 @@ def contact(request):
         else:
             messages.error(request, "This form is invalid")
     else:
-        form=ContactUs()
+        form = forms.ContactUs()
 
     context={'form': form}
     return HttpResponse(template.render(context, request))
