@@ -222,7 +222,7 @@ def login_user(request):
             login(request, user_account)
             next_url = request.POST.get('next',default=request.GET.get('next', 'login.html'))
             if request.GET.get('next') is None:
-                if user_account.is_superuser:
+                if user_account.is_staff:
                     next_url = "admin_start"
                 else:
                     next_url = "librarian_start"
@@ -273,7 +273,7 @@ def add_copy(request, id):
             copy = copy_submission_form.save(commit=False)
             copy.location_verified = False
             if not request.user.is_staff:
-                copy.location = UserDetail.objects.get(user=request.user).affiliation
+                copy.location = models.UserDetail.objects.get(user=request.user).affiliation
                 copy.location_verified = True
             copy.issue = models.Issue.objects.get(pk=id)
             copy.save()
@@ -304,7 +304,7 @@ def display_user_profile(request):
 def librarian_start(request):
     template = loader.get_template('census/librarian/librarian_start_page.html')
     current_user = request.user
-    cur_user_detail = UserDetail.objects.get(user=current_user)
+    cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
 
     copy_count = models.CanonicalCopy.objects.all().filter(location=affiliation,
@@ -326,7 +326,7 @@ def librarian_validate_sort_key(copy):
 def librarian_validate1(request):
     template = loader.get_template('census/librarian/librarian_validate1.html')
     current_user = request.user
-    cur_user_detail = UserDetail.objects.get(user=current_user)
+    cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
     copy_list = models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
@@ -341,7 +341,7 @@ def librarian_validate1(request):
 def librarian_validate2(request):
     template = loader.get_template('census/librarian/librarian_validate2.html')
     current_user = request.user
-    cur_user_detail = UserDetail.objects.get(user=current_user)
+    cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
     child_copies = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                         location_verified=True)
@@ -525,7 +525,7 @@ def signup(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            user_detail = UserDetail.objects.get(user=user)
+            user_detail = models.UserDetail.objects.get(user=user)
             user_detail.affiliation = form.cleaned_data['affiliation']
             user_detail.save()
             current_site = get_current_site(request)
@@ -555,7 +555,7 @@ def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-        user_detail = UserDetail.objects.get(user=user)
+        user_detail = models.UserDetail.objects.get(user=user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         user_detail = None

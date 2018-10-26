@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-{% if not user.is_superuser %}
+{% if not user.is_staff %}
 <p>Please sign in as administrator to view this page or do anything</p>
 {% else %}
 <div>
