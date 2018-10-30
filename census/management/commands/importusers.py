@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from census.ingest.serialize import import_canon_json
+from census.ingest.serialize import import_user_json
 
 class Command(BaseCommand):
     help = ('Import a json version of the current database. '
