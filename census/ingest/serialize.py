@@ -2,7 +2,7 @@ import os
 import codecs
 from census import models
 from django.core.serializers import serialize, deserialize
-from django.conf import settings
+from django.contrib import auth
 
 # This defines the primary backup dataset. There are lots of
 # other tables, but we regard all of them as containing ephemeral
@@ -26,7 +26,7 @@ _canonical_models = [
 ]
 
 _user_models = [
-    ('user', settings.AUTH_USER_MODEL),
+    ('user', auth.get_user_model()),
     ('userdetail', models.UserDetail),
 ]
 
