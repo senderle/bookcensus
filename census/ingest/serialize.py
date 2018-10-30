@@ -2,6 +2,7 @@ import os
 import codecs
 from census import models
 from django.core.serializers import serialize, deserialize
+from django.conf import settings
 
 # This defines the primary backup dataset. There are lots of
 # other tables, but we regard all of them as containing ephemeral
@@ -24,6 +25,11 @@ _canonical_models = [
     ('statictext', models.StaticPageText),
 ]
 
+_user_models = [
+    ('user', settings.AUTH_USER_MODEL),
+    ('userdetail', models.UserDetail),
+]
+
 def check_filename(f):
     new_f = f
     if os.path.exists(f):
@@ -43,11 +49,6 @@ def export_query_json(filename, queryset):
     with codecs.open(filename, 'w', encoding='utf-8') as op:
         op.write(data)
 
-def export_canon_json(filename_base='backup'):
-    for name, model in _canonical_models:
-        filename = '{}_{}.json'.format(filename_base, name)
-        export_query_json(filename, model.objects.all())
-
 def import_query_json(filename, queryset):
     with codecs.open(filename, 'r', encoding='utf-8') as ip:
         data = ip.read()
@@ -55,11 +56,30 @@ def import_query_json(filename, queryset):
     for row in deserialize('json', data):
         row.save()
 
-def import_canon_json(filename_base='backup'):
+def export_modelset_json(modelset, filename_base):
+    for name, model in modelset:
+        filename = '{}_{}.json'.format(filename_base, name)
+        export_query_json(filename, model.objects.all())
+
+def import_modelset_json(modelset, filename_base):
     canonical_models = [('{}_{}.json'.format(filename_base, name), model)
-                        for name, model in _canonical_models]
+                        for name, model in modelset]
     if all(os.path.isfile(filename) for filename, model in canonical_models):
         for filename, model in canonical_models:
             import_query_json(filename, model.objects.all())
     else:
         print("couldn't find backup files")
+
+def export_canon_json(filename_base='backup'):
+    export_modelset_json(_canonical_models, filename_base)
+
+def import_canon_json(filename_base='backup'):
+    import_modelset_json(_canonical_models, filename_base)
+
+def export_user_json(filename_base='_user_backup'):
+    export_modelset_json(_user_models, filename_base)
+
+def import_user_json(filename_base='_user_backup'):
+    import_modelset_json(_user_models, filename_base)
+
+
