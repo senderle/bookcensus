@@ -12,7 +12,9 @@ ALLOWED_HOSTS = [
     "localhost",
     "0.0.0.0",
     "127.0.0.1",
-    '159.203.127.128'
+    '138.197.9.8',
+    'shakespearecensus.org',
+    'www.shakespearecensus.org'
 ]
 
 # CACHES

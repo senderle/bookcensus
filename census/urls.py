@@ -36,15 +36,20 @@ urlpatterns = [
 
     # Librarian verification and admin approval routines.
 
-    url(r'^admin_verify_location_verified$', views.admin_verify_location_verified, name='admin_verify_location_verified'), #to verify false_positive_draft
-    #button triggered, change false_positive attribute of the copy
+    # Admin start page:
+    url(r'^admin_start$', views.admin_start, name='admin_start'),
 
-    #button triggered, change admin_validated attribute of the copy
+    # Location verification page:
+    url(r'^admin_verify_copy/$', views.admin_verify_copy, name='admin_verify_copy'),
+    # ...and ajax call
+    url(r'^admin_verify_location_verified$', views.admin_verify_location_verified, name='admin_verify_location_verified'),
+
+    # Edit verification and submission verification pages:
     url(r'^admin_edit_verify$', views.admin_edit_verify, name='admin_edit_verify'),
+    url(r'^admin_submission_verify$', views.admin_submission_verify, name='admin_submission_verify'),
+    # ...and ajax calls
     url(r'^admin_verify_single_edit_accept/$', views.admin_verify_single_edit_accept, name='admin_verify_single_edit_accept'),
     url(r'^admin_verify_single_edit_reject/$', views.admin_verify_single_edit_reject, name='admin_verify_single_edit_reject'),
-    url(r'^admin_verify_copy/$', views.admin_verify_copy, name='admin_verify_copy'),
-    url(r'^admin_start$', views.admin_start, name='admin_start'),
 
     # Librarian-specific verification UI elements:
     url(r'^librarian_start$', views.librarian_start, name='librarian_start'),

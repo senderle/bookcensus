@@ -30,6 +30,7 @@
             <tr>
                 <th class="librarian-select-ui-wide">Copies at {{ affiliation }}</th>
                 <th class="librarian-select-ui"></th>
+                <th class="librarian-select-ui"></th>
                 <th class="librarian-select-ui">Held by library?</th>
             </tr>
             {% for copy in copies %}
@@ -41,9 +42,14 @@
                                 STC/Wing: {{ copy.issue.STC_Wing }}
                             </td>
                             <td>
-                                <span class="copy_data button-inline-small" id="data{{copy.id}}" data-form="{% url 'copy_data' copy.id %}" title="Details">
+                                <span class="copy_data button-inline" id="data{{copy.id}}" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">
                                     View details
                                 </span>
+                            </td>
+                            <td>
+                                <a class="button-inline" href="{% url 'update_draft_copy' copy.id %}" target="_blank">
+                                    Edit details
+                                </a>
                             </td>
                             <td>
                                 <span class="button-inline {% if draft %}{{ draft_held|yesno:"button-inline-selected," }}{% endif %}" id="yes_button_{{copy.id}}" onclick="yes({{ copy.id }})" title="Yes">

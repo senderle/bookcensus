@@ -36,7 +36,7 @@ import re
 def get_or_create_draft(selected_copy):
     assert selected_copy.drafts.count() < 2, "There should not be more than one Draft copy"
     if not selected_copy.drafts.exists():
-        create_draft(selected_copy)
+        models.create_draft(selected_copy)
 
     draft_copy = selected_copy.drafts.get()
     return draft_copy
@@ -386,13 +386,35 @@ def admin_start(request):
     context={}
     return HttpResponse(template.render(context, request))
 
-
 @login_required
 def admin_edit_verify(request):
     template = template = loader.get_template('census/staff/admin_edit_verify.html')
     selected_copies = models.DraftCopy.objects.all()
-    copies = [copy.parent for copy in selected_copies
-              if isinstance(copy.parent, models.CanonicalCopy) and copy.parent.location_verified]
+    copies = [copy for copy in selected_copies
+              if copy.parent and
+                 isinstance(copy.parent, models.CanonicalCopy) and 
+                 copy.parent.location_verified]
+
+    paginator = Paginator(copies, 10)
+    page = request.GET.get('page')
+    try:
+        copies_per_page = paginator.page(page)
+    except PageNotAnInteger:
+        copies_per_page = paginator.page(1)
+    except EmptyPage:
+        copies_per_page = paginator.page(paginator.num_pages)
+
+    context={
+        'copies': copies_per_page,
+    }
+    return HttpResponse(template.render(context, request))
+
+@login_required
+def admin_submission_verify(request):
+    template = template = loader.get_template('census/staff/admin_submission_verify.html')
+    selected_copies = models.DraftCopy.objects.all()
+    copies = [copy for copy in selected_copies
+              if not copy.parent]
 
     paginator = Paginator(copies, 10)
     page = request.GET.get('page')
@@ -414,9 +436,11 @@ def admin_verify_single_edit_accept(request):
         copy_id = request.GET.get('copy_id')
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
-    selected_draft_copy = models.CanonicalCopy.objects.get(pk=copy_id).drafts.get()
-    canonical_copy = selected_draft_copy.parent
-    draft_to_canonical_update(selected_draft_copy)
+    selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
+    if selected_draft_copy.parent and isinstance(selectd_draft_copy.parent, CanonicalCopy):
+        models.draft_to_canonical_update(selected_draft_copy)
+    else:
+        models.draft_to_canonical_create(selected_draft_copy)
 
     return HttpResponse('success')
 
@@ -439,9 +463,9 @@ def admin_verify_location_verified(request):
     template = loader.get_template('census/staff/admin_verify.html')
     selected_copies = models.DraftCopy.objects.all()
     copies = [copy for copy in selected_copies
-              if copy.parent is None or 
-              (isinstance(copy.parent, models.CanonicalCopy) 
-               and not copy.parent.location_verified)]
+              if copy.parent and
+                 isinstance(copy.parent, models.CanonicalCopy) and not
+                 copy.parent.location_verified]
 
     context={
         'copies': copies
@@ -458,13 +482,18 @@ def admin_verify_copy(request):
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     canonical_copy = selected_draft_copy.parent
 
-    if canonical_copy is None:
-        draft_to_canonical_create(selected_draft_copy)
-    elif not selected_draft_copy.location_verified:
+    if not selected_draft_copy.location_verified:
         selected_draft_copy.delete()
-        canonical_to_fp_move(canonical_copy)
+        models.canonical_to_fp_move(canonical_copy)
     else:
-        draft_to_canonical_update(selected_draft_copy)
+        # We directly edit the canonical copy here and create a history
+        # record for it, without touching the draft, because we need to
+        # verify the edits separately. This means that in cases where the
+        # librarian has made no edits, this will still appear in the admin
+        # edit verify queue. I am not sure about the best way to handle this.
+        models.create_history(canonical_copy)
+        canonical_copy.location_verified = True
+        canonical_copy.save()
 
     return HttpResponse('success')
 
