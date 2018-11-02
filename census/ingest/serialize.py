@@ -3,6 +3,9 @@ import codecs
 from census import models
 from django.core.serializers import serialize, deserialize
 from django.contrib import auth
+from django.db.utils import ProgrammingError
+from django.db import connection
+
 
 # This defines the primary backup dataset. There are lots of
 # other tables, but we regard all of them as containing ephemeral
@@ -49,24 +52,31 @@ def export_query_json(filename, queryset):
     with codecs.open(filename, 'w', encoding='utf-8') as op:
         op.write(data)
 
-def import_query_json(filename, queryset):
+def import_query_json(filename, model):
     with codecs.open(filename, 'r', encoding='utf-8') as ip:
         data = ip.read()
 
     for row in deserialize('json', data):
         row.save()
 
+    try:
+        table = model._meta.db_table
+        cur = connection.cursor()
+        cur.execute("SELECT setval('{}_id_seq', (SELECT max(id) FROM {}))".format(table, table))
+    except ProgrammingError:
+        pass
+
 def export_modelset_json(modelset, filename_base):
     for name, model in modelset:
         filename = '{}_{}.json'.format(filename_base, name)
-        export_query_json(filename, model.objects.all())
+        export_query_json(filename, model)
 
 def import_modelset_json(modelset, filename_base):
     canonical_models = [('{}_{}.json'.format(filename_base, name), model)
                         for name, model in modelset]
     if all(os.path.isfile(filename) for filename, model in canonical_models):
         for filename, model in canonical_models:
-            import_query_json(filename, model.objects.all())
+            import_query_json(filename, model)
     else:
         print("couldn't find backup files")
 
