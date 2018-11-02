@@ -328,7 +328,13 @@ def librarian_validate1(request):
     current_user = request.user
     cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
+
+    # Include all unverified records...
     copy_list = models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
+
+    # ...but filter out ones with drafts that have been verified.
+    copy_list = (c for c in copy_list if not c.drafts or not c.drafts.first().location_verified)
+
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
         'affiliation': affiliation.name,
@@ -343,13 +349,22 @@ def librarian_validate2(request):
     current_user = request.user
     cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
-    child_copies = models.CanonicalCopy.objects.all().filter(location=affiliation,
-                                                             location_verified=True)
-    child_copies = sorted(child_copies, key=librarian_validate_sort_key)
+
+    # Include all verified drafts...
+    verified_drafts = models.DraftCopy.objects.filter(location=affiliation,
+                                                      location_verified=True)
+    # And all verified copies...
+    verified_copies = models.CanonicalCopy.objects.filter(location=affiliation,
+                                                          location_verified=True)
+
+    # ...but convert drafts to parents and include only verified copies without drafts.
+    all_copies = [d.parent for d in verified_drafts] + [c for c in verified_copies if not c.drafts]
+
+    all_copies = sorted(all_copies, key=librarian_validate_sort_key)
     context={
         'user_detail': cur_user_detail,
         'affiliation': affiliation.name,
-        'child_copies': child_copies,
+        'child_copies': all_copies,
     }
     return HttpResponse(template.render(context, request))
 
