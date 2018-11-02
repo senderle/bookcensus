@@ -37,10 +37,10 @@
                             STC/Wing: {{ copy.issue.STC_Wing }}
                         </td>
                         <td>
-                            <a class="copy_data button-inline" href="#" data-form="{% url 'copy_data' copy.id %}" title="Details">Original Version</a>
+			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>
                         </td>
                         <td>
-                            <a class="copy_data button-inline" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+			    <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
                         </td>
                         <td>
                             <button class="button-inline" id="accept-{{ copy.id }}" onclick="accept({{ copy.id }});">Accept</button>
@@ -66,6 +66,8 @@ function accept(copy_id) {
     }).done(function() {
         $('#accept-' + copy_id).addClass('button-inline-selected');
         $('#reject-' + copy_id).removeClass('button-inline-selected');
+	$('original-details-' + copy_id).addClass('hidden');
+	$('new-draft-details-' + copy_id).addClass('hidden');
     });
 }
 function reject(copy_id) {
@@ -78,6 +80,8 @@ function reject(copy_id) {
     }).done(function() {
         $('#accept-' + copy_id).removeClass('button-inline-selected');
         $('#reject-' + copy_id).addClass('button-inline-selected');
+	$('original-details-' + copy_id).addClass('hidden');
+	$('new-draft-details-' + copy_id).addClass('hidden');
     });
 }
 </script>

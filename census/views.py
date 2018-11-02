@@ -344,7 +344,7 @@ def librarian_validate2(request):
     cur_user_detail = models.UserDetail.objects.get(user=current_user)
     affiliation = cur_user_detail.affiliation
     child_copies = models.CanonicalCopy.objects.all().filter(location=affiliation,
-                                        location_verified=True)
+                                                             location_verified=True)
     child_copies = sorted(child_copies, key=librarian_validate_sort_key)
     context={
         'user_detail': cur_user_detail,
@@ -437,7 +437,7 @@ def admin_verify_single_edit_accept(request):
     except IOError:
         print("something wrong with id, may be it does not exist at all?")
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
-    if selected_draft_copy.parent and isinstance(selectd_draft_copy.parent, CanonicalCopy):
+    if selected_draft_copy.parent and isinstance(selected_draft_copy.parent, models.CanonicalCopy):
         models.draft_to_canonical_update(selected_draft_copy)
     else:
         models.draft_to_canonical_create(selected_draft_copy)
