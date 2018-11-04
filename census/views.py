@@ -309,8 +309,13 @@ def librarian_start(request):
 
     copy_count = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                                     location_verified=False).count()
+    draft_count = models.DraftCopy.objects.all().filter(location=affiliation,
+                                                        location_verified=True,
+                                                        parent__location_verified=False).count()
+    copy_count -= draft_count
     verified_count = models.CanonicalCopy.objects.all().filter(location=affiliation,
                                                         location_verified=True).count()
+    verified_count += draft_count
 
     context = {
         'affiliation': affiliation.name,
@@ -330,10 +335,17 @@ def librarian_validate1(request):
     affiliation = cur_user_detail.affiliation
 
     # Include all unverified records...
-    copy_list = models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False)
+    copy_list = list(models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False))
+
+    print([c.drafts for c in copy_list])
+    print([c.drafts.first() for c in copy_list if c.drafts])
+    print([c.drafts.first().location_verified for c in copy_list if c.drafts and c.drafts.first()])
 
     # ...but filter out ones with drafts that have been verified.
-    copy_list = (c for c in copy_list if not c.drafts or not c.drafts.first().location_verified)
+    copy_list = [c for c in copy_list 
+                 if not c.drafts 
+                 or not c.drafts.first() 
+                 or not c.drafts.first().location_verified]
 
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
     context = {
@@ -358,7 +370,7 @@ def librarian_validate2(request):
                                                           location_verified=True)
 
     # ...but convert drafts to parents and include only verified copies without drafts.
-    all_copies = [d.parent for d in verified_drafts] + [c for c in verified_copies if not c.drafts]
+    all_copies = [d.parent for d in verified_drafts] + [c for c in verified_copies if not c.drafts or not c.drafts.first()]
 
     all_copies = sorted(all_copies, key=librarian_validate_sort_key)
     context={
