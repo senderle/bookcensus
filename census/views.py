@@ -581,7 +581,7 @@ def signup(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            user_detail = models.UserDetail.objects.get(user=user)
+            user_detail = models.UserDetail(user=user)
             user_detail.affiliation = form.cleaned_data['affiliation']
             user_detail.save()
             current_site = get_current_site(request)

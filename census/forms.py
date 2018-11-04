@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib import auth
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from django.forms import inlineformset_factory, TextInput, formset_factory
@@ -130,5 +130,5 @@ class SignupForm(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')
     affiliation = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     class Meta:
-        model = User
+        model = auth.get_user_model()
         fields = ('username', 'email', 'password1', 'password2')

@@ -29,7 +29,7 @@ class UserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     affiliation_str = models.CharField(max_length=255, default='', null=True, blank=True)
     affiliation = models.ForeignKey(Location, on_delete=models.CASCADE, unique=False, null=True, blank=True)
-    group=models.ForeignKey(Group, on_delete=models.CASCADE, default=1, null=True, blank=True)
+    group=models.ForeignKey(Group, on_delete=models.CASCADE, default=None, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
