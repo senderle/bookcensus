@@ -129,7 +129,8 @@ class BaseCopy(models.Model):
     Bartlett1916_Notes = models.TextField(null=True, blank=True, default=None)
     Lee_Notes = models.TextField(null=True, blank=True, default=None)
     Local_Notes = models.TextField(null=True, blank=True, default=None)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies", default=1, null=True, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies", 
+                                   default=None, null=True, blank=True, on_delete=models.CASCADE)
     prov_info = models.TextField(null=True, blank=True, default=None)
     bibliography = models.TextField(null=True, blank=True, default=None)
     from_estc = models.BooleanField(default=False)

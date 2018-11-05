@@ -211,6 +211,10 @@ input,
     font-size: 80%;
 }
 
+input[type="text"] {
+    width: 100%;
+}
+
 .button-inline {
     height: 18px;
     font-size: 65%;
