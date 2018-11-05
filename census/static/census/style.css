@@ -211,7 +211,7 @@ input,
     font-size: 80%;
 }
 
-input[type="text"] {
+.admin-submit input[type="text"] {
     width: 100%;
 }
 

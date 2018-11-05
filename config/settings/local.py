@@ -13,6 +13,7 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
     "127.0.0.1",
     '138.197.9.8',
+    '159.203.127.128',
     'shakespearecensus.org',
     'www.shakespearecensus.org'
 ]
