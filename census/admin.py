@@ -17,7 +17,10 @@ class LocationAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 admin.site.register(models.StaticPageText)
-admin.site.register(models.ContactForm)
+
+@admin.register(models.ContactForm)
+class ContactFormAdmin(admin.ModelAdmin):
+    readonly_fields = ('date_submitted',)
 
 # Higher-level FRBR categories:
 

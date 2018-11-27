@@ -147,9 +147,13 @@ def homepage(request):
 
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
-    copy_count = str(models.CanonicalCopy.objects.count())
-    content = [(s.content.replace('{copy_count}', copy_count)
-                         .replace('{current_date}', '{d:%d %B %Y}'.format(d=datetime.now())))
+    pre_render_context = {
+        'copy_count': str(models.CanonicalCopy.objects.count()),
+        'verified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=True).count()),
+        'unverified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=False).count()),
+        'current_date': '{d:%d %B %Y}'.format(d=datetime.now()),
+    }
+    content = [s.content.format(**pre_render_context)
                for s in models.StaticPageText.objects.filter(viewname=viewname)]
     context =  {
         'content': content,
@@ -369,8 +373,16 @@ def librarian_validate2(request):
     verified_copies = models.CanonicalCopy.objects.filter(location=affiliation,
                                                           location_verified=True)
 
-    # ...but convert drafts to parents and include only verified copies without drafts.
-    all_copies = [d.parent for d in verified_drafts] + [c for c in verified_copies if not c.drafts or not c.drafts.first()]
+    # ...but convert drafts to parents and add only those verified copies that
+    # do not have drafts. (They would be included twice otherwise. Also...
+    # TODO: To avoid an error, we have to drop drafts without parents. But 
+    #       in the long run, we'd like those to be editable. That is probably
+    #       going to mean having a separate section -- there's just no clean
+    #       way to get drafts and parents in the same section, sorted correctly.
+    #       What I should do is have both sections on all views, and then have
+    #       drafts and parents segregated, always. That will fix all the annoying
+    #       problems we've been having.
+    all_copies = [d.parent for d in verified_drafts if d.parent is not None] + [c for c in verified_copies if not c.drafts or not c.drafts.first()]
 
     all_copies = sorted(all_copies, key=librarian_validate_sort_key)
     context={

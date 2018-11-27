@@ -4,15 +4,15 @@
 
 <link href="{% static 'census/style.css' %}" rel="stylesheet" type="text/css" />
 
-<h1 align="center">Contact Us</h1>
+<p class="play-title-header guide-text">Contact Us</p>
 
 <div class="contactfieldWrapper">
   <form action="" method="post">
     {% csrf_token %}
-    <table align="center" cellpadding="10px" frame="box" width="500px">
+    <table class="contact-form" align="center" cellpadding="10px" frame="box" width="500px">
       {{ form.as_table }}
-      <td><input type="submit"></input></td><td></td>
     </table>
+    <p class="guide-text"><input type="submit"></input></p>
   </form>
 </div>
 

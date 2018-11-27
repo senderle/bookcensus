@@ -43,6 +43,10 @@ table {
     font-weight: lighter;
 }
 
+table.contact-form {
+    border-style: none;
+}
+
 th {
     font-weight: lighter;
 }
