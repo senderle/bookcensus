@@ -69,7 +69,7 @@ def import_query_json(filename, model):
 def export_modelset_json(modelset, filename_base):
     for name, model in modelset:
         filename = '{}_{}.json'.format(filename_base, name)
-        export_query_json(filename, model)
+        export_query_json(filename, model.objects.all())
 
 def import_modelset_json(modelset, filename_base):
     canonical_models = [('{}_{}.json'.format(filename_base, name), model)
