@@ -30,6 +30,7 @@ from django.core.mail import EmailMessage
 
 from datetime import datetime
 import re
+import csv
 
 ## UTILITY FUNCTIONS ##
 # Eventually these should be moved into a separate util module.
@@ -254,6 +255,21 @@ def copy_info(request, copy_id):
         'selected_copy': selected_copy,
     }
     return HttpResponse(template.render(context,request))
+
+def location_copy_count_csv_export(request):
+    locations = CanonicalCopy.objects.all().values('location')
+    locations = locations.annotate(total=Count('location')).order_by('location')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Location', 'Number of Copies'])
+    for loc in locations:
+        writer.writerow([loc.location, loc.total])
+
+    return response
+
 
 @login_required()
 def add_copy(request, id):

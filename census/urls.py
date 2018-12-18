@@ -28,6 +28,9 @@ urlpatterns = [
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
 
+    # Data export
+    url(r'^location_copy_count_csv_export', views.location_copy_count_csv_export, name='location_copy_count_csv_export')
+
     # User accounts and management
     url(r'^login', views.login_user, name='login_user'),
     url(r'^logout$', views.logout_user, name='logout_user'),
