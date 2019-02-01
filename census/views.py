@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template.response import TemplateResponse
 from django.template import Context, Template
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,7 +11,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from django.forms import formset_factory
-from django.db.models import Q
+from django.db.models import Q, Count, Sum #, Concat
 from django.contrib import admin
 from itertools import chain
 from django.core import serializers
@@ -257,19 +257,45 @@ def copy_info(request, copy_id):
     return HttpResponse(template.render(context,request))
 
 def location_copy_count_csv_export(request):
-    locations = CanonicalCopy.objects.all().values('location')
-    locations = locations.annotate(total=Count('location')).order_by('location')
+    locations = models.CanonicalCopy.objects.all().values('location')
+    locations = locations.annotate(total=Count('location')).order_by('location__name')
     
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    response['Content-Disposition'] = 'attachment; filename="shakespeare_census_location_copy_count.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['Location', 'Number of Copies'])
     for loc in locations:
-        writer.writerow([loc.location, loc.total])
+        writer.writerow([models.Location.objects.get(pk=loc['location']).name, loc['total']])
 
     return response
 
+def export(request, groupby, column, aggregate):
+    agg_model = (# Concat if aggregate == 'concatenation' else
+                 Sum if aggregate == 'sum' else
+                 Count)
+    try:
+        groups = models.CanonicalCopy.objects.all().values(groupby)
+    except: 
+        raise Http404('Invalid groupby column.')
+
+    try:
+        rows = groups.annotate(agg=agg_model(column)).order_by(groupby)
+    except:
+        raise Http404('Invalid aggregation column.')
+
+    filename = 'shakespeare_census_{}_of_{}_for_each_{}.csv'
+    filename = filename.format(aggregate, column, groupby)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+
+    writer = csv.writer(response)
+    writer.writerow([groupby, '{} of {}'.format(aggregate, column)])
+
+    for row in rows:
+        writer.writerow([row[groupby], row['agg']])
+
+    return response
 
 @login_required()
 def add_copy(request, id):
