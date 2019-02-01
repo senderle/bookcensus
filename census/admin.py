@@ -39,6 +39,10 @@ admin.site.register(models.BaseCopy)
 class DraftCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
 
+@admin.register(models.RejectedDraftCopy)
+class RejectedDraftCopyAdmin(admin.ModelAdmin):
+    raw_id_fields = ("parent",)
+
 @admin.register(models.HistoryCopy)
 class HistoryCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)

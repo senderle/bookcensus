@@ -173,7 +173,7 @@ class RejectedDraftCopy(BaseCopy):
     parent = models.ForeignKey(CanonicalCopy, related_name='rejected_drafts', default=None, null=True, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     class Meta:
-        verbose_name_plural = "Draft copies"
+        verbose_name_plural = "Rejected draft copies"
 
 ### Copy Management Classes/Callables ###
 
