@@ -534,7 +534,7 @@ def admin_verify_single_edit_reject(request):
         print("Error in ID Field. We don't actually understand why this happened, sorry.")
     
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
-    draft_to_reject_move(selected_draft_copy)
+    models.draft_to_reject_move(selected_draft_copy)
 
     return HttpResponse('success')
 

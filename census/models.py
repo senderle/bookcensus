@@ -170,7 +170,7 @@ class HistoryCopy(BaseCopy):
         verbose_name_plural = "History copies"
 
 class RejectedDraftCopy(BaseCopy):
-    parent = models.ForeignKey(CanonicalCopy, related_name='drafts', default=None, null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey(CanonicalCopy, related_name='rejected_drafts', default=None, null=True, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name_plural = "Draft copies"
@@ -269,7 +269,7 @@ class ParentCopyMove(object):
 canonical_to_fp_move = ParentCopyMove(CanonicalCopy, FalseCopy, BaseCopy)
 
 class LinkedCopyMove(object):
-    def __init__(self, source_model, target_mode, base_model):
+    def __init__(self, source_model, target_model, base_model):
         self.source_model = source_model
         self.target_model = target_model
         self.base_model = base_model
@@ -287,4 +287,4 @@ class LinkedCopyMove(object):
         new.save()
         source.delete()
 
-draft_to_reject_move = LinkedCopyMove(object)
+draft_to_reject_move = LinkedCopyMove(DraftCopy, RejectedDraftCopy, BaseCopy)
