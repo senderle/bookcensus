@@ -1,0 +1,10 @@
+sudo docker cp shakespearecensusproduction_django_1:app/latest_basecopies.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_canonicalcopies.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_draftcopies.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_editions.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_falsecopies.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_historycopies.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_issues.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_locations.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_statictext.json .
+sudo docker cp shakespearecensusproduction_django_1:app/latest_titles.json .

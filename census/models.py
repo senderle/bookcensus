@@ -169,6 +169,11 @@ class HistoryCopy(BaseCopy):
     class Meta:
         verbose_name_plural = "History copies"
 
+class RejectedDraftCopy(BaseCopy):
+    parent = models.ForeignKey(CanonicalCopy, related_name='drafts', default=None, null=True, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        verbose_name_plural = "Draft copies"
 
 ### Copy Management Classes/Callables ###
 
@@ -262,3 +267,24 @@ class ParentCopyMove(object):
         source.delete()
 
 canonical_to_fp_move = ParentCopyMove(CanonicalCopy, FalseCopy, BaseCopy)
+
+class LinkedCopyMove(object):
+    def __init__(self, source_model, target_mode, base_model):
+        self.source_model = source_model
+        self.target_model = target_model
+        self.base_model = base_model
+        self.copy_fields = set(f.name for f in base_model._meta.fields)
+        self.copy_fields.discard('id')
+        self.copy_fields.discard('pk')
+        self.copy_fields.add('parent')
+        self.copy_fields.add('date_created')
+    def __call__(self, source):
+        if not isinstance(source, self.source_model):
+            raise ValueError('Can only copy instances of {}'.format(self.source_model))
+        new = self.target_model()
+        for f in self.copy_fields:
+            setattr(new, f, getattr(source, f))
+        new.save()
+        source.delete()
+
+draft_to_reject_move = LinkedCopyMove(object)

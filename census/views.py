@@ -516,7 +516,7 @@ def admin_verify_single_edit_accept(request):
     try:
         copy_id = request.GET.get('copy_id')
     except IOError:
-        print("something wrong with id, may be it does not exist at all?")
+        print("Error in ID Field. We don't actually understand why this happened, sorry.")
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     if selected_draft_copy.parent and isinstance(selected_draft_copy.parent, models.CanonicalCopy):
         models.draft_to_canonical_update(selected_draft_copy)
@@ -531,11 +531,10 @@ def admin_verify_single_edit_reject(request):
         copy_id = request.GET.get('copy_id')
 
     except IOError:
-        print("something wrong with id, may be it does not exist at all?")
-    # selected_draft_set = models.CanonicalCopy.objects.get(pk=copy_id).drafts
-    # if selected_draft_set:
-    #     selected_draft = selected_draft_set.get()
-    #     selected_draft.delete() 
+        print("Error in ID Field. We don't actually understand why this happened, sorry.")
+    
+    selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
+    draft_to_reject_move(selected_draft_copy)
 
     return HttpResponse('success')
 
@@ -559,7 +558,7 @@ def admin_verify_copy(request):
     try:
         copy_id = request.GET.get('copy_id')
     except IOError:
-        print("something wrong with id, may be it does not exist at all?")
+        print("Error in ID Field. We don't actually understand why this happened, sorry.")
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     canonical_copy = selected_draft_copy.parent
 
@@ -605,7 +604,7 @@ def create_draftcopy(request):
     try:
         copy_id = request.GET.get('copy_id')
     except IOError:
-        print("something wrong with id, may be it does not exist at all?")
+        print("Error in ID Field. We don't actually understand why this happened, sorry.")
 
     selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)
@@ -619,7 +618,7 @@ def location_incorrect(request):
     try:
         copy_id = request.GET.get('copy_id')
     except IOError:
-        print("something wrong with id, may be it does not exist at all?")
+        print("Error in ID Field. We don't actually understand why this happened, sorry.")
 
     selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)
