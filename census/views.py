@@ -69,7 +69,8 @@ def title_sort_key(title_object):
 
 def issue_sort_key(i):
     ed_number = i.edition.Edition_number
-    return int(ed_number) if ed_number.isdigit() else float('inf')
+    ed_idx = int(ed_number) if ed_number.isdigit() else float('inf')
+    return (ed_idx, i.STC_Wing)
 
 def copy_sort_key(c):
     return (strip_article(c.location.name), c.Shelfmark)
@@ -439,9 +440,10 @@ def update_draft_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     canonical_copy = models.CanonicalCopy.objects.get(pk=id)
     selected_copy = get_draft_if_exists(canonical_copy)
-    init_fields = ['Shelfmark', 'Local_Notes', 'prov_info', 
-                   'Height', 'Width', 'Marginalia', 'Binding', 'Binder']
+
+    init_fields = forms.LibrarianCopySubmissionForm.field_order
     data = {f: getattr(selected_copy, f) for f in init_fields}
+
     if request.method == 'POST':
         copy_form = forms.LibrarianCopySubmissionForm(request.POST)
 

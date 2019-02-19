@@ -37,10 +37,10 @@
                             STC/Wing: {{ copy.issue.STC_Wing }}
                         </td>
                         <td>
-			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original Version</a>
+			    <a class="copy_data button-inline" id="original-details-{{ copy.id }}" href="#" data-form="{% url 'copy_data' copy.parent.id %}" title="Details">Original&nbspVersion</a>
                         </td>
                         <td>
-			    <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New Version</a>
+			    <a class="copy_data button-inline" id="new-draft-details-{{ copy.id }}" href="#" data-form="{% url 'draft_copy_data' copy.id %}" title="Details">New&nbspVersion</a>
                         </td>
                         <td>
                             <button class="button-inline" id="accept-{{ copy.id }}" onclick="accept({{ copy.id }});">Accept</button>
