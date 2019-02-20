@@ -446,16 +446,18 @@ def update_draft_copy(request, id):
 
     if request.method == 'POST':
         copy_form = forms.LibrarianCopySubmissionForm(request.POST)
-
-        if copy_form.is_valid():
-            copy_form_data = copy_form.save(commit=False)
-            draft_copy = get_or_create_draft(canonical_copy)
-            for f in init_fields:
-                setattr(draft_copy, f, getattr(copy_form_data, f))
-            draft_copy.save()
-            return HttpResponseRedirect(reverse('librarian_validate2'))
-    else:
+    else: 
         copy_form = forms.LibrarianCopySubmissionForm(initial=data)
+
+
+    if request.method == 'POST' and copy_form.is_valid():
+        copy_form_data = copy_form.save(commit=False)
+        draft_copy = get_or_create_draft(canonical_copy)
+        for f in init_fields:
+            setattr(draft_copy, f, getattr(copy_form_data, f))
+        draft_copy.save()
+        return HttpResponseRedirect(reverse('librarian_validate2'))
+    else: 
         context = {
             'form': copy_form,
             'copy': selected_copy,
