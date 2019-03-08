@@ -1,10 +1,9 @@
-sudo docker cp shakespearecensusproduction_django_1:app/latest_basecopies.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_canonicalcopies.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_draftcopies.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_editions.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_falsecopies.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_historycopies.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_issues.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_locations.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_statictext.json .
-sudo docker cp shakespearecensusproduction_django_1:app/latest_titles.json .
+# This is a very sloppy way of getting backups out of the docker container.
+# Run it, copy the output, and paste it back into the terminal.
+
+echo "sudo docker exec -it shakespearecensusproduction_django_1 /entrypoint python manage.py exportjson $1"
+echo "sudo docker exec -it shakespearecensusproduction_django_1 /entrypoint python manage.py exportjson latest"
+docker exec -it shakespearecensusproduction_django_1 /entrypoint find . -maxdepth 1 -iname *_*.json | \
+    grep .*_.*.json | \
+    sed "s/\./sudo docker cp shakespearecensusproduction_django_1:app/" | \
+    sed "s/\.json/.json . /"
