@@ -96,14 +96,14 @@ def search(request):
     template = loader.get_template('census/search-results.html')
     field = request.GET.get('field')
     value = request.GET.get('value')
-    print(field)
-    print(value)
     copy_list = models.CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
         field = 'STC / Wing'
         result_list = copy_list.filter(issue__STC_Wing__icontains=value)
-        print(result_list)
+    elif field == 'nsc' and value:
+        field = 'SC'
+        result_list = copy_list.filter(NSC=value)
     elif field == 'year' and value:
         field = 'Year'
         year_range = convert_year_range(value)
@@ -118,6 +118,8 @@ def search(request):
     elif field == 'bartlett' and value:
         field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
+    else:
+        result_list = []
 
     result_list = sorted(result_list, key=search_sort_key)
 
@@ -383,10 +385,6 @@ def librarian_validate1(request):
 
     # Include all unverified records...
     copy_list = list(models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False))
-
-    print([c.drafts for c in copy_list])
-    print([c.drafts.first() for c in copy_list if c.drafts])
-    print([c.drafts.first().location_verified for c in copy_list if c.drafts and c.drafts.first()])
 
     # ...but filter out ones with drafts that have been verified.
     copy_list = [c for c in copy_list 
