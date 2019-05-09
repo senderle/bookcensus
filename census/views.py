@@ -223,6 +223,22 @@ def copy(request, id):
     return HttpResponse(template.render(context, request))
 
 def draft_copy_data(request, copy_id):
+    # This is a little bit questionable, so I'm explaining in detail.
+
+    # To avoid having a proliferation of endpoints for copies of
+    # multiple kinds, we simplify by assuming the incoming ID is
+    # a canonical copy, and getting the corresponding draft
+    # information if it exists. Otherwise, no draft has been created
+    # yet, and so we should return the original data, which is the only
+    # existing "draft."
+
+    # That makes perfect sense.
+
+    # *However* ... sometimes it's necessary to ask for an existing draft
+    # copy by its own ID instead of by the copy id. If the above
+    # fails, we try to do that instead. This allows us to reuse several
+    # templates that we would otherwise have to customize.
+
     template = loader.get_template('census/copy_modal.html')
     selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)
     if selected_copy:
@@ -235,6 +251,12 @@ def draft_copy_data(request, copy_id):
     return HttpResponse(template.render(context, request))
 
 def copy_data(request, copy_id):
+    # See above notes to `draft_copy_data`. Here, instead of
+    # canonical -> draft, it's canonical -> false. But the essential
+    # idea is the same; we get to reuse templates by cheating a
+    # little bit here. In this case it's the `search_results`
+    # template, which is also used to display false copies.
+
     template = loader.get_template('census/copy_modal.html')
     selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)
     if selected_copy:
