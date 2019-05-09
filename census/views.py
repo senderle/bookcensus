@@ -236,7 +236,12 @@ def draft_copy_data(request, copy_id):
 
 def copy_data(request, copy_id):
     template = loader.get_template('census/copy_modal.html')
-    selected_copy = models.CanonicalCopy.objects.get(pk=copy_id)
+    selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)
+    if selected_copy:
+        selected_copy = selected_copy[0]
+    else:
+        selected_copy = models.FalseCopy.objects.get(pk=copy_id)
+
     context={"copy": selected_copy}
 
     return HttpResponse(template.render(context, request))
