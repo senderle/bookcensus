@@ -127,8 +127,10 @@ class AdminCopySubmissionForm(forms.ModelForm):
         fields = _submission_field_order
 
 class SignupForm(UserCreationForm):
-    email = forms.EmailField(max_length=200, help_text='Required')
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=150, required=True)
+    email = forms.EmailField(max_length=200, required=True, help_text='Required')
     affiliation = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     class Meta:
         model = auth.get_user_model()
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')

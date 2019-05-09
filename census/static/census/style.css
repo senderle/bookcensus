@@ -189,6 +189,8 @@ span.citation {
 
 .unicode-icon {
     font-family: FontAwesome;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 /* UI Styles (May be either class- or tag-level) */

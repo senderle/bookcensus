@@ -1,7 +1,12 @@
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 align="left" class="modal-title">Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})</h3>
+            <h3 align="left" class="modal-title">
+		    Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
+		    {% if copy.Digital_Facsimile_URL %} 
+		    <span class="unicode-icon"> ☷ </span>
+		    {% endif %}
+	    </h3>
         </div>
         <div class="modal-body">
           <!--div class="half-one"-->
@@ -64,7 +69,7 @@
           <!--div class="half-two"--->
 
             {% if copy.Lee %}
-            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
+            <p align="left"><strong>Lee #</strong>: {{ copy.Lee }}</p>
             {% endif %}
 
             {% if copy.Lee_Notes %}
