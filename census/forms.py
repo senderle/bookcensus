@@ -100,8 +100,8 @@ class LibrarianCopySubmissionForm(forms.ModelForm):
     Bookplate = forms.CharField(label="Bookplate", required=False)
     Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
     Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
-    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
-    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
+    Height = forms.DecimalField(label="Leaf Height (cm)", initial=0, required=False)
+    Width = forms.DecimalField(label="Leaf Width (cm)", initial=0, required=False)
 
     field_order = _submission_field_order[1:]
     class Meta:
@@ -118,8 +118,8 @@ class AdminCopySubmissionForm(forms.ModelForm):
     Bookplate = forms.CharField(label="Bookplate", required=False)
     Bookplate_Location = forms.CharField(label="Bookplate Location", required=False)
     Local_Notes = forms.CharField(label="Other Copy-specific Details", widget=forms.Textarea, required=False)
-    Height = forms.DecimalField(label="Height (cm)", initial=0, required=False)
-    Width = forms.DecimalField(label="Width (cm)", initial=0, required=False)
+    Height = forms.DecimalField(label="Leaf Height (cm)", initial=0, required=False)
+    Width = forms.DecimalField(label="Leaf Width (cm)", initial=0, required=False)
 
     field_order = _submission_field_order
     class Meta:
