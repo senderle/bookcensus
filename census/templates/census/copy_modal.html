@@ -4,7 +4,11 @@
             <h3 align="left" class="modal-title">
 		    Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
 		    {% if copy.Digital_Facsimile_URL %} 
-		    <span class="unicode-icon"> ☷ </span>
+		    <span class="unicode-icon">
+			<a href="{{ copy.Digital_Facsimile_URL }}">
+	                ☷
+			</a>
+		    </span>
 		    {% endif %}
 	    </h3>
         </div>
