@@ -73,7 +73,24 @@ def issue_sort_key(i):
     return (ed_idx, i.STC_Wing)
 
 def copy_sort_key(c):
-    return (strip_article(c.location.name), c.Shelfmark)
+    name = c.location.name
+    sm = c.Shelfmark
+    sc = c.NSC
+    try:
+        if '.' in sc:
+            sc_a, sc_b = sc.split('.')
+            sc_a, sc_b = int(sc_a), int(sc_b)
+        else:
+            sc_a = int(sc)
+            sc_b = 0
+    except ValueError:
+        sc_a = 0
+        sc_b = 0
+
+    return (strip_article(name if name else ''), 
+            sm if sm else '',
+            sc_a, 
+            sc_b)
 
 def convert_year_range(year):
     if '-' in year:
