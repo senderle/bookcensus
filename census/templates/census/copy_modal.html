@@ -55,10 +55,6 @@
             <p align="left"><strong>Bookplate location</strong>: {{ copy.Bookplate_Location }}</p>
             {% endif %}
 
-            {% if copy.Lee_Notes %}
-            <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
-            {% endif %}
-
             {% if copy.bibliography %}
             <p align="left"><strong>For scholarship on this copy, see</strong>: {{ copy.bibliography }}</p>
             {% endif %}
@@ -66,16 +62,25 @@
 
 
           <!--div class="half-two"--->
+
+            {% if copy.Lee %}
+            <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
+            {% endif %}
+
+            {% if copy.Lee_Notes %}
+            <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
+            {% endif %}
+
             {% if copy.Bartlett1939 %}
             <p align="left"><strong>Bartlett 1939 #</strong>: {{ copy.Bartlett1939 }}</p>
             {% endif %}
 
-            {% if copy.Bartlett1916 %}
-            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.Bartlett1916 }}</p>
-            {% endif %}
-
             {% if copy.Bartlett1939_Notes %}
             <p align="left"><strong>Bartlett 1939 notes</strong>: {{ copy.Bartlett1939_Notes }}</p>
+            {% endif %}
+
+            {% if copy.Bartlett1916 %}
+            <p align="left"><strong>Bartlett 1916 #</strong>: {{ copy.Bartlett1916 }}</p>
             {% endif %}
 
             {% if copy.Bartlett1916_Notes %}

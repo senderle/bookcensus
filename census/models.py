@@ -113,7 +113,7 @@ class Issue (models.Model):
 class BaseCopy(models.Model):
     location = models.ForeignKey(Location, unique=False, null=True, blank=True, on_delete=models.CASCADE)
     issue = models.ForeignKey(Issue, unique=False, on_delete=models.CASCADE)
-    thumbnail_URL = models.URLField(max_length=500, null=True, blank=True)
+    Digital_Facsimile_URL = models.URLField(max_length=500, null=True, blank=True)
     NSC = models.CharField(max_length=40, default='', null=True, blank=True)
     Shelfmark = models.CharField(max_length=500, default='', null=True, blank=True)
     Height = models.FloatField(default=0, null=True)
@@ -128,6 +128,7 @@ class BaseCopy(models.Model):
     Bartlett1939_Notes = models.TextField(null=True, blank=True, default='')
     Bartlett1916 = models.IntegerField(default=0, null=True)
     Bartlett1916_Notes = models.TextField(null=True, blank=True, default='')
+    Lee = models.IntegerField(default=0, null=True)
     Lee_Notes = models.TextField(null=True, blank=True, default='')
     Local_Notes = models.TextField(null=True, blank=True, default='')
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies", 
