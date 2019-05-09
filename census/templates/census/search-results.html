@@ -24,12 +24,20 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-                {{ field }}: {{ value }}
+		{% if field == "Ghosts" %}
+                    ESTC Ghosts
+		{% else %}
+                    {{ field }}: {{ value }}
+		{% endif %}
             </td>
         </tr>
         <tr>
             <td class="play-issue-header">
-                <span>Extant copies: {{ copy_count }} </span>
+		{% if field == "Ghosts" %}
+                    <span>{{ copy_count }} Records</span>
+		{% else %}
+                    <span>Extant copies: {{ copy_count }} </span>
+		{% endif %}
             </td>
         </tr>
     </table>

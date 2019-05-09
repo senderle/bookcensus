@@ -135,6 +135,10 @@ def search(request):
     elif field == 'bartlett' and value:
         field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
+    elif field == 'ghosts':
+        field = 'Ghosts'
+        value = 'All'
+        result_list = models.FalseCopy.objects.all()
     else:
         result_list = []
 
