@@ -135,6 +135,10 @@ def search(request):
     elif field == 'bartlett' and value:
         field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
+    elif field == 'unverified':
+        field = 'Unverified'
+        value = 'All'
+        result_list = copy_list.filter(location_verified=False)
     elif field == 'ghosts':
         field = 'Ghosts'
         value = 'All'
