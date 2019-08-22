@@ -103,7 +103,7 @@ def copy_shelfmark_sort_key(c):
     return sm if sm else ''
 
 def copy_sort_key(c):
-    sc_a, sc_b = copy_nsc_sort_key(c.NSC)
+    sc_a, sc_b = copy_nsc_sort_key(c)
     return (copy_location_sort_key(c), 
             copy_shelfmark_sort_key(c),
             sc_a, 
@@ -139,11 +139,11 @@ def get_icon_path(id=None):
 
 ## VIEW FUNCTIONS ##
 
-def search(request):
+def search(request, field=None, value=None, order=None):
     template = loader.get_template('census/search-results.html')
-    field = request.GET.get('field')
-    value = request.GET.get('value')
-    order = request.GET.get('order')
+    field = field if field is not None else request.GET.get('field')
+    value = value if value is not None else request.GET.get('value')
+    order = order if order is not None else request.GET.get('order')
     copy_list = models.CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
