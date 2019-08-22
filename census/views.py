@@ -142,7 +142,7 @@ def search(request):
     template = loader.get_template('census/search-results.html')
     field = request.GET.get('field')
     value = request.GET.get('value')
-    value = request.GET.get('order')
+    order = request.GET.get('order')
     copy_list = models.CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
