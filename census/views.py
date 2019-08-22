@@ -48,9 +48,6 @@ def get_draft_if_exists(selected_copy):
     else:
         return selected_copy.drafts.get()
 
-def search_sort_key(copy):
-    return (int(copy.issue.start_date), title_sort_key(copy.issue.edition.title), strip_article(copy.location.name))
-
 def strip_article(s):
     articles = ['a ', 'A ', 'an ', 'An ', 'the ', 'The ']
     for a in articles:
@@ -58,6 +55,58 @@ def strip_article(s):
             return s.replace(a, '', 1)
     else:
         return s
+
+def search_sort_date(copy):
+    return (copy_date_sort_key(copy), 
+            title_sort_key(copy.issue.edition.title), 
+            copy_location_sort_key(copy))
+
+def search_sort_title(copy):
+    return (title_sort_key(copy.issue.edition.title), 
+            copy_date_sort_key(copy), 
+            copy_location_sort_key(copy))
+
+def search_sort_location(copy):
+    return (copy_location_sort_key(copy),
+            copy_date_sort_key(copy),
+            title_sort_key(copy.issue.edition.title))
+
+def search_sort_stc(copy):
+    return (copy.issue.STC_Wing,
+            copy_location_sort_key(copy))
+
+def copy_date_sort_key(c):
+    return int(c.issue.start_date)
+
+def copy_nsc_sort_key(c):
+    nsc = c.NSC
+    nsc_a = 0
+    nsc_b = 0
+
+    try:
+        if '.' in nsc:
+            nsc_a, nsc_b = nsc.split('.')
+            nsc_a, nsc_b = int(nsc_a), int(nsc_b)
+        else:
+            nsc_a = int(nsc)
+    except ValueError:
+        pass
+
+    return (nsc_a, nsc_b)
+
+def copy_location_sort_key(c):
+    return strip_article(c.location.name if name else '')
+
+def copy_shelfmark_sort_key(c):
+    sm = c.Shelfmark
+    return sm if sm else ''
+
+def copy_sort_key(c):
+    sc_a, sc_b = copy_nsc_sort_key(c.NSC)
+    return (copy_location_sort_key(c), 
+            copy_shelfmark_sort_key(c),
+            sc_a, 
+            sc_b)
 
 def title_sort_key(title_object):
     title = title_object.title
@@ -71,26 +120,6 @@ def issue_sort_key(i):
     ed_number = i.edition.Edition_number
     ed_idx = int(ed_number) if ed_number.isdigit() else float('inf')
     return (ed_idx, i.STC_Wing)
-
-def copy_sort_key(c):
-    name = c.location.name
-    sm = c.Shelfmark
-    sc = c.NSC
-    try:
-        if '.' in sc:
-            sc_a, sc_b = sc.split('.')
-            sc_a, sc_b = int(sc_a), int(sc_b)
-        else:
-            sc_a = int(sc)
-            sc_b = 0
-    except ValueError:
-        sc_a = 0
-        sc_b = 0
-
-    return (strip_article(name if name else ''), 
-            sm if sm else '',
-            sc_a, 
-            sc_b)
 
 def convert_year_range(year):
     if '-' in year:
@@ -113,6 +142,7 @@ def search(request):
     template = loader.get_template('census/search-results.html')
     field = request.GET.get('field')
     value = request.GET.get('value')
+    value = request.GET.get('order')
     copy_list = models.CanonicalCopy.objects.all()
 
     if field == 'stc' or field is None and value:
@@ -146,7 +176,18 @@ def search(request):
     else:
         result_list = []
 
-    result_list = sorted(result_list, key=search_sort_key)
+    if order is None:
+        result_list = sorted(result_list, key=search_sort_date)
+    elif order == 'date':
+        result_list = sorted(result_list, key=search_sort_date)
+    elif order == 'title':
+        result_list = sorted(result_list, key=search_sort_title)
+    elif order == 'location':
+        result_list = sorted(result_list, key=search_sort_location)
+    elif order == 'stc':
+        result_list = sorted(result_list, key=search_sort_stc)
+    elif order == 'sc':
+        result_list = sorted(result_list, key=copy_nsc_sort_key)
 
     context = {
         'icon_path': get_icon_path(),

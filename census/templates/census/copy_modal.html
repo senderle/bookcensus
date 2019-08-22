@@ -4,9 +4,9 @@
             <h3 align="left" class="modal-title">
 		    Copy Details for {{ copy.issue.edition.title }} ({{ copy.issue.year }})
 		    {% if copy.Digital_Facsimile_URL %} 
-		    <span class="unicode-icon">
+		    <span class="unicode-icon" title="Link to digital facsimile of this copy">
 			<a href="{{ copy.Digital_Facsimile_URL }}">
-	                ☷
+	                <i class="fa-camera-retro"></i>
 			</a>
 		    </span>
 		    {% endif %}
