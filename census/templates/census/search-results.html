@@ -24,16 +24,16 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-		{% if field == "Ghosts" %}
+		{% if field == "ghosts" %}
                     ESTC Ghosts
 		{% else %}
-                    {{ field }}: {{ value }}
+                    {{ display_field }}: {{ value }}
 		{% endif %}
             </td>
         </tr>
         <tr>
             <td class="play-issue-header">
-		{% if field == "Ghosts" %}
+		{% if field == "ghosts" %}
                     <span>{{ copy_count }} Records</span>
 		{% else %}
                     <span>Extant copies: {{ copy_count }} </span>
@@ -46,11 +46,11 @@
 
         {% if result_list %}
         <tr>
-            <th class="terse"> SC # </th>
-            <th> Year </th>
-            <th class="detailed"> Title </th>
-            <th class="detailed"> Location </th>
-            <th class="terse"> STC / Wing </th>
+	    <th class="terse"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=sc">SC #</a> </th>
+	    <th> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=date">Year</a> </th>
+            <th class="detailed"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=title">Title</a> </th>
+	    <th class="detailed"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=location">Location</a> </th>
+            <th class="terse"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=stc">STC / Wing</a> </th>
         </tr>
         {% for copy in result_list %}
         <tr>

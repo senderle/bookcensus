@@ -145,15 +145,16 @@ def search(request, field=None, value=None, order=None):
     value = value if value is not None else request.GET.get('value')
     order = order if order is not None else request.GET.get('order')
     copy_list = models.CanonicalCopy.objects.all()
+    display_field = field
 
     if field == 'stc' or field is None and value:
-        field = 'STC / Wing'
+        display_field = 'STC / Wing'
         result_list = copy_list.filter(issue__STC_Wing__icontains=value)
     elif field == 'nsc' and value:
-        field = 'SC'
+        display_field = 'SC'
         result_list = copy_list.filter(NSC=value)
     elif field == 'year' and value:
-        field = 'Year'
+        display_field = 'Year'
         year_range = convert_year_range(value)
         if year_range:
             start, end = year_range
@@ -161,17 +162,19 @@ def search(request, field=None, value=None, order=None):
         else:
             result_list = copy_list.filter(issue__year__icontains=value)
     elif field == 'location' and value:
-        field = 'Location'
+        display_field = 'Location'
         result_list = copy_list.filter(location__name__icontains=value)
     elif field == 'bartlett' and value:
-        field = 'Bartlett'
+        display_field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
     elif field == 'unverified':
-        field = 'Unverified'
+        display_field = 'Unverified'
         value = 'All'
         result_list = copy_list.filter(location_verified=False)
+        if order is None:
+            order = 'location'
     elif field == 'ghosts':
-        field = 'Ghosts'
+        display_field = 'Ghosts'
         value = 'All'
         result_list = models.FalseCopy.objects.all()
     else:
@@ -194,6 +197,7 @@ def search(request, field=None, value=None, order=None):
         'icon_path': get_icon_path(),
         'value': value,
         'field': field,
+        'display_field': display_field,
         'result_list': result_list,
         'copy_count': len(result_list)
     }
