@@ -226,6 +226,8 @@ class ProvenanceOwnership(models.Model):
             self.copy.issue.edition.Edition_number, 
             self.copy.NSC
         )
+    class Meta:
+        verbose_name_plural = "Provenance Ownership Records"
 
 ### Copy Management Classes/Callables ###
 
