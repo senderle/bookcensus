@@ -7,6 +7,7 @@ from . import models
 
 class UserInlineAdmin(admin.StackedInline):
     model = models.UserDetail 
+    extra = 1
 
 admin.site.unregister(auth.get_user_model())
 @admin.register(auth.get_user_model())
