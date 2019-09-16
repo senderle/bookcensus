@@ -3,6 +3,7 @@ from django.conf import settings
 
 from . import models
 
+### Administrative Tables
 
 class UserInlineAdmin(admin.StackedInline):
     model = models.UserDetail 
@@ -22,7 +23,15 @@ admin.site.register(models.StaticPageText)
 class ContactFormAdmin(admin.ModelAdmin):
     readonly_fields = ('date_submitted',)
 
-# Higher-level FRBR categories:
+### Core Data Tables
+
+# Provenance tables
+
+@admin.register(models.ProvenanceName)
+class ProvenanceNameAdmin(admin.ModelAdmin):
+    ordering = ('name',)
+
+# Higher-level FRBR categories
 
 @admin.register(models.Title)
 class TitleAdmin(admin.ModelAdmin):
@@ -30,7 +39,7 @@ class TitleAdmin(admin.ModelAdmin):
 admin.site.register(models.Issue)
 admin.site.register(models.Edition)
 
-# Copy tables:
+# Copy tables
 
 admin.site.register(models.CanonicalCopy)
 admin.site.register(models.FalseCopy)

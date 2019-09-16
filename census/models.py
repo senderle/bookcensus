@@ -12,6 +12,8 @@ from django.conf import settings
 
 ### Main Site Operations ###
 
+# This is a data table but it is a prerequsite for the UserDetail table
+
 class Location(models.Model):
     name = models.CharField(max_length=500)
     def __str__(self):
@@ -70,6 +72,34 @@ def create_user_detail(sender, instance, created, **kwargs):
         UserDetail.objects.create(user=instance)
 
 ### Core Data Tables ###
+
+class ProvenanceName(models.Model):
+    SEVENTEENTH = '17'
+    EIGHTEENTH = '18'
+    NINETEENTH = '19'
+    TWENTIETH = '20'
+    CENTURY_CHOICES = [
+        (SEVENTEENTH, 'Pre-1700'),
+        (EIGHTEENTH, '18th-Cenutry'),
+        (NINETEENTH, '19th-Century'),
+        (TWENTIETH, 'Post-1900')
+    ]
+    MALE = 'M'
+    FEMALE = 'F'
+    UNKNOWN = 'U'
+    NOT_APPLICABLE = 'X'
+    GENDER_CHOICES = [
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),
+        (UNKNOWN, 'Unknown'),
+        (NOT_APPLICABLE, 'N/A'),
+    ]
+    name = models.CharField(max_length=256, null=True, blank=True)
+    bio = models.CharField(max_length=1024, null=True, blank=True)
+    viaf = models.CharField(max_length=256, null=True, blank=True)
+    start_century = models.CharField(max_length=2, choices=CENTURY_CHOICES, null=True, blank=True)
+    end_century = models.CharField(max_length=2, choices=CENTURY_CHOICES, null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
 class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
