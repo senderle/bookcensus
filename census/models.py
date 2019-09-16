@@ -222,7 +222,7 @@ class ProvenanceOwnership(models.Model):
     def __str__(self):
         return '{} owned {}, edition {}, SC# {}'.format(
             self.owner.name, 
-            self.copy.title, 
+            self.copy.issue.edition.title, 
             self.copy.issue.edition.Edition_number, 
             self.copy.NSC
         )
