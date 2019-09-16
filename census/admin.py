@@ -31,6 +31,13 @@ class ContactFormAdmin(admin.ModelAdmin):
 class ProvenanceNameAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
+class ProvenanceOwnerInline(admin.TabularInline):
+    model = models.ProvenanceOwner
+
+@admin.register(models.ProvenanceOwner)
+class ProvenanceOwnerAdmin(admin.ModelAdmin):
+    inlines = (ProvenanceOwnerInline,)
+
 # Higher-level FRBR categories
 
 @admin.register(models.Title)
@@ -41,7 +48,10 @@ admin.site.register(models.Edition)
 
 # Copy tables
 
-admin.site.register(models.CanonicalCopy)
+@admin.register(models.CanonicalCopy)
+class CanonicalCopyAdmin(admin.ModelAdmin):
+    inlines = (ProvenanceOwnerInline,)
+
 admin.site.register(models.FalseCopy)
 admin.site.register(models.BaseCopy)
 @admin.register(models.DraftCopy)
