@@ -16,10 +16,11 @@
 
         {% if all_copies %}
         <tr>
-            <th class="terse"> SC # </th>
+            <th class="terse"> SC&nbsp;# </th>
             <th class="detailed"> Location </th>
-            <th> Shelfmark </th>
-            <th class="terse"> Verified? </th>
+            <th class="even"> Shelfmark </th>
+            <th class="icon">&nbsp;</th>
+            <th class="icon">&nbsp;</th>
         </tr>
         {% for copy in all_copies %}
         <tr>
@@ -32,7 +33,7 @@
                     &nbsp;
                 {% endif %}
                 {% if user.is_staff %}
-                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit copy</a>]</span>
+                    <span class="note">[<a href="{% url 'admin:census_canonicalcopy_change' copy.id %}">Edit&nbsp;copy</a>]</span>
                 {% endif %}
             </td>
             <td>
@@ -51,11 +52,20 @@
             </td>
             <td>
                 {% if copy.from_estc and not copy.location_verified %}
-              	    <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
+                      <span title="The existence of this copy has not been verified; location derived from ESTC." class="unverified-symbol">&#x20E0;</span>
                 {% elif not copy.location_verified %}
-              	    <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
+                      <span title="The existence of this copy has not been verified; location entered by an administrator." class="unverified-symbol">&#x20E0;</span>
                 {% else %}
-              	    <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
+                      <span title="This existence of this copy at the location has been verified." class="verified-symbol">&#x2713;</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if copy.Digital_Facsimile_URL %}
+                    <span class="unicode-icon" title="Link to digital facsimile of this copy">
+                        <a href="{{ copy.Digital_Facsimile_URL }}" target="_blank">
+                        <i class="fas fa-camera-retro"></i>
+                        </a>
+                    </span>
                 {% endif %}
             </td>
         </tr>

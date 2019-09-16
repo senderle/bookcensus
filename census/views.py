@@ -79,7 +79,7 @@ def copy_date_sort_key(c):
     return int(c.issue.start_date)
 
 def copy_nsc_sort_key(c):
-    nsc = c.NSC
+    nsc = c.NSC if c.NSC is not None else ''
     nsc_a = 0
     nsc_b = 0
 

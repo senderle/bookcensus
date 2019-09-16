@@ -126,20 +126,24 @@ span.verified-symbol {
 
 .play-detail-set td,
 .play-detail-set th {
-    width: 170px;
+    width: 100px;
     padding: 10px 6px 10px 6px;
 }
 
 .play-detail-set th.detailed {
-    width: 350px;
+    width: 2000px;
 }
 
 .play-detail-set th.terse {
-    width: 20px;
+    width: 40px;
+}
+
+.play-detail-set th.icon {
+    width: 5px;
 }
 
 .play-detail-set th.even {
-    width: 215px;
+    width: 300px;
 }
 
 .warning,
