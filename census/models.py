@@ -101,6 +101,9 @@ class ProvenanceName(models.Model):
     end_century = models.CharField(max_length=2, choices=CENTURY_CHOICES, null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 class Title(models.Model):
     title = models.CharField(max_length=128, unique=True)
     Apocryphal = models.BooleanField(default=False)
