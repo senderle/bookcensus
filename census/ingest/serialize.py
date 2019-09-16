@@ -26,6 +26,8 @@ _canonical_models = [
     ('draftcopies', models.DraftCopy),
     ('historycopies', models.HistoryCopy),
     ('statictext', models.StaticPageText),
+    ('provenancename', models.ProvenanceName),
+    ('provenanceowner', models.ProvenanceOwner),
 ]
 
 _user_models = [

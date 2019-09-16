@@ -185,6 +185,12 @@ class FalseCopy(BaseCopy):
 # Copy records that we are treating as accurate. These records *must*
 # be preserved across versions of the app.
 class CanonicalCopy(BaseCopy):
+    provenance_search_names = models.ManyToManyField(
+        ProvenanceName,
+        through='ProvenanceOwnership',
+        through_fields=('copy', 'owner')
+    )
+
     class Meta:
         verbose_name_plural = "Canonical copies"
 
@@ -208,6 +214,18 @@ class RejectedDraftCopy(BaseCopy):
     date_created = models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name_plural = "Rejected draft copies"
+
+class ProvenanceOwnership(models.Model):
+    copy = models.ForeignKey(CanonicalCopy, on_delete=models.CASCADE)
+    owner = models.ForeignKey(ProvenanceName, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} owned {}, edition {}, SC# {}'.format(
+            self.owner.name, 
+            self.copy.title, 
+            self.copy.issue.edition.Edition_number, 
+            self.copy.NSC
+        )
 
 ### Copy Management Classes/Callables ###
 
