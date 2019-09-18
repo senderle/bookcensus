@@ -6,8 +6,7 @@ from . import models
 ### Administrative Tables
 
 class UserInlineAdmin(admin.StackedInline):
-    model = models.UserDetail 
-    extra = 1
+    model = models.UserDetail
 
 admin.site.unregister(auth.get_user_model())
 @admin.register(auth.get_user_model())
@@ -28,16 +27,20 @@ class ContactFormAdmin(admin.ModelAdmin):
 
 # Provenance tables
 
+class ProvenanceOwnershipInline(admin.TabularInline):
+    model = models.ProvenanceOwnership
+    autocomplete_fields = ('copy', 'owner')
+    extra = 1
+
 @admin.register(models.ProvenanceName)
 class ProvenanceNameAdmin(admin.ModelAdmin):
     ordering = ('name',)
-
-class ProvenanceOwnershipInline(admin.TabularInline):
-    model = models.ProvenanceOwnership
+    search_fields = ('name',)
+    inlines = (ProvenanceOwnershipInline,)
 
 @admin.register(models.ProvenanceOwnership)
 class ProvenanceOwnershipAdmin(admin.ModelAdmin):
-    inlines = (ProvenanceOwnershipInline,)
+    autocomplete_fields = ('copy', 'owner')
 
 # Higher-level FRBR categories
 
@@ -52,6 +55,7 @@ admin.site.register(models.Edition)
 @admin.register(models.CanonicalCopy)
 class CanonicalCopyAdmin(admin.ModelAdmin):
     inlines = (ProvenanceOwnershipInline,)
+    search_fields = ('NSC', 'issue__edition__title__title')
 
 admin.site.register(models.FalseCopy)
 admin.site.register(models.BaseCopy)

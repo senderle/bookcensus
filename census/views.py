@@ -167,6 +167,9 @@ def search(request, field=None, value=None, order=None):
     elif field == 'bartlett' and value:
         display_field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
+    elif field == 'provenance_name' and value:
+        display_field = 'Provenance Name'
+        result_list = copy_list.filter(provenance_search_names__name__icontains=value)
     elif field == 'unverified':
         display_field = 'Unverified'
         value = 'All'

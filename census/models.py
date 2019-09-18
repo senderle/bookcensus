@@ -172,7 +172,7 @@ class BaseCopy(models.Model):
     location_verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return  "%s (%s)" % (self.issue, self.issue.year)
+        return  "{} ({}), SC# {}".format(self.issue, self.issue.year, self.NSC)
     class Meta:
         verbose_name_plural = "Base copies"
 
@@ -220,11 +220,9 @@ class ProvenanceOwnership(models.Model):
     owner = models.ForeignKey(ProvenanceName, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '{} owned {}, edition {}, SC# {}'.format(
+        return '{} owned {}'.format(
             self.owner.name, 
-            self.copy.issue.edition.title, 
-            self.copy.issue.edition.Edition_number, 
-            self.copy.NSC
+            self.copy
         )
     class Meta:
         verbose_name_plural = "Provenance Ownership Records"
