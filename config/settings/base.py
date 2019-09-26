@@ -59,6 +59,8 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize', # Handy template tags
+    # 'dal',  # Third-party, but must be included prior to django.contrib.admin
+    # 'dal_select2'
     'django.contrib.admin',
 ]
 THIRD_PARTY_APPS = [

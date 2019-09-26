@@ -30,6 +30,9 @@ urlpatterns = [
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
 
+    # Search autocomplete
+    # url(r'provenancename-autocomplete/$', views.ProvenanceNameAutocomplete.as_view(), name='provenancename-autocomplete')
+
     # Data export
     url(r'^location_copy_count_csv_export/$', views.location_copy_count_csv_export, name='location_copy_count_csv_export'),
     url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$', 

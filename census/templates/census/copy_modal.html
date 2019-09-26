@@ -29,7 +29,7 @@
             {% endif %}
 
             {% if copy.prov_info %}
-            <p align="left"><strong>Provenance</strong>: {{ copy.prov_info}}</p>
+            <p align="left"><strong>Provenance notes</strong>: {{ copy.prov_info}}</p>
             {% endif %}
 
             {% if copy.Height %}
@@ -78,6 +78,14 @@
 
             {% if copy.Lee_Notes %}
             <p align="left"><strong>Lee notes</strong>: {{ copy.Lee_Notes }}</p>
+            {% endif %}
+
+            {% if copy.rasmussen_west %}
+            <p align="left"><strong>Rasmussen & West #</strong>: {{ copy.rasmussen_west }}</p>
+            {% endif %}
+
+            {% if copy.rasmussen_west_history %}
+            <p align="left"><strong>Rasmussen & West History</strong>: {{ copy.rasmussen_west_history }}</p>
             {% endif %}
 
             {% if copy.Bartlett1939 %}

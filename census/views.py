@@ -13,13 +13,12 @@ from django.views.generic import ListView
 from django.forms import formset_factory
 from django.db.models import Q, Count, Sum #, Concat
 from django.contrib import admin
-from itertools import chain
+
 from django.core import serializers
 from django.forms.models import model_to_dict
-import json
 from django.urls import reverse
 from django.contrib import messages
-#new import
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.encoding import force_bytes, force_text
@@ -29,6 +28,11 @@ from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 
 from datetime import datetime
+from itertools import chain
+
+from dal import autocomplete
+
+import json
 import re
 import csv
 
@@ -207,10 +211,25 @@ def search(request, field=None, value=None, order=None):
 
     return HttpResponse(template.render(context, request))
 
+# class ProvenanceNameAutocomplete(autocomplete.Select2QuerySetView):
+#     def get_queryset(self):
+#         qs = models.ProvenanceName.objects.all()
+# 
+#         if self.q:
+#             qs = qs.filter(name__istartswith=self.q)
+# 
+#         return qs
+
+def search_autocomplete_test(request):
+    pass
+
 def homepage(request):
     template = loader.get_template('census/frontpage.html')
     gridwidth = 5
-    titlelist = sorted(models.Title.objects.all(), key=title_sort_key)
+    titlelist = models.Title.objects.all()
+    if not request.user.is_staff:
+        titlelist = titlelist.exclude(title='Comedies, Histories, and Tragedies')
+    titlelist = sorted(titlelist, key=title_sort_key)
     titlerows = [titlelist[i: i + gridwidth]
                  for i in range(0, len(titlelist), gridwidth)]
     for row in titlerows:
@@ -230,6 +249,8 @@ def about(request, viewname='about'):
         'verified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=True).count()),
         'unverified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=False).count()),
         'current_date': '{d:%d %B %Y}'.format(d=datetime.now()),
+        'estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=True).count()), 
+        'non_estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=False).count()),
     }
     content = [s.content.format(**pre_render_context)
                for s in models.StaticPageText.objects.filter(viewname=viewname)]
