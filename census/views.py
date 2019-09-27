@@ -115,6 +115,9 @@ def copy_sort_key(c):
 
 def title_sort_key(title_object):
     title = title_object.title
+    if title == 'Comedies, Histories, and Tragedies':
+        title = ' ' + title
+
     if title and title[0].isdigit():
         title = title.split()
         return strip_article(' '.join(title[1:] + [title[0]]))
@@ -167,13 +170,13 @@ def search(request, field=None, value=None, order=None):
             result_list = copy_list.filter(issue__year__icontains=value)
     elif field == 'location' and value:
         display_field = 'Location'
-        result_list = copy_list.filter(location__name__icontains=value)
+        result_list = copy_list.filter(location__name__search=value)
     elif field == 'bartlett' and value:
         display_field = 'Bartlett'
         result_list = copy_list.filter(Q(Bartlett1916=value) | Q(Bartlett1939=value))
     elif field == 'provenance_name' and value:
         display_field = 'Provenance Name'
-        result_list = copy_list.filter(provenance_search_names__name__icontains=value)
+        result_list = copy_list.filter(provenance_search_names__name__search=value)
     elif field == 'unverified':
         display_field = 'Unverified'
         value = 'All'
@@ -185,7 +188,9 @@ def search(request, field=None, value=None, order=None):
         value = 'All'
         result_list = models.FalseCopy.objects.all()
     else:
-        result_list = []
+        result_list = models.CanonicalCopy.objects.none()
+
+    result_list = result_list.exclude(issue__edition__title__title='Comedies, Histories, and Tragedies')
 
     if order is None:
         result_list = sorted(result_list, key=search_sort_date)
