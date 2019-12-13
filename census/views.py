@@ -154,7 +154,23 @@ def search(request, field=None, value=None, order=None):
     copy_list = models.CanonicalCopy.objects.all()
     display_field = field
 
-    if field == 'stc' or field is None and value:
+    if field == 'keyword' or field is None and value:
+        display_field = 'Keyword Search'
+        query = (Q(Marginalia__search=value) |
+                 Q(Binding__search=value) |
+                 Q(Binder__search=value) |
+                 Q(Bookplate__search=value) |
+                 Q(Bookplate_Location__search=value) |
+                 Q(Bartlett1939_Notes__search=value) |
+                 Q(Bartlett1916_Notes__search=value) |
+                 Q(Lee_Notes__search=value) |
+                 Q(rasmussen_west_notes__search=value) |
+                 Q(Local_Notes__search=value) |
+                 Q(prov_info__search=value) |
+                 Q(bibliography__search=value) |
+                 Q(provenance_search_names__name__search=value))
+        result_list = copy_list.filter(query)
+    elif field == 'stc' and value:
         display_field = 'STC / Wing'
         result_list = copy_list.filter(issue__STC_Wing__icontains=value)
     elif field == 'nsc' and value:
@@ -191,6 +207,7 @@ def search(request, field=None, value=None, order=None):
         result_list = models.CanonicalCopy.objects.none()
 
     result_list = result_list.exclude(issue__edition__title__title='Comedies, Histories, and Tragedies')
+    result_list = result_list.distinct()
 
     if order is None:
         result_list = sorted(result_list, key=search_sort_date)
