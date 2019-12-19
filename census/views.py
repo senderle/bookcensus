@@ -355,10 +355,13 @@ def copy_data(request, copy_id):
 
     template = loader.get_template('census/copy_modal.html')
     selected_copy = models.CanonicalCopy.objects.filter(pk=copy_id)
+    if not selected_copy:
+        selected_copy = models.FalseCopy.objects.filter(pk=copy_id)
+
     if selected_copy:
         selected_copy = selected_copy[0]
     else:
-        selected_copy = models.FalseCopy.objects.get(pk=copy_id)
+        raise Http404('Selected copy does not exist')
 
     context={"copy": selected_copy}
 
@@ -659,10 +662,8 @@ def admin_submission_verify(request):
 
 @login_required
 def admin_verify_single_edit_accept(request):
-    try:
-        copy_id = request.GET.get('copy_id')
-    except IOError:
-        print("Error in ID Field. We don't actually understand why this happened, sorry.")
+    copy_id = request.GET.get('copy_id')
+
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     if selected_draft_copy.parent and isinstance(selected_draft_copy.parent, models.CanonicalCopy):
         models.draft_to_canonical_update(selected_draft_copy)
@@ -673,12 +674,8 @@ def admin_verify_single_edit_accept(request):
 
 @login_required
 def admin_verify_single_edit_reject(request):
-    try:
-        copy_id = request.GET.get('copy_id')
+    copy_id = request.GET.get('copy_id')
 
-    except IOError:
-        print("Error in ID Field. We don't actually understand why this happened, sorry.")
-    
     selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
     models.draft_to_reject_move(selected_draft_copy)
 
@@ -698,14 +695,15 @@ def admin_verify_location_verified(request):
     }
     return HttpResponse(template.render(context, request))
 
-# This is for validate old copyx
+# This is for verifying copy location.
 @login_required()
 def admin_verify_copy(request):
+    copy_id = request.GET.get('copy_id')
+
     try:
-        copy_id = request.GET.get('copy_id')
-    except IOError:
-        print("Error in ID Field. We don't actually understand why this happened, sorry.")
-    selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
+        selected_draft_copy = models.DraftCopy.objects.get(pk=copy_id)
+    except models.DraftCopy.DoesNotExist:
+        raise Http404("No draft matches the query.")
     canonical_copy = selected_draft_copy.parent
 
     if not selected_draft_copy.location_verified:
@@ -746,11 +744,7 @@ def edit_profile(request):
 #used by aja
 @login_required
 def create_draftcopy(request):
-
-    try:
-        copy_id = request.GET.get('copy_id')
-    except IOError:
-        print("Error in ID Field. We don't actually understand why this happened, sorry.")
+    copy_id = request.GET.get('copy_id')
 
     selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)
@@ -761,10 +755,7 @@ def create_draftcopy(request):
 
 @login_required
 def location_incorrect(request):
-    try:
-        copy_id = request.GET.get('copy_id')
-    except IOError:
-        print("Error in ID Field. We don't actually understand why this happened, sorry.")
+    copy_id = request.GET.get('copy_id')
 
     selected_copy =  models.CanonicalCopy.objects.get(pk=copy_id)
     draft_copy = get_or_create_draft(selected_copy)

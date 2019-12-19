@@ -173,9 +173,15 @@ p.static-text {
   text-align: left;
 }
 
+p.error-text,
 p.guide-text,
 td p.static-text {
   text-align: center;
+}
+
+p.error-text {
+  margin-top: 0px;
+  margin-bottom: 40px;
 }
 
 span.citation {
