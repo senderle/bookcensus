@@ -155,6 +155,7 @@ def search(request, field=None, value=None, order=None):
     display_field = field
 
     if field == 'keyword' or field is None and value:
+        field = 'keyword'
         display_field = 'Keyword Search'
         query = (Q(Marginalia__search=value) |
                  Q(Binding__search=value) |
@@ -198,6 +199,7 @@ def search(request, field=None, value=None, order=None):
         value = 'All'
         result_list = copy_list.filter(location_verified=False)
         if order is None:
+            request.GET.order = 'location'
             order = 'location'
     elif field == 'ghosts':
         display_field = 'Ghosts'
@@ -210,6 +212,7 @@ def search(request, field=None, value=None, order=None):
     result_list = result_list.distinct()
 
     if order is None:
+        request.GET.order = 'date'
         result_list = sorted(result_list, key=search_sort_date)
     elif order == 'date':
         result_list = sorted(result_list, key=search_sort_date)

@@ -203,6 +203,10 @@ span.citation {
     padding-right: 4px;
 }
 
+.fa, .fas {
+    display: inline;
+}
+
 /* UI Styles (May be either class- or tag-level) */
 
 input,
@@ -392,6 +396,15 @@ img.play-title-icon-generic {
 
 .hidden {
     display: none;
+}
+
+.hidden-icon {
+    display: none;
+    /* Using visibility: hidden instead of display: none keeps the 
+     * words from subtly changing position when the icon appears.
+     * But it skews the headers slightly to one side, so it's not
+     * a perfect solution; still working on this problem. */
+    /* visibility: hidden; */
 }
 
 /* Detail Table Styles */

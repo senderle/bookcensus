@@ -46,11 +46,16 @@
 
         {% if result_list %}
         <tr>
-	    <th class="terse"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=sc">SC #</a> </th>
-	    <th> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=date">Year</a> </th>
-            <th class="detailed"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=title">Title</a> </th>
-	    <th class="detailed"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=location">Location</a> </th>
-            <th class="terse"> <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=stc">STC / Wing</a> </th>
+	    <th class="terse"> 
+		    <a href="{% url 'search' %}?field={{field}}&value={{value}}&order=sc">SC&nbsp;#</a>&nbsp;<i class="fas fa-caret-down {% if request.GET.order != 'sc' %}hidden-icon{% endif %}"></i> </th>
+	    <th> 
+		<a href="{% url 'search' %}?field={{field}}&value={{value}}&order=date">Year</a>&nbsp;<i class="fas fa-caret-down {% if request.GET.order != 'date' %}hidden-icon{% endif %}"></i> </th>
+            <th class="detailed"> 
+		<a href="{% url 'search' %}?field={{field}}&value={{value}}&order=title">Title</a>&nbsp;<i class="fas fa-caret-down {% if request.GET.order != 'title' %}hidden-icon{% endif %}"></i> </th>
+	    <th class="detailed"> 
+		<a href="{% url 'search' %}?field={{field}}&value={{value}}&order=location">Location</a>&nbsp;<i class="fas fa-caret-down {% if request.GET.order != 'location' %}hidden-icon{% endif %}"></i> </th>
+            <th class="terse"> 
+		<a href="{% url 'search' %}?field={{field}}&value={{value}}&order=stc">STC&nbsp;/&nbsp;Wing</a>&nbsp;<i class="fas fa-caret-down {% if request.GET.order != 'stc' %}hidden-icon{% endif %}"></i> </th>
         </tr>
         {% for copy in result_list %}
         <tr>
@@ -83,7 +88,7 @@
                 </a>
             </td>
             <td>
-                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.STC_Wing }}&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
+                <a href="{% url 'copy' copy.issue.id %}" target="_blank" title="Go to Edition">{{ copy.issue.STC_Wing }}&nbsp;&nbsp;&nbsp;<i class="fas fa-external-link-alt"></i></a>
             </td>
         </tr>
         {% endfor %}

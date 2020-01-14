@@ -25,11 +25,20 @@
             {% endif %}
 
             {% if copy.Local_Notes %}
-            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes}}</p>
+            <p align="left"><strong>Copy-specific notes</strong>: {{ copy.Local_Notes }}</p>
             {% endif %}
 
+            {% if copy.provenance_search_names.all %}
+	        <p align="left"><strong>Provenance</strong>:
+		    {% for owner in copy.provenance_search_names.all|dictsort:"name" %}
+		        <a href="https://viaf.org/viaf/{{ owner.viaf }}" target="_blank" title="{{ owner.bio }}">
+			{{owner.name}}</a>{% if not forloop.last %};{% endif %}
+		    {% endfor %}
+		</p>
+	    {% endif %}
+
             {% if copy.prov_info %}
-            <p align="left"><strong>Provenance notes</strong>: {{ copy.prov_info}}</p>
+            <p align="left"><strong>Provenance notes</strong>: {{ copy.prov_info }}</p>
             {% endif %}
 
             {% if copy.Height %}

@@ -321,6 +321,7 @@ class ParentCopyMove(object):
         source.delete()
 
 canonical_to_fp_move = ParentCopyMove(CanonicalCopy, FalseCopy, BaseCopy)
+fp_to_canonical_move = ParentCopyMove(FalseCopy, CanonicalCopy, BaseCopy)
 
 class LinkedCopyMove(object):
     def __init__(self, source_model, target_model, base_model):
