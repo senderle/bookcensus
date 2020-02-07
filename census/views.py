@@ -285,7 +285,7 @@ def about(request, viewname='about'):
     return HttpResponse(template.render(context, request))
 
 def detail(request, id):
-    selected_title=models.Title.objects.get(pk=id)
+    selected_title = get_object_or_404(models.Title, pk=id)
     if id == '5' or id == '6':
         editions = list(selected_title.edition_set.all())
         extra_ed = list(models.Title.objects.get(pk='39').edition_set.all())
@@ -309,7 +309,7 @@ def detail(request, id):
 
 # showing all copies for an issue
 def copy(request, id):
-    selected_issue = models.Issue.objects.get(pk=id)
+    selected_issue = get_object_or_404(models.Issue, pk=id)
     all_copies = models.CanonicalCopy.objects.filter(issue__id=id).order_by('location__name', 'Shelfmark')
     all_copies = sorted(all_copies, key=copy_sort_key)
     template = loader.get_template('census/copy.html')
@@ -476,6 +476,7 @@ def add_copy(request, id):
                 copy.location_verified = True
             copy.issue = models.Issue.objects.get(pk=id)
             copy.save()
+            admin_notify()
             return HttpResponseRedirect(reverse('copy', args=(id,)))
     else:
         if request.user.is_staff:
@@ -604,6 +605,7 @@ def update_draft_copy(request, id):
         for f in init_fields:
             setattr(draft_copy, f, getattr(copy_form_data, f))
         draft_copy.save()
+        admin_notify()
         return HttpResponseRedirect(reverse('librarian_validate2'))
     else: 
         context = {
@@ -753,6 +755,7 @@ def create_draftcopy(request):
     draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = True
     draft_copy.save()
+    admin_notify()
 
     return HttpResponse("success!")
 
@@ -764,6 +767,7 @@ def location_incorrect(request):
     draft_copy = get_or_create_draft(selected_copy)
     draft_copy.location_verified = False
     draft_copy.save()
+    admin_notify()
 
     return HttpResponse("success!")
 
@@ -777,6 +781,8 @@ def signup(request):
             user_detail = models.UserDetail(user=user)
             user_detail.affiliation = form.cleaned_data['affiliation']
             user_detail.save()
+            admin_notify()
+
             current_site = get_current_site(request)
             email_validation = False
             if email_validation:
@@ -818,6 +824,19 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
+def admin_notify():
+    # message = render_to_string('signup/acc_active_email.html', {
+    #     'user':user,
+    #     'domain':current_site.domain,
+    #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+    #     'token': account_activation_token.make_token(user),
+    # })
+    message = 'There is a new user submission awaiting admin attenion.'
+    mail_subject = 'Shakespeare Census user activity'
+    to_email = 'zacharylesser@gmail.com'
+    email = EmailMessage(mail_subject, message, to=[to_email])
+    email.send()
+
 def contact(request):
     template=loader.get_template('census/contact-form.html')
 
@@ -825,6 +844,7 @@ def contact(request):
         form = forms.ContactUs(request.POST)
         if form.is_valid() and form.data['guardian'] == "":
             form.save()
+            admin_notify()
             return HttpResponseRedirect(reverse('contact_success'))
         elif form.is_valid() and form.data['guardian'] != "":
             return HttpResponseRedirect(reverse('contact_success'))
