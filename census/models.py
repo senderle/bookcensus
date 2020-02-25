@@ -155,6 +155,7 @@ class BaseCopy(models.Model):
     Condition = models.CharField(max_length=500, default='', null=True, blank=True)
     Binding = models.CharField(max_length=500, default='', null=True, blank=True)
     Binder = models.CharField(max_length=500, default='', null=True, blank=True)
+    in_early_sammelband = models.BooleanField(default=False)
     Bookplate = models.CharField(max_length=500, default='', null=True, blank=True)
     Bookplate_Location = models.CharField(max_length=500, default='', null=True, blank=True)
     Bartlett1939 = models.IntegerField(default=0, null=True)
@@ -166,7 +167,7 @@ class BaseCopy(models.Model):
     rasmussen_west = models.IntegerField(default=0, null=True)
     rasmussen_west_notes = models.TextField(null=True, blank=True, default='')
     Local_Notes = models.TextField(null=True, blank=True, default='')
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies", 
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_submitted_copies",
                                    default=None, null=True, blank=True, on_delete=models.CASCADE)
     prov_info = models.TextField(null=True, blank=True, default='')
     bibliography = models.TextField(null=True, blank=True, default='')
@@ -223,7 +224,7 @@ class ProvenanceOwnership(models.Model):
 
     def __str__(self):
         return '{} owned {}'.format(
-            self.owner.name, 
+            self.owner.name,
             self.copy
         )
     class Meta:
