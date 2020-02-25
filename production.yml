@@ -17,6 +17,8 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+    volumes:
+      - ./census/ingest/data:/app/census/ingest/data
     command: /start
 
   postgres:
