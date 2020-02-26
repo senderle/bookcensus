@@ -31,11 +31,12 @@ urlpatterns = [
     url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
 
     # Search autocomplete
-    # url(r'provenancename-autocomplete/$', views.ProvenanceNameAutocomplete.as_view(), name='provenancename-autocomplete')
+    url(r'^autofill/location/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_location, name='autofill_location')
+    url(r'^autofill/provenance/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_provenance, name='autofill_provenance')
 
     # Data export
     url(r'^location_copy_count_csv_export/$', views.location_copy_count_csv_export, name='location_copy_count_csv_export'),
-    url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$', 
+    url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$',
         views.export, name='export'),
 
     # User accounts and management

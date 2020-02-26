@@ -61,13 +61,13 @@ def strip_article(s):
         return s
 
 def search_sort_date(copy):
-    return (copy_date_sort_key(copy), 
-            title_sort_key(copy.issue.edition.title), 
+    return (copy_date_sort_key(copy),
+            title_sort_key(copy.issue.edition.title),
             copy_location_sort_key(copy))
 
 def search_sort_title(copy):
-    return (title_sort_key(copy.issue.edition.title), 
-            copy_date_sort_key(copy), 
+    return (title_sort_key(copy.issue.edition.title),
+            copy_date_sort_key(copy),
             copy_location_sort_key(copy))
 
 def search_sort_location(copy):
@@ -108,9 +108,9 @@ def copy_shelfmark_sort_key(c):
 
 def copy_sort_key(c):
     sc_a, sc_b = copy_nsc_sort_key(c)
-    return (copy_location_sort_key(c), 
+    return (copy_location_sort_key(c),
             copy_shelfmark_sort_key(c),
-            sc_a, 
+            sc_a,
             sc_b)
 
 def title_sort_key(title_object):
@@ -236,17 +236,15 @@ def search(request, field=None, value=None, order=None):
 
     return HttpResponse(template.render(context, request))
 
-# class ProvenanceNameAutocomplete(autocomplete.Select2QuerySetView):
-#     def get_queryset(self):
-#         qs = models.ProvenanceName.objects.all()
-# 
-#         if self.q:
-#             qs = qs.filter(name__istartswith=self.q)
-# 
-#         return qs
+def autofill_location(request, query):
+    location_matches = models.Location.objects.filter(name__icontains==query)
+    json = serializers.serialize('json', location_matches)
+    return HttpResponse(json, content_type='application/json')
 
-def search_autocomplete_test(request):
-    pass
+def autofill_provenance(request, query):
+    prov_matches = models.ProvenanceName.objects.filter(name__icontains==query)
+    json = serializers.serialize('json', prov_matches)
+    return HttpResponse(json, content_type='application/json')
 
 def homepage(request):
     template = loader.get_template('census/frontpage.html')
@@ -274,7 +272,7 @@ def about(request, viewname='about'):
         'verified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=True).count()),
         'unverified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=False).count()),
         'current_date': '{d:%d %B %Y}'.format(d=datetime.now()),
-        'estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=True).count()), 
+        'estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=True).count()),
         'non_estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=False).count()),
     }
     content = [s.content.format(**pre_render_context)
@@ -412,7 +410,7 @@ def copy_info(request, copy_id):
 def location_copy_count_csv_export(request):
     locations = models.CanonicalCopy.objects.all().values('location')
     locations = locations.annotate(total=Count('location')).order_by('location__name')
-    
+
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="shakespeare_census_location_copy_count.csv"'
 
@@ -429,7 +427,7 @@ def export(request, groupby, column, aggregate):
                  Count)
     try:
         groups = models.CanonicalCopy.objects.all().values(groupby)
-    except: 
+    except:
         raise Http404('Invalid groupby column.')
 
     try:
@@ -454,7 +452,7 @@ def export(request, groupby, column, aggregate):
 def add_copy(request, id):
     template = loader.get_template('census/copy_submission.html')
     selected_issue = models.Issue.objects.get(pk=id)
-    
+
     data = {'issue_id': id, 'Shelfmark': '', 'Local_Notes': '', 'prov_info': ''}
     if request.method == 'POST':
         if request.user.is_staff:
@@ -538,9 +536,9 @@ def librarian_validate1(request):
     copy_list = list(models.CanonicalCopy.objects.filter(location=affiliation, location_verified=False))
 
     # ...but filter out ones with drafts that have been verified.
-    copy_list = [c for c in copy_list 
-                 if not c.drafts 
-                 or not c.drafts.first() 
+    copy_list = [c for c in copy_list
+                 if not c.drafts
+                 or not c.drafts.first()
                  or not c.drafts.first().location_verified]
 
     copy_list = sorted(copy_list, key=librarian_validate_sort_key)
@@ -567,7 +565,7 @@ def librarian_validate2(request):
 
     # ...but convert drafts to parents and add only those verified copies that
     # do not have drafts. (They would be included twice otherwise. Also...
-    # TODO: To avoid an error, we have to drop drafts without parents. But 
+    # TODO: To avoid an error, we have to drop drafts without parents. But
     #       in the long run, we'd like those to be editable. That is probably
     #       going to mean having a separate section -- there's just no clean
     #       way to get drafts and parents in the same section, sorted correctly.
@@ -595,7 +593,7 @@ def update_draft_copy(request, id):
 
     if request.method == 'POST':
         copy_form = forms.LibrarianCopySubmissionForm(request.POST)
-    else: 
+    else:
         copy_form = forms.LibrarianCopySubmissionForm(initial=data)
 
 
@@ -607,7 +605,7 @@ def update_draft_copy(request, id):
         draft_copy.save()
         admin_notify()
         return HttpResponseRedirect(reverse('librarian_validate2'))
-    else: 
+    else:
         context = {
             'form': copy_form,
             'copy': selected_copy,
@@ -627,7 +625,7 @@ def admin_edit_verify(request):
     selected_copies = models.DraftCopy.objects.all()
     copies = [copy for copy in selected_copies
               if copy.parent and
-                 isinstance(copy.parent, models.CanonicalCopy) and 
+                 isinstance(copy.parent, models.CanonicalCopy) and
                  copy.parent.location_verified]
 
     paginator = Paginator(copies, 10)
