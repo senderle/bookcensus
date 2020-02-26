@@ -57,7 +57,7 @@
 
 <div class="search-bar">
   <form id="search-bar-form" class="hidden" action="/search/" method="get">
-    <select name="field">
+    <select id="search-bar-form-field" name="field">
       <option disabled selected value>Search by...</option>
       <option value="keyword">Keyword</option>
       <option value="location">Location</option>
@@ -67,8 +67,8 @@
       <option value="bartlett">Bartlett #</option>
       <option value="nsc">SC #</option>
     </select>
-    <input type="text" name="value" placeholder="Search..">
-    <input type="submit" value="Submit" >
+    <input id="search-bar-form-text" type="text" name="value" placeholder="Search..">
+    <input id="search-bar-form-submit" type="submit" value="Submit" >
   </form>
 </div>
 
@@ -76,6 +76,36 @@
     utils.get.id('site-search-button').addEventListener('click', function () {
         utils.togglehide.id('search-bar-form');
     });
+    $(function() {
+        var fillerGlobal = ['some', 'fake', 'suggestions'];
+        var fieldMap = {
+            location: {}, // search location table
+            provenance_name: {} // search prov name table
+            // special: {},  // autofill with fixed set of values
+        };
+
+        // $.ajax( initialize some stuff here )
+
+        // put some helper functions here
+
+        $('#search-bar-form-text').autocomplete({
+            autoFocus: true,
+            source: function(request, response) {
+                var field_el = utils.get.id('search-bar-form-field');
+                var field = field_el.options[field_el.selectedIndex].value;
+                console.log(field);
+                var results = $.ui.autocomplete.filter(fillerGlobal, request.term);
+                // response(results.slice(0, 20));
+            },
+            select: function(evt, ui) {
+
+            },
+            focus: function(evt, ui) {
+            }
+        });
+    });
+
+
     // if (window.location.hash && window.location.hash === '#search') {
     //    utils.get.id('search-bar-form').classList.remove('hidden');
     // }
