@@ -253,6 +253,17 @@ input {
     background-color: rgba(152, 75, 67, 0.1);
 }
 
+.ui-menu .ui-menu-item {
+    background-color: rgba(152, 75, 67, 0.1);
+    font-size: 75%;
+}
+
+.ui-menu .ui-menu-item,
+.ui-menu .ui-menu-item .ui-state-active {
+    font-weight: lighter;
+    font-family: "Open Sans", AppleGothic, sans-serif;
+}
+
 .button,
 .button-inline,
 .button-inline-small,

@@ -62,6 +62,7 @@
       <option value="keyword">Keyword</option>
       <option value="location">Location</option>
       <option value="provenance_name">Provenance Name</option>
+      <!-- <option value="collections">Specific Features</option> -->
       <option value="year">Year</option>
       <option value="stc">STC / Wing #</option>
       <option value="bartlett">Bartlett #</option>
@@ -77,30 +78,48 @@
         utils.togglehide.id('search-bar-form');
     });
     $(function() {
-        var fillerGlobal = ['some', 'fake', 'suggestions'];
-        var fieldMap = {
-            location: {}, // search location table
-            provenance_name: {} // search prov name table
-            // special: {},  // autofill with fixed set of values
+        var autofillMap = {
+            location: 'https://shakespearecensus.org/autofill/location/',
+            provenance_name: 'https://shakespearecensus.org/autofill/provenance/',
+            collections: 'https://shakespearecensus.org/autofill/collections/'
         };
 
-        // $.ajax( initialize some stuff here )
-
-        // put some helper functions here
+        var autofillResponse = function(field, query, response) {
+            fetch(autofillMap[field] + query)
+                .then((matches) => {
+                    return matches.json()
+                })
+                .then((matches_json) => {
+                    return response(matches_json.matches);
+                });
+        };
 
         $('#search-bar-form-text').autocomplete({
-            autoFocus: true,
+            minLength: 3,
             source: function(request, response) {
                 var field_el = utils.get.id('search-bar-form-field');
                 var field = field_el.options[field_el.selectedIndex].value;
-                console.log(field);
-                var results = $.ui.autocomplete.filter(fillerGlobal, request.term);
-                // response(results.slice(0, 20));
+                if (autofillMap.hasOwnProperty(field)) {
+                    autofillResponse(field, request.term, response);
+                }
             },
-            select: function(evt, ui) {
 
+            // This is a simple way to automatically submit the form when
+            // a value is selected. But it behaves counterintuitively in 
+            // a couple of cases. I haven't been able to work out why.
+            // So for now you have to hit tab and then enter.
+            select: function(evt, ui) {
+                $('#search-bar-form-text').val(ui.item.value);
+                $('#search-bar-form').submit();
             },
-            focus: function(evt, ui) {
+
+            // focus: function(evt, ui) {
+            // }
+        });
+        
+        $('#search-bar-form-field').change(function(evt) {
+            if ($('#search-bar-form-field option:selected').val() === 'collections') {
+                $('#search-bar-form-text').autocomplete('search', '  ');
             }
         });
     });

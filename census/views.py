@@ -1,21 +1,13 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template.response import TemplateResponse
-from django.template import Context, Template
-from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from . import models
 from . import forms
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
-from django.forms import formset_factory
 from django.db.models import Q, Count, Sum #, Concat
-from django.contrib import admin
 
-from django.core import serializers
-from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.contrib import messages
 
@@ -28,12 +20,7 @@ from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 
 from datetime import datetime
-from itertools import chain
 
-from dal import autocomplete
-
-import json
-import re
 import csv
 
 ## UTILITY FUNCTIONS ##
@@ -194,14 +181,14 @@ def search(request, field=None, value=None, order=None):
     elif field == 'provenance_name' and value:
         display_field = 'Provenance Name'
         result_list = copy_list.filter(provenance_search_names__name__search=value)
-    elif field == 'unverified':
+    elif field == 'unverified' or (field == 'collections' and value == 'unverified'):
         display_field = 'Unverified'
         value = 'All'
         result_list = copy_list.filter(location_verified=False)
         if order is None:
             request.GET.order = 'location'
             order = 'location'
-    elif field == 'ghosts':
+    elif field == 'ghosts' or (field == 'collections' and value == 'ghosts'):
         display_field = 'Ghosts'
         value = 'All'
         result_list = models.FalseCopy.objects.all()
@@ -236,15 +223,26 @@ def search(request, field=None, value=None, order=None):
 
     return HttpResponse(template.render(context, request))
 
-def autofill_location(request, query):
-    location_matches = models.Location.objects.filter(name__icontains==query)
-    json = serializers.serialize('json', location_matches)
-    return HttpResponse(json, content_type='application/json')
+def autofill_location(request, query=None):
+    if query is not None:
+        location_matches = models.Location.objects.filter(name__icontains=query)
+        match_object = {'matches': [m.name for m in location_matches]}
+    else:
+        match_object = {'matches': []}
+    return JsonResponse(match_object)
 
-def autofill_provenance(request, query):
-    prov_matches = models.ProvenanceName.objects.filter(name__icontains==query)
-    json = serializers.serialize('json', prov_matches)
-    return HttpResponse(json, content_type='application/json')
+def autofill_provenance(request, query=None):
+    if query is not None:
+        prov_matches = models.ProvenanceName.objects.filter(name__icontains=query)
+        match_object = {'matches': [m.name for m in prov_matches]}
+    else:
+        match_object = {'matches': []}
+    return JsonResponse(match_object)
+
+def autofill_collections(request, query=None):
+    collections = [{'label': 'Ghosts', 'value': 'ghosts'},
+                   {'label': 'Unverified', 'value': 'unverified'}]
+    return JsonResponse({'matches': collections})
 
 def homepage(request):
     template = loader.get_template('census/frontpage.html')
@@ -398,7 +396,7 @@ def logout_user(request):
 #expected to be called when a new copy is submitted; displaying the copy info
 def copy_info(request, copy_id):
     template = loader.get_template('census/copy_info.html')
-    selected_copy = get_object_or_404(ChildCopy, pk=copy_id)
+    selected_copy = get_object_or_404(models.ChildCopy, pk=copy_id)
     selected_issue = selected_copy.issue
     selected_edition = selected_issue.edition
     context = {

@@ -1,11 +1,4 @@
-from django.conf.urls import url, include
-from django.contrib.auth.views import (password_reset,
-                                       password_reset_done,
-                                       password_reset_confirm,
-                                       password_reset_complete,
-                                       password_change,
-                                       password_change_done,
-                                       logout)
+from django.conf.urls import url
 
 from . import views
 
@@ -16,10 +9,11 @@ urlpatterns = [
     # Main site functionality
     url(r'^$', views.homepage, name='homepage'),
     url(r'^$', views.homepage, name='home'),
-    url(r'^homepage$',views.homepage, name='homepage'),
+    url(r'^homepage$', views.homepage, name='homepage'),
     url(r'^search/$', views.search, name='search'),
     url(r'^search/(?P<field>[A-Za-z0-9- ]+)/(?P<value>[A-Za-z0-9- ]+)/$', views.search, name='search'),
-    url(r'^search/(?P<field>[A-Za-z0-9- ]+)/(?P<value>[A-Za-z0-9- ]+)/(?P<order>[A-Za-z0-9- ]+)/$', views.search, name='search'),
+    url(r'^search/(?P<field>[A-Za-z0-9- ]+)/(?P<value>[A-Za-z0-9- ]+)/(?P<order>[A-Za-z0-9- ]+)/$',
+        views.search, name='search'),
     url(r'^editions/(?P<id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^about/$', views.about, name='about'),
     url(r'^about/(?P<viewname>[A-Za-z0-9-]+)/$', views.about, name='about'),
@@ -31,11 +25,17 @@ urlpatterns = [
     url(r'^contact/contact_success/$', views.display_contact_success, name='contact_success'),
 
     # Search autocomplete
-    url(r'^autofill/location/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_location, name='autofill_location')
-    url(r'^autofill/provenance/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_provenance, name='autofill_provenance')
+    url(r'^autofill/location/$', views.autofill_location, name='autofill_location'),
+    url(r'^autofill/location/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_location, name='autofill_location'),
+    url(r'^autofill/provenance/$', views.autofill_provenance, name='autofill_provenance'),
+    url(r'^autofill/provenance/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_provenance, name='autofill_provenance'),
+    url(r'^autofill/collections/$', views.autofill_collections, name='autofill_collections'),
+    url(r'^autofill/collections/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_collections, name='autofill_collections'),
 
     # Data export
-    url(r'^location_copy_count_csv_export/$', views.location_copy_count_csv_export, name='location_copy_count_csv_export'),
+    url(r'^location_copy_count_csv_export/$',
+        views.location_copy_count_csv_export,
+        name='location_copy_count_csv_export'),
     url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$',
         views.export, name='export'),
 
