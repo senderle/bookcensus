@@ -3,7 +3,7 @@ mv -f census/ingest/data/json-backups/latest/* census/ingest/data/json-backups/d
 
 # Make folder writable by anyone. This is the easiest way to work around
 # the problem that the container's django user doesn't have write privileges.
-chmod -R o+w census/ingest/data/json-backups
+chmod -R o+w census/ingest/data/json-backups/latest
 
 # Run the backup routine in a disposable container.
 sudo docker-compose -f production.yml run --rm django python3 manage.py exportjson census/ingest/data/json-backups/latest/`date +'%Y-%m-%d'`
@@ -12,7 +12,7 @@ sudo docker-compose -f production.yml run --rm django python3 manage.py exportjs
 # to some weird system account. So change back to current user.
 sudo chown -R $USER:$USER census/ingest/data/json-backups
 
-# Make folder read-only again for other users.
+# Make folder read-only again for all other users.
 chmod -R o-w census/ingest/data/json-backups
 
 # Commit and push changes to git.
