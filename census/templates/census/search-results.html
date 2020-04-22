@@ -26,8 +26,10 @@
             <td class="play-issue-header">
 		{% if field == "ghosts" %}
                     ESTC Ghosts
+        {% elif display_value == "All" %}
+                    {{ display_field }}
 		{% else %}
-                    {{ display_field }}: {{ value }}
+                    {{ display_field }}: {{ display_value }}
 		{% endif %}
             </td>
         </tr>

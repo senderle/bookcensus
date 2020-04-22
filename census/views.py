@@ -140,6 +140,7 @@ def search(request, field=None, value=None, order=None):
     order = order if order is not None else request.GET.get('order')
     copy_list = models.CanonicalCopy.objects.all()
     display_field = field
+    display_value = value
 
     if field == 'keyword' or field is None and value:
         field = 'keyword'
@@ -181,17 +182,20 @@ def search(request, field=None, value=None, order=None):
     elif field == 'provenance_name' and value:
         display_field = 'Provenance Name'
         result_list = copy_list.filter(provenance_search_names__name__search=value)
-    elif field == 'unverified' or (field == 'collections' and value == 'unverified'):
+    elif field == 'unverified':
         display_field = 'Unverified'
-        value = 'All'
+        display_value = 'All'
         result_list = copy_list.filter(location_verified=False)
         if order is None:
             request.GET.order = 'location'
             order = 'location'
-    elif field == 'ghosts' or (field == 'collections' and value == 'ghosts'):
+    elif field == 'ghosts':
         display_field = 'Ghosts'
-        value = 'All'
+        display_value = 'All'
         result_list = models.FalseCopy.objects.all()
+    elif field == 'collection':
+        result_list, display_field = get_collection(copy_list, value)
+        display_value = 'All'
     else:
         result_list = models.CanonicalCopy.objects.none()
 
@@ -216,12 +220,42 @@ def search(request, field=None, value=None, order=None):
         'icon_path': get_icon_path(),
         'value': value,
         'field': field,
+        'display_value': display_value,
         'display_field': display_field,
         'result_list': result_list,
         'copy_count': len(result_list)
     }
 
     return HttpResponse(template.render(context, request))
+
+def get_collection(copy_list, coll_name):
+    if coll_name == 'earlyprovenance':
+        results = copy_list.filter(provenance_search_names__start_century='17')
+        display = 'Copies with known early provenance (before 1700)'
+    elif coll_name == 'womanowner':
+        results = copy_list.filter(provenance_search_names__gender='F')
+        display = 'Copies with a known woman owner'
+    elif coll_name == 'earlywomanowner':
+        results = copy_list.filter(Q(provenance_search_names__gender='F') &
+                                   (Q(provenance_search_names__start_century='17') |
+                                    Q(provenance_search_names__start_century='18')))
+        display = 'Copies with a known woman owner before 1800'
+    elif coll_name == 'marginalia':
+        results = copy_list.exclude(Q(Marginalia='') | Q(Marginalia=None))
+        display = 'Copies that include marginalia'
+    elif coll_name == 'earlysammelband':
+        results = copy_list.filter(in_early_sammelband=True)
+        display = 'Copies in an early sammelband'
+
+    return results, display
+
+def autofill_collection(request, query=None):
+    collection = [{'label': 'With known early provenance (before 1700)', 'value': 'earlyprovenance'},
+                  {'label': 'With a known woman owner', 'value': 'womanowner'},
+                  {'label': 'With a known woman owner before 1800', 'value': 'earlywomanowner'},
+                  {'label': 'Includes marginalia', 'value': 'marginalia'},
+                  {'label': 'In an early sammelband', 'value': 'earlysammelband'}]
+    return JsonResponse({'matches': collection})
 
 def autofill_location(request, query=None):
     if query is not None:
@@ -238,11 +272,6 @@ def autofill_provenance(request, query=None):
     else:
         match_object = {'matches': []}
     return JsonResponse(match_object)
-
-def autofill_collections(request, query=None):
-    collections = [{'label': 'Ghosts', 'value': 'ghosts'},
-                   {'label': 'Unverified', 'value': 'unverified'}]
-    return JsonResponse({'matches': collections})
 
 def homepage(request):
     template = loader.get_template('census/frontpage.html')

@@ -1,10 +1,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User, Group
-from django.forms import ModelForm
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django import forms
 
 from django.conf import settings
 
@@ -135,7 +133,7 @@ class Issue (models.Model):
 
     def DEEP_as_list(self):
         deep_list = self.DEEP.split('; ')
-        return [(depp, (i + 1) == len(deep_list))
+        return [(deep, (i + 1) == len(deep_list))
                 for i, deep in enumerate(deep_list)]
 
 

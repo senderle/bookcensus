@@ -29,8 +29,8 @@ urlpatterns = [
     url(r'^autofill/location/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_location, name='autofill_location'),
     url(r'^autofill/provenance/$', views.autofill_provenance, name='autofill_provenance'),
     url(r'^autofill/provenance/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_provenance, name='autofill_provenance'),
-    url(r'^autofill/collections/$', views.autofill_collections, name='autofill_collections'),
-    url(r'^autofill/collections/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_collections, name='autofill_collections'),
+    url(r'^autofill/collection/$', views.autofill_collection, name='autofill_collection'),
+    url(r'^autofill/collection/(?P<query>[A-Za-z0-9- ]+)/$', views.autofill_collection, name='autofill_collection'),
 
     # Data export
     url(r'^location_copy_count_csv_export/$',

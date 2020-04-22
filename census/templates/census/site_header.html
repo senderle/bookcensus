@@ -62,7 +62,7 @@
       <option value="keyword">Keyword</option>
       <option value="location">Location</option>
       <option value="provenance_name">Provenance Name</option>
-      <!-- <option value="collections">Specific Features</option> -->
+      <option value="collection">Specific Features</option>
       <option value="year">Year</option>
       <option value="stc">STC / Wing #</option>
       <option value="bartlett">Bartlett #</option>
@@ -81,7 +81,7 @@
         var autofillMap = {
             location: 'https://shakespearecensus.org/autofill/location/',
             provenance_name: 'https://shakespearecensus.org/autofill/provenance/',
-            collections: 'https://shakespearecensus.org/autofill/collections/'
+            collection: 'https://shakespearecensus.org/autofill/collection/'
         };
 
         var autofillResponse = function(field, query, response) {
@@ -118,8 +118,8 @@
         });
         
         $('#search-bar-form-field').change(function(evt) {
-            if ($('#search-bar-form-field option:selected').val() === 'collections') {
-                $('#search-bar-form-text').autocomplete('search', '  ');
+            if ($('#search-bar-form-field option:selected').val() === 'collection') {
+                $('#search-bar-form-text').autocomplete('search', '   ');
             }
         });
     });
