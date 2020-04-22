@@ -295,10 +295,17 @@ def homepage(request):
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
     pre_render_context = {
-        'copy_count': str(models.CanonicalCopy.objects.count()),
+        'copy_count': str(
+            models.CanonicalCopy.objects.exclude(
+                issue__edition__title__title='Comedies, Histories, and Tragedies'
+            ).count()
+        ),
         'verified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=True).count()),
         'unverified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=False).count()),
         'current_date': '{d:%d %B %Y}'.format(d=datetime.now()),
+        'facsimile_copy_count': str(models.CanonicalCopy.objects.filter(
+            ~Q(Digital_Facsimile_URL=None) & ~Q(Digital_Facsimile_URL='')
+        ).count()),
         'estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=True).count()),
         'non_estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=False).count()),
     }
