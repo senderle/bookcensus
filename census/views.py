@@ -864,7 +864,9 @@ def display_contact_success(request):
 @login_required
 def enter_copy(request):
     if request.method == 'POST':
-        # TODO
+        form = forms.EnterCopyForm(request.POST)
+        if form.is_valid():
+            return HttpResponse('copy success')
         return HttpResponse('POST REQUEST')
     else:
         form = forms.EnterCopyForm()

@@ -344,3 +344,15 @@ class LinkedCopyMove(object):
         source.delete()
 
 draft_to_reject_move = LinkedCopyMove(DraftCopy, RejectedDraftCopy, BaseCopy)
+
+class CopyForm (models.Model):
+    location = models.ForeignKey(Location, unique=False, null=True, blank=True, on_delete=models.CASCADE)
+    shelfmark = models.CharField(max_length=500, default='', null=True, blank=True)
+    height = models.FloatField(default=0, null=True)
+    width = models.FloatField(default=0, null=True)
+    rasmussen_west = models.IntegerField(default=0, null=True)
+    rasmussen_west_notes = models.TextField(null=True, blank=True, default='')
+    prov_info = models.TextField(null=True, blank=True, default='')
+    marginalia = models.TextField(null=True, blank=True, default='')
+    binding = models.CharField(max_length=500, default='', null=True, blank=True)
+    binder = models.CharField(max_length=500, default='', null=True, blank=True)

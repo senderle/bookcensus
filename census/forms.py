@@ -139,15 +139,11 @@ class SignupForm(UserCreationForm):
 class EnterCopyForm(forms.Form):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     shelfmark = forms.CharField(label="Shelfmark", required=True)
-
     height = forms.DecimalField(label="Leaf Height (cm)", initial=0, required=False)
     width = forms.DecimalField(label="Leaf Width (cm)", initial=0, required=False)
-
     rasmussen_west = models.IntegerField(default=0, null=True)
     rasmussen_west_notes = models.TextField(null=True, blank=True, default='')
-
     prov_info = forms.CharField(label="Provenance Information", widget=forms.Textarea, required=False)
     marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
-
     binding = forms.CharField(label="Binding", required=False)
     binder = forms.CharField(label="Binder", required=False)
