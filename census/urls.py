@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^about/(?P<viewname>[A-Za-z0-9-]+)/$', views.about, name='about'),
     url(r'^copy/(?P<id>[0-9]+)/$', views.copy, name='copy'),
     url(r'^copydata/(?P<copy_id>[0-9]+)/$', views.copy_data, name='copy_data'),
+    url(r'^sc/(?P<sc>[0-9.]+)/$', views.sc_copy_modal_shortcut, name='sc_copy_modal_shortcut'),
     url(r'^draftcopydata/(?P<copy_id>[0-9]+)/$', views.draft_copy_data, name='draft_copy_data'),
     url(r'^add_copy/(?P<id>[0-9]+)/$', views.add_copy, name='add_copy'),
     url(r'^contact/$', views.contact, name='contact'),
@@ -36,6 +37,9 @@ urlpatterns = [
     url(r'^location_copy_count_csv_export/$',
         views.location_copy_count_csv_export,
         name='location_copy_count_csv_export'),
+    url(r'^year_issue_copy_count_csv_export/$',
+        views.year_issue_copy_count_csv_export,
+        name='year_issue_copy_count_csv_export'),
     url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$',
         views.export, name='export'),
 

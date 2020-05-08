@@ -32,7 +32,7 @@ class UserDetail(models.Model):
     group=models.ForeignKey(Group, on_delete=models.CASCADE, default=None, null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return '{} ({})'.format(self.user.username, self.affiliation.name)
     class Meta:
         verbose_name_plural = "user details"
 '''
@@ -160,6 +160,7 @@ class BaseCopy(models.Model):
     Bartlett1939_Notes = models.TextField(null=True, blank=True, default='')
     Bartlett1916 = models.IntegerField(default=0, null=True)
     Bartlett1916_Notes = models.TextField(null=True, blank=True, default='')
+    Bartlett_MS_Annotations = models.TextField(null=True, blank=True, default='')
     Lee = models.IntegerField(default=0, null=True)
     Lee_Notes = models.TextField(null=True, blank=True, default='')
     rasmussen_west = models.IntegerField(default=0, null=True)

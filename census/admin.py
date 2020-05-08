@@ -11,7 +11,7 @@ class UserInlineAdmin(admin.StackedInline):
 admin.site.unregister(auth.get_user_model())
 @admin.register(auth.get_user_model())
 class UserDetailAdmin(admin.ModelAdmin):
-    list_display = ['username']
+    list_display = ['username', 'userdetail']
     inlines = (UserInlineAdmin,)
 
 @admin.register(models.Location)

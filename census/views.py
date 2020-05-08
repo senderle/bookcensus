@@ -294,23 +294,28 @@ def homepage(request):
 
 def about(request, viewname='about'):
     template = loader.get_template('census/about.html')
+
+    copy_count = models.CanonicalCopy.objects.exclude(
+        issue__edition__title__title='Comedies, Histories, and Tragedies'
+    ).count()
+    facsimile_copy_count = models.CanonicalCopy.objects.filter(
+            ~Q(Digital_Facsimile_URL=None) & ~Q(Digital_Facsimile_URL='')
+    ).count()
+    facsimile_copy_percent = round(100 * facsimile_copy_count / copy_count)
+
     pre_render_context = {
-        'copy_count': str(
-            models.CanonicalCopy.objects.exclude(
-                issue__edition__title__title='Comedies, Histories, and Tragedies'
-            ).count()
-        ),
+        'copy_count': str(copy_count),
         'verified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=True).count()),
         'unverified_copy_count': str(models.CanonicalCopy.objects.filter(location_verified=False).count()),
         'current_date': '{d:%d %B %Y}'.format(d=datetime.now()),
-        'facsimile_copy_count': str(models.CanonicalCopy.objects.filter(
-            ~Q(Digital_Facsimile_URL=None) & ~Q(Digital_Facsimile_URL='')
-        ).count()),
+        'facsimile_copy_count': str(facsimile_copy_count),
+        'facsimile_copy_percent': '{}%'.format(facsimile_copy_percent),
         'estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=True).count()),
         'non_estc_copy_count': str(models.CanonicalCopy.objects.filter(from_estc=False).count()),
     }
     content = [s.content.format(**pre_render_context)
                for s in models.StaticPageText.objects.filter(viewname=viewname)]
+
     context =  {
         'content': content,
     }
@@ -402,6 +407,16 @@ def copy_data(request, copy_id):
 
     return HttpResponse(template.render(context, request))
 
+def sc_copy_modal_shortcut(request, sc):
+    # This redirects a request for a copy with a specific SC number to the
+    # corresponding list of copies, with a fragment containing the id of the
+    # corresponding copy. A javascript routine will see the fragment and
+    # load the copy's modal.
+
+    selected_copy = get_object_or_404(models.CanonicalCopy, NSC=sc)
+    url = reverse('copy', kwargs={'id': selected_copy.issue.id})
+    return HttpResponseRedirect(f'{url}#{selected_copy.id}')
+
 def login_user(request):
     template = loader.get_template('census/login.html')
     if request.method=='POST':
@@ -452,6 +467,27 @@ def location_copy_count_csv_export(request):
     writer.writerow(['Location', 'Number of Copies'])
     for loc in locations:
         writer.writerow([models.Location.objects.get(pk=loc['location']).name, loc['total']])
+
+    return response
+
+def year_issue_copy_count_csv_export(request):
+    issues = models.CanonicalCopy.objects.exclude(
+        issue__edition__title__title='Comedies, Histories, and Tragedies'
+    ).values('issue')
+    issues = issues.annotate(total=Count('issue')).order_by('issue__start_date')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="shakespeare_census_year_issue_copy_count.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Year', 'Title', 'Number of Copies'])
+    for iss in issues:
+        iss_obj = models.Issue.objects.get(pk=iss['issue'])
+        writer.writerow([
+            iss_obj.start_date, 
+            iss_obj.edition.title.title,
+            iss['total']
+        ])
 
     return response
 

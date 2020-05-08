@@ -14,5 +14,10 @@ jQuery(function($) {
             });
             return false;
         });
+        if (window.location.hash) {
+            var copy_id = window.location.hash.substring(1);
+            console.log(copy_id);
+            $(".copy_data_" + copy_id).click();
+        }
     });
 });
