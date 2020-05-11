@@ -136,7 +136,7 @@ class SignupForm(UserCreationForm):
         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
 
 
-class EnterCopyForm(forms.Form):
+class EnterCopyForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.order_by('name'), required=True)
     shelfmark = forms.CharField(label="Shelfmark", required=True)
     height = forms.DecimalField(label="Leaf Height (cm)", initial=0, required=False)
@@ -147,3 +147,7 @@ class EnterCopyForm(forms.Form):
     marginalia = forms.CharField(label="Marginalia", widget=forms.Textarea, required=False)
     binding = forms.CharField(label="Binding", required=False)
     binder = forms.CharField(label="Binder", required=False)
+
+    class Meta:
+        model = CopyForm
+        fields = '__all__'

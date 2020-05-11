@@ -866,8 +866,8 @@ def enter_copy(request):
     if request.method == 'POST':
         form = forms.EnterCopyForm(request.POST)
         if form.is_valid():
-            return HttpResponse('copy success')
-        return HttpResponse('POST REQUEST')
+            form.save()
+            return HttpResponse("Success!")
     else:
         form = forms.EnterCopyForm()
 
