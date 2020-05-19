@@ -40,6 +40,9 @@ urlpatterns = [
     url(r'^year_issue_copy_count_csv_export/$',
         views.year_issue_copy_count_csv_export,
         name='year_issue_copy_count_csv_export'),
+    url(r'^copy_sc_bartlett_csv_export/$',
+        views.copy_sc_bartlett_csv_export,
+        name='copy_sc_bartlett_csv_export'),
     url(r'^export/(?P<groupby>[A-Za-z0-9_]{1,50})/(?P<column>[A-Za-z0-9_]{1,50})/(?P<aggregate>[A-Za-z0-9_]{1,50})/$',
         views.export, name='export'),
 

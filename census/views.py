@@ -494,13 +494,36 @@ def year_issue_copy_count_csv_export(request):
     response['Content-Disposition'] = 'attachment; filename="shakespeare_census_year_issue_copy_count.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Year', 'Title', 'Number of Copies'])
+    writer.writerow(['Year', 'STC/Wing', 'Title', 'Number of Copies'])
     for iss in issues:
         iss_obj = models.Issue.objects.get(pk=iss['issue'])
         writer.writerow([
-            iss_obj.start_date, 
+            iss_obj.start_date,
+            iss_obj.STC_Wing,
             iss_obj.edition.title.title,
             iss['total']
+        ])
+
+    return response
+
+def copy_sc_bartlett_csv_export(request):
+    copies = models.CanonicalCopy.objects.exclude(
+        issue__edition__title__title='Comedies, Histories, and Tragedies'
+    )
+    copies = copies.exclude(Bartlett1939=0, Bartlett1916=0)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="shakespeare_census_year_issue_copy_count.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['SC #', 'Bartlett 1939 #', 'Bartlett 1916 #', 'Title', 'Year'])
+    for copy in copies:
+        writer.writerow([
+            copy.NSC,
+            copy.Bartlett1939,
+            copy.Bartlett1916,
+            copy.issue.edition.title.title,
+            copy.issue.start_date,
         ])
 
     return response
