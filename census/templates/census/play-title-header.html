@@ -78,8 +78,8 @@
         </tr>
         <tr>
             <td class="play-issue-header">
-                {% if all_copies %}
-                    <span>Extant copies: {{ all_copies|length }} </span>
+                {% if copy_count > 0 %}
+                    <span>Extant copies: {{ copy_count }} </span>
                     {% if user.is_authenticated %}
                         <span class="note">
                             [

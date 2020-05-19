@@ -14,10 +14,22 @@ jQuery(function($) {
             });
             return false;
         });
-        if (window.location.hash) {
-            var copy_id = window.location.hash.substring(1);
-            console.log(copy_id);
-            $(".copy_data_" + copy_id).click();
+
+        var copy_nsc = '';
+        var pathlist = window.location.pathname
+            .replace(/^\/*/, '')
+            .replace(/\/*$/, '')
+            .split('/');
+        if (pathlist.length == 2 && 
+                pathlist[0] === 'sc' && 
+                pathlist[1].match(/^[0-9]+$/)) {
+            copy_nsc = pathlist[1];
+        } else if (window.location.hash) {
+            copy_nsc = window.location.hash.substring(1);
+        }
+
+        if (copy_nsc !== '') {
+            $(".copy_data_" + copy_nsc).click();
         }
     });
 });

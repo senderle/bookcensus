@@ -352,6 +352,7 @@ def copy(request, id):
     template = loader.get_template('census/copy.html')
     context = {
         'all_copies': all_copies,
+        'copy_count': len(all_copies),
         'selected_issue': selected_issue,
         'icon_path': get_icon_path(selected_issue.edition.title.id),
         'title': selected_issue.edition.title
@@ -407,15 +408,28 @@ def copy_data(request, copy_id):
 
     return HttpResponse(template.render(context, request))
 
-def sc_copy_modal_shortcut(request, sc):
-    # This redirects a request for a copy with a specific SC number to the
-    # corresponding list of copies, with a fragment containing the id of the
-    # corresponding copy. A javascript routine will see the fragment and
-    # load the copy's modal.
+def sc_copy_modal(request, sc):
+    # This is almost identical to copy, above, but it accepts a SC number
+    # instead of an issue number, and if the SC number is found, it
+    # finds the issue, and displays the page for that issue. The 
+    # modal-display javascript then detects what has happened and
+    # automatically displays the modal for the given copy.
 
     selected_copy = get_object_or_404(models.CanonicalCopy, NSC=sc)
-    url = reverse('copy', kwargs={'id': selected_copy.issue.id})
-    return HttpResponseRedirect(f'{url}#{selected_copy.id}')
+    selected_issue = selected_copy.issue
+    # all_copies = models.CanonicalCopy.objects.filter(issue=selected_issue).order_by('location__name', 'Shelfmark')
+    # all_copies = sorted(all_copies, key=copy_sort_key)
+    all_copies = [selected_copy]
+    template = loader.get_template('census/copy.html')
+    context = {
+        'all_copies': all_copies,
+        'copy_count': 0,
+        'selected_issue': selected_issue,
+        'icon_path': get_icon_path(selected_issue.edition.title.id),
+        'title': selected_issue.edition.title
+    }
+    return HttpResponse(template.render(context, request))
+
 
 def login_user(request):
     template = loader.get_template('census/login.html')
