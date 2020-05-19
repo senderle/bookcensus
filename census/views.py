@@ -968,3 +968,16 @@ def display_contact_success(request):
         'user': current_user,
     }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+def enter_copy(request):
+    if request.method == 'POST':
+        form = forms.EnterCopyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Success!")
+    else:
+        form = forms.EnterCopyForm()
+
+    return render(request, 'census/staff/enter_copy.html', {'form': form})

@@ -227,7 +227,7 @@ def main():
     hostname = get_hostname()
     # update_voyant_gen(voyant_hostname, voyant_gen_py_path)
     # update_traefik_toml(hostname, voyant_hostname, traefik_toml_path)
-    generate_django_env_file_prod('hostname')
+    generate_django_env_file_prod(hostname)
     generate_postgres_env_file_prod()
     generate_django_env_file_loc()
     generate_postgres_env_file_loc()

@@ -72,6 +72,8 @@ class RejectedDraftCopyAdmin(admin.ModelAdmin):
 class HistoryCopyAdmin(admin.ModelAdmin):
     raw_id_fields = ("parent",)
 
+admin.site.register(models.CopyForm)
+
 ### The below are all unused currently.
 
 # admin.site.register(BookPlate)
