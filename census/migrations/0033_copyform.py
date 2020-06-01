@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('census', '0031_basecopy_in_early_sammelband'),
+        ('census', '0032_basecopy_bartlett_ms_annotations')
     ]
 
     operations = [
