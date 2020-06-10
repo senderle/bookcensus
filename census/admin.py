@@ -1,6 +1,8 @@
 from django.contrib import admin, auth
 from django.conf import settings
 
+from import_export.admin import ImportExportModelAdmin
+
 from . import models
 
 ### Administrative Tables
@@ -10,18 +12,18 @@ class UserInlineAdmin(admin.StackedInline):
 
 admin.site.unregister(auth.get_user_model())
 @admin.register(auth.get_user_model())
-class UserDetailAdmin(admin.ModelAdmin):
+class UserDetailAdmin(ImportExportModelAdmin):
     list_display = ['username', 'userdetail']
     inlines = (UserInlineAdmin,)
 
 @admin.register(models.Location)
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(ImportExportModelAdmin):
     ordering = ('name',)
 
 admin.site.register(models.StaticPageText)
 
 @admin.register(models.ContactForm)
-class ContactFormAdmin(admin.ModelAdmin):
+class ContactFormAdmin(ImportExportModelAdmin):
     readonly_fields = ('date_submitted',)
 
 ### Core Data Tables
@@ -34,19 +36,19 @@ class ProvenanceOwnershipInline(admin.TabularInline):
     extra = 1
 
 @admin.register(models.ProvenanceName)
-class ProvenanceNameAdmin(admin.ModelAdmin):
+class ProvenanceNameAdmin(ImportExportModelAdmin):
     ordering = ('name',)
     search_fields = ('name',)
     inlines = (ProvenanceOwnershipInline,)
 
 @admin.register(models.ProvenanceOwnership)
-class ProvenanceOwnershipAdmin(admin.ModelAdmin):
+class ProvenanceOwnershipAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('copy', 'owner')
 
 # Higher-level FRBR categories
 
 @admin.register(models.Title)
-class TitleAdmin(admin.ModelAdmin):
+class TitleAdmin(ImportExportModelAdmin):
     ordering = ('title',)
 admin.site.register(models.Issue)
 admin.site.register(models.Edition)
@@ -54,22 +56,22 @@ admin.site.register(models.Edition)
 # Copy tables
 
 @admin.register(models.CanonicalCopy)
-class CanonicalCopyAdmin(admin.ModelAdmin):
+class CanonicalCopyAdmin(ImportExportModelAdmin):
     inlines = (ProvenanceOwnershipInline,)
     search_fields = ('NSC', 'issue__edition__title__title')
 
 admin.site.register(models.FalseCopy)
 admin.site.register(models.BaseCopy)
 @admin.register(models.DraftCopy)
-class DraftCopyAdmin(admin.ModelAdmin):
+class DraftCopyAdmin(ImportExportModelAdmin):
     raw_id_fields = ("parent",)
 
 @admin.register(models.RejectedDraftCopy)
-class RejectedDraftCopyAdmin(admin.ModelAdmin):
+class RejectedDraftCopyAdmin(ImportExportModelAdmin):
     raw_id_fields = ("parent",)
 
 @admin.register(models.HistoryCopy)
-class HistoryCopyAdmin(admin.ModelAdmin):
+class HistoryCopyAdmin(ImportExportModelAdmin):
     raw_id_fields = ("parent",)
 
 admin.site.register(models.CopyForm)

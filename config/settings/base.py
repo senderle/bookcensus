@@ -63,6 +63,7 @@ DJANGO_APPS = [
     # 'dal',  # Third-party, but must be included prior to django.contrib.admin
     # 'dal_select2',
     'django.contrib.admin',
+    'import_export',
 ]
 THIRD_PARTY_APPS = [
     'crispy_forms',

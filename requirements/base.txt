@@ -7,6 +7,8 @@ redis>=2.10.5  # https://github.com/antirez/redis
 celery==4.2.1  # pyup: <5.0  # https://github.com/celery/celery
 flower==0.9.2  # https://github.com/mher/flower
 
+
+
 # Django
 # ------------------------------------------------------------------------------
 django==2.0.9  # pyup: < 2.1  # https://www.djangoproject.com/
@@ -16,6 +18,7 @@ django-allauth==0.38.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.7.2  # https://github.com/django-crispy-forms/django-crispy-forms
 django-redis==4.9.0  # https://github.com/niwinz/django-redis
 django-autocomplete-light==3.3.0  # https://github.com/yourlabs/django-autocomplete-light
+django-import-export==2.2.0 # https://github.com/django-import-export/django-import-export
 
 # Django REST Framework
 djangorestframework==3.8.2  # https://github.com/encode/django-rest-framework
