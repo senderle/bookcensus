@@ -19,6 +19,8 @@ services:
       - ./.envs/.production/.postgres
     volumes:
       - ./census/ingest/data:/app/census/ingest/data
+      - ./census/media:/app/census/media
+      - ./census/migrations:/app/census/migrations
     command: /start
 
   postgres:
@@ -41,6 +43,7 @@ services:
       - django
     volumes:
       - production_caddy:/root/.caddy
+      - ./census/media:/srv/media
     env_file:
       - ./.envs/.production/.caddy
     ports:
@@ -50,19 +53,19 @@ services:
   redis:
     image: redis:3.2
 
-  celeryworker:
-    <<: *django
-    image: shakespeare_census_production_celeryworker
-    command: /start-celeryworker
-
-  celerybeat:
-    <<: *django
-    image: shakespeare_census_production_celerybeat
-    command: /start-celerybeat
-
-  flower:
-    <<: *django
-    image: shakespeare_census_production_flower
-    ports:
-      - "5555:5555"
-    command: /start-flower
+    #   celeryworker:
+    #     <<: *django
+    #     image: shakespeare_census_production_celeryworker
+    #     command: /start-celeryworker
+    # 
+    #   celerybeat:
+    #     <<: *django
+    #     image: shakespeare_census_production_celerybeat
+    #     command: /start-celerybeat
+    # 
+    #   flower:
+    #     <<: *django
+    #     image: shakespeare_census_production_flower
+    #     ports:
+    #       - "5555:5555"
+    #     command: /start-flower

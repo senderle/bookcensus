@@ -5,7 +5,7 @@ Base settings to build other settings files upon.
 import environ
 
 ROOT_DIR = environ.Path(__file__) - 3  # (shakespeare_census/config/settings/base.py - 3 = shakespeare_census/)
-APPS_DIR = ROOT_DIR.path('shakespeare_census')
+APPS_DIR = ROOT_DIR.path('census')
 
 env = environ.Env()
 

@@ -50,6 +50,11 @@ class ProvenanceOwnershipAdmin(ImportExportModelAdmin):
 @admin.register(models.Title)
 class TitleAdmin(ImportExportModelAdmin):
     ordering = ('title',)
+
+# @admin.register(models.TitleIcon)
+# class TitleIconAdmin(admin.ModelAdmin):
+#     pass
+
 admin.site.register(models.Issue)
 admin.site.register(models.Edition)
 
