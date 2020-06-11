@@ -125,12 +125,6 @@ def convert_year_range(year):
         return int(year), int(year)
     return False
 
-def get_icon_path(id=None):
-    if id is None:
-        return 'census/images/title_icons/generic-title-icon.png'
-    else:
-        return 'census/images/title_icons/{}.png'.format(id)
-
 ## VIEW FUNCTIONS ##
 
 def search(request, field=None, value=None, order=None):
@@ -217,7 +211,7 @@ def search(request, field=None, value=None, order=None):
         result_list = sorted(result_list, key=copy_nsc_sort_key)
 
     context = {
-        'icon_path': get_icon_path(),
+        'icon_path': 'census/images/title_icons/generic-title-icon.png',
         'value': value,
         'field': field,
         'display_value': display_value,
@@ -282,13 +276,11 @@ def homepage(request):
     titlelist = sorted(titlelist, key=title_sort_key)
     titlerows = [titlelist[i: i + gridwidth]
                  for i in range(0, len(titlelist), gridwidth)]
-    for row in titlerows:
-        for t in row:
-            t.icon_path = get_icon_path(t.id)
     context = {
         'frontpage': True,
         'titlelist': titlelist,
         'titlerows': titlerows,
+        'icon_path': 'census/images/title_icons/generic-title-icon.png'
     }
     return HttpResponse(template.render(context, request))
 
@@ -336,7 +328,7 @@ def detail(request, id):
     copy_count = models.CanonicalCopy.objects.filter(issue__id__in=[i.id for i in issues]).count()
     template = loader.get_template('census/detail.html')
     context = {
-        'icon_path': get_icon_path(id),
+        'icon_path': 'census/images/title_icons/generic-title-icon.png',
         'editions': editions,
         'issues': issues,
         'title': selected_title,
@@ -354,7 +346,7 @@ def copy(request, id):
         'all_copies': all_copies,
         'copy_count': len(all_copies),
         'selected_issue': selected_issue,
-        'icon_path': get_icon_path(selected_issue.edition.title.id),
+        'icon_path': 'census/images/title_icons/generic-title-icon.png',
         'title': selected_issue.edition.title
     }
     return HttpResponse(template.render(context, request))
@@ -425,7 +417,7 @@ def sc_copy_modal(request, sc):
         'all_copies': all_copies,
         'copy_count': 0,
         'selected_issue': selected_issue,
-        'icon_path': get_icon_path(selected_issue.edition.title.id),
+        'icon_path': 'census/images/title_icons/generic-title-icon.png',
         'title': selected_issue.edition.title
     }
     return HttpResponse(template.render(context, request))
@@ -591,7 +583,7 @@ def add_copy(request, id):
     context = {
        'form': copy_submission_form,
        'issue': selected_issue,
-       'icon_path': get_icon_path(selected_issue.edition.title.id)
+       'icon_path': 'census/images/title_icons/generic-title-icon.png'
     }
 
     return HttpResponse(template.render(context, request))
@@ -716,7 +708,7 @@ def update_draft_copy(request, id):
         context = {
             'form': copy_form,
             'copy': selected_copy,
-            'icon_path': get_icon_path(selected_copy.issue.edition.title.id)
+            'icon_path': 'census/images/title_icons/generic-title-icon.png'
         }
         return HttpResponse(template.render(context, request))
 
