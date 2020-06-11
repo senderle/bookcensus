@@ -10,7 +10,11 @@
             <div class="play-title-icon">
                 <div class="play-title-icon-border">
                     <a href="{% url 'detail' title.id %}">
-                        <img class="play-title-icon" src="{% static title.icon_path %}">
+                        {% if title.image %}
+                            <img class="play-title-icon" src="{{ title.image.url }}">
+                        {% else %}
+                            <img class="play-title-icon" src="{% static title.icon_path %}">
+                        {% endif %}
                     </a>
 		</div>
             </div>

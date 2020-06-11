@@ -6,7 +6,11 @@
             <td rowspan="3" class="play-title-header-icon">
                 <div class="play-title-icon-border">
                     <a href = "{% url 'detail' title.id %}">
-                        <img class="play-title-icon" src="{% static icon_path %}">
+                        {% if title.image %}
+                            <img class="play-title-icon" src="{{ title.image.url }}">
+                        {% else %}
+                            <img class="play-title-icon" src="{% static icon_path %}">
+                        {% endif %}
                     </a>
                 </div>
             </td>
