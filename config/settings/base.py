@@ -223,6 +223,7 @@ ADMINS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
+NOTIFICATIONS = [('Zack Lesser', 'zacharylesser@gmail.com')]
 
 # Celery
 # ------------------------------------------------------------------------------

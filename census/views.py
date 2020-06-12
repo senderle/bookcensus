@@ -18,6 +18,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
+from django.conf import settings
 
 from datetime import datetime
 
@@ -833,7 +834,7 @@ def edit_profile(request):
             profile_form.save()
             return HttpResponseRedirect(reverse('profile'))
         else:
-            messages.error(request, "The username you've inputted is already taken!")
+            messages.error(request, "That username is already taken.")
     else:
         profile_form=forms.EditProfileForm(instance=current_user)
 
@@ -928,11 +929,11 @@ def admin_notify():
     #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
     #     'token': account_activation_token.make_token(user),
     # })
+    emails = [email for name, email in settings.NOTIFICATIONS]
     message = 'There is a new user submission awaiting admin attenion.'
     mail_subject = 'Shakespeare Census user activity'
-    to_email = 'zacharylesser@gmail.com'
-    email = EmailMessage(mail_subject, message, to=[to_email])
-    email.send()
+    message = EmailMessage(mail_subject, message, to=emails)
+    message.send()
 
 def contact(request):
     template=loader.get_template('census/contact-form.html')
