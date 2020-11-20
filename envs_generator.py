@@ -118,10 +118,10 @@ def generate_postgres_env_file_loc():
 
 
 # generate .caddy file in .envs/.production directory
-def generate_caddy_env_file():
+def generate_caddy_env_file(hostname):
     postgres_file = "# Caddy\n"
     postgres_file += "# -------------------------------------------------------------------------\n"
-    postgres_file += "DOMAIN_NAME=example.com\n"
+    postgres_file += "DOMAIN_NAME=" + hostname " + "\n"
     f = open(".envs/.production/.caddy", "w")
     f.write(postgres_file)
     f.close()
@@ -231,7 +231,7 @@ def main():
     generate_postgres_env_file_prod()
     generate_django_env_file_loc()
     generate_postgres_env_file_loc()
-    generate_caddy_env_file()
+    generate_caddy_env_file(hostname)
 
 
 if __name__ == "__main__":
