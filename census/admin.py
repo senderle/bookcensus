@@ -16,11 +16,21 @@ class UserDetailAdmin(ImportExportModelAdmin):
     list_display = ['username', 'userdetail']
     inlines = (UserInlineAdmin,)
 
+class CanonicalCopyInline(admin.StackedInline):
+    model = models.CanonicalCopy
+    fields = ('issue',)
+    readonly_fields = ('issue',)
+    show_change_link = True
+    extra = 0
+
 @admin.register(models.Location)
 class LocationAdmin(ImportExportModelAdmin):
     ordering = ('name',)
+    inlines = (CanonicalCopyInline,)
 
-admin.site.register(models.StaticPageText)
+@admin.register(models.StaticPageText)
+class StaticPageTextAdmin(ImportExportModelAdmin):
+    pass
 
 @admin.register(models.ContactForm)
 class ContactFormAdmin(ImportExportModelAdmin):
@@ -55,8 +65,13 @@ class TitleAdmin(ImportExportModelAdmin):
 # class TitleIconAdmin(admin.ModelAdmin):
 #     pass
 
-admin.site.register(models.Issue)
-admin.site.register(models.Edition)
+@admin.register(models.Issue)
+class IssueAdmin(ImportExportModelAdmin):
+    pass
+
+@admin.register(models.Edition)
+class EditionAdmin(ImportExportModelAdmin):
+    pass
 
 # Copy tables
 

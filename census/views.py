@@ -87,7 +87,10 @@ def copy_nsc_sort_key(c):
     return (nsc_a, nsc_b)
 
 def copy_location_sort_key(c):
-    name = c.location.name
+    if c.location is not None:
+        name = c.location.name
+    else:
+        name = '' 
     return strip_article(name if name else '')
 
 def copy_shelfmark_sort_key(c):
